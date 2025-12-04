@@ -5,10 +5,12 @@ logging.basicConfig(level=logging.INFO)
 from flask import Flask, render_template, jsonify
 
 from services.osu_service import OsuAPIService
+from services.data_service import DataService
 
 logger = logging.getLogger(__name__)
 
 osu_service = OsuAPIService()
+data_service = DataService()
 
 app = Flask(__name__)
 
@@ -16,9 +18,16 @@ app = Flask(__name__)
 def home():
     routes = [
         {'path': '/api/update_top_scores'},
-        {'path': '/api//update_player_info_list'},
+        {'path': '/api/update_player_info_list'},
+        {'path': '/api/update_top_score_time_histogram'},
     ]
     return render_template('debug.html', routes=routes)
+
+@app.route('/api/update_top_score_time_histogram')
+def update_top_score_time_histogram():
+    logger.info('Histogram requested')
+    data_service.update_top_play_time_histogram()
+    return "OK"
 
 def get_top_scores():
     logger.info('Score list requested')

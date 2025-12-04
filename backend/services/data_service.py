@@ -1,6 +1,7 @@
 import logging
 
 from config.database_config import database
+from processing.data_processing import *
 
 logger = logging.getLogger(__name__)
 
@@ -14,3 +15,5 @@ class DataService:
 
     def update_top_play_time_histogram(self):
         score_dates = self.scores_collection.distinct('ended_at')
+        histogram = top_play_hour_histogram(score_dates)
+        self.data_collection.update_one("top_play_hour_histogram", {"$set": histogram}, upsert=True)
