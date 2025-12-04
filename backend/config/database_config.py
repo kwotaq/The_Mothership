@@ -10,8 +10,13 @@ class Database:
         self.client = MongoClient(os.getenv('DB_URL'))
         self.db = self.client['osu!apiData']
 
-    def get_collection(self):
+    def get_player_collection(self):
         return self.db['players']
 
+    def get_scores_collection(self):
+        return self.db['scores']
+
+    def get_processed_data_cache(self):
+        return self.db['processed_data']
 
 database = Database()

@@ -4,7 +4,7 @@ logging.basicConfig(level=logging.INFO)
 
 from flask import Flask, render_template, jsonify
 
-from osu_api.osu_service import OsuAPIService
+from services.osu_service import OsuAPIService
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +15,8 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     routes = [
-        {'path': '/update_top_scores'},
-        {'path': '/update_player_info'},
+        {'path': '/api/update_top_scores'},
+        {'path': '/api//update_player_info_list'},
     ]
     return render_template('debug.html', routes=routes)
 
