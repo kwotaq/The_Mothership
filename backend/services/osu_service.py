@@ -16,7 +16,7 @@ class OsuAPIService:
         self.scores_collection = database.get_scores_collection()
 
     def get_top_scores(self):
-        return list(self.player_collection.find())
+        return list(self.scores_collection.find())
 
     def update_top_scores(self):
         player_ids = self.player_collection.distinct("_id")
@@ -52,7 +52,7 @@ class OsuAPIService:
         logger.info("Updated all top scores")
 
     def get_player_info(self):
-        return list(self.scores_collection.find())
+        return list(self.player_collection.find())
 
     def update_player_info_list(self):
         logger.info('Fetching player info from osu!api')
