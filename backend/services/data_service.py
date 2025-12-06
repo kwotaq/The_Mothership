@@ -1,7 +1,7 @@
 import logging
 
 from config.database_config import database
-from processing.data_processing import *
+from processing.data_statistic_methods import *
 
 logger = logging.getLogger(__name__)
 
@@ -17,3 +17,7 @@ class DataService:
         score_dates = self.scores_collection.distinct('ended_at')
         histogram = top_play_hour_histogram(score_dates)
         self.data_collection.update_one("top_play_hour_histogram", {"$set": histogram}, upsert=True)
+
+    def update_profile_similarities(self):
+        similarities = profile_similarities(self.scores_collection.find())
+        # self.data_collection.update_one("profile_similarities", similarities, upsert=True)
