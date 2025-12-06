@@ -1,13 +1,19 @@
 import pandas as pd
 
-from similarity_calculation import SimilarityCalculator
+from processing.similarity_calculation import analyze_profiles
 
 def top_play_hour_histogram(date_list):
-    df = pd.DataFrame({'dates': date_list})
-    df = df.groupby(df["dates"].dt.hour).count()
-    return df["dates"].tolist()
+    df = pd.DataFrame.from_dict(date_list)
+    df = df.groupby(df["ended_at"].dt.hour).size()
+    return df
 
-def profile_similarities(scores):
+
+def most_common_x(x_list, x_label):
+    df = pd.DataFrame.from_dict(x_list)
+    df = df.groupby([x_label]).size().sort_values(ascending=False)
+    return df.head(5)
+
+
+def profile_similarity_coordinates(scores):
     df = pd.DataFrame(scores)
-    similarity_calculator = SimilarityCalculator(df)
-    similarity_calculator.calculate_similarity()
+    analyze_profiles(df)

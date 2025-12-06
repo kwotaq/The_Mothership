@@ -19,6 +19,8 @@ def home():
         {'path': '/api/update_player_info_list'},
         {'path': '/api/update_top_score_time_histogram'},
         {'path': '/api/update_profile_similarities'},
+        {'path': '/api/update_top_artists'},
+        {'path': '/api/update_similarity_coordinates'},
     ]
     return render_template('debug.html', routes=routes)
 
