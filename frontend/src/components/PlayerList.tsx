@@ -16,7 +16,6 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, loading, error }) => {
       <div className="data-list-container">
         <div className="list-header">
           <h2>Player Rankings</h2>
-          <div className="item-count">Loading...</div>
         </div>
         <div className="loading-state">
           <div className="spinner"></div>
@@ -46,7 +45,6 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, loading, error }) => {
       <div className="data-list-container">
         <div className="list-header">
           <h2>Player Rankings</h2>
-          <div className="item-count">0 Players</div>
         </div>
         <div className="empty-state">
           <h3>No Players Found</h3>
@@ -60,7 +58,6 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, loading, error }) => {
     <div className="data-list-container">
       <div className="list-header">
         <h2>Player Rankings</h2>
-        <div className="item-count">{players.length} Players</div>
       </div>
       <div className="flat-list">
         {players.map((player) => (

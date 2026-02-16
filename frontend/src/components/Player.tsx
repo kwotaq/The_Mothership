@@ -14,19 +14,15 @@ const Player: React.FC<PlayerProps> = ({ player }) => {
         </div>
         <img
           src={player.avatar}
-          alt={`${player.name}'s avatar`}
           className="player-avatar"
         />
         <div className="player-details">
-          <h3 className="player-name">{player.name}</h3>
+          <h3 className="player-name"><a href={"https://osu.ppy.sh/users/"+player._id}>{player.name}</a></h3>
           <div className="player-stats">
             <span className="global-rank">Global: #{player.global_rank}</span>
             <span className="performance-points">{player.performance_points.toLocaleString()} PP</span>
           </div>
         </div>
-      </div>
-      <div className="player-id">
-        ID: {player._id}
       </div>
     </div>
   );
