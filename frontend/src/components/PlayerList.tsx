@@ -60,8 +60,8 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, loading, error }) => {
         <h2>Player Rankings</h2>
       </div>
       <div className="flat-list">
-        {players.map((player) => (
-          <Player key={player._id} player={player} />
+        {players.map((player, index) => (
+          <Player key={player._id} player={player} index={index + 1}/>
         ))}
       </div>
     </div>

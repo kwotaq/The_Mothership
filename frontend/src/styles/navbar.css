@@ -1,0 +1,49 @@
+.navbar {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    border-bottom: var(--border-gold);
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.website-title {
+    color: var(--gold-primary);
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: var(--shadow-gold);
+    letter-spacing: 1px;
+}
+
+.navbar-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    transition: var(--transition-normal);
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--gold-primary);
+    border: 1px solid var(--gold-primary);
+    box-shadow: var(--shadow-gold);
+    transform: translateY(-2px);
+}

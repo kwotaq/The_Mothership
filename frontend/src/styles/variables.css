@@ -1,0 +1,26 @@
+:root {
+    /* Dark theme palette */
+    --bg-primary: #0f0f0f;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2d2d2d;
+
+    /* Gold accent palette */
+    --gold-primary: #ffd700;
+    --gold-secondary: #b8860b;
+    --gold-glow: rgba(255, 215, 0, 0.3);
+
+    /* Text colors */
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888888;
+
+    /* Borders & shadows */
+    --border-radius: 8px;
+    --border-gold: 2px solid var(--gold-primary);
+    --shadow-gold: 0 0 15px var(--gold-glow);
+    --shadow-soft: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
