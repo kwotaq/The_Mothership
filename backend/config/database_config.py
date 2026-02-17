@@ -16,7 +16,10 @@ class Database:
     def get_scores_collection(self):
         return self.db['scores']
 
-    def get_processed_data_cache(self):
-        return self.db['processed_data']
+    def get_player_stats_collection(self):
+        return self.db['player_stats']
+
+    def get_unified_stats_collection(self):
+        return self.db['unified_stats']
 
 database = Database()

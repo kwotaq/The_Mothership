@@ -78,8 +78,16 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = TSNE(n_components=2, perplexity=40)
+    reducer = TSNE(n_components=2, perplexity=40, random_state=67)
     coordinates = reducer.fit_transform(similarity_matrix)
-    user_coordinates = {'user_id': user_idx, 'coordinates': coordinates}
-    return user_coordinates
+    formatted_coordinates = [
+        {
+            "user_id": str(uid),
+            "x": float(coord[0]),
+            "y": float(coord[1])
+        }
+        for uid, coord in zip(user_idx, coordinates)
+    ]
+
+    return formatted_coordinates
 
