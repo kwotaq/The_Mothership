@@ -19,7 +19,7 @@ class Database:
     def get_player_stats_collection(self):
         return self.db['player_stats']
 
-    def get_unified_stats_collection(self):
-        return self.db['unified_stats']
+    def get_global_stats_collection(self):
+        return self.db['global_stats']
 
 database = Database()

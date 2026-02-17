@@ -11,13 +11,13 @@ class DataService:
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()
         self.player_stats_collection = database.get_player_stats_collection()
-        self.unified_stats_collection = database.get_unified_stats_collection()
+        self.global_stats_collection = database.get_global_stats_collection()
 
 
-    def get_unified_stats(self):
-        return self.unified_stats_collection.find_one({"_id": "global_metrics"})
+    def get_global_stats(self):
+        return self.global_stats_collection.find_one({"_id": "global_metrics"}, {"_id": 0})
 
-    def update_unified_stats(self):
+    def update_global_stats(self):
         top_artists = self.calculate_top_artists()
         top_songs = self.calculate_top_songs()
         hour_histogram = self.calculate_top_play_time_histogram()
@@ -30,7 +30,7 @@ class DataService:
             'similarity_coordinates': similarity_coordinates,
         }
 
-        self.unified_stats_collection.update_one({"_id": "global_metrics"} , {"$set": data}, upsert=True)
+        self.global_stats_collection.update_one({"_id": "global_metrics"}, {"$set": data}, upsert=True)
         logger.info("Updated unified stats")
 
 
