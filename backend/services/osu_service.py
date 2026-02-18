@@ -33,7 +33,7 @@ class OsuAPIService:
                     mod_string += mod.mod.value
 
                 score_data = {
-                    "_id": score.id,
+                    "_id": str(score.id),
                     "user_id": score.user_id,
                     "background_url": score.beatmapset.background_url,
                     "artist": score.beatmapset.artist,
@@ -47,7 +47,7 @@ class OsuAPIService:
                     "ended_at": score.ended_at
                 }
 
-                self.scores_collection.update_one({"_id": score.id}, {"$set": score_data}, upsert=True)
+                self.scores_collection.update_one({"_id": str(score.id)}, {"$set": score_data}, upsert=True)
 
         logger.info("Updated all top scores")
 
@@ -65,13 +65,13 @@ class OsuAPIService:
 
             for stats in rankings.ranking:
                 user = {
-                    "_id": stats.user.id,
+                    "_id": str(stats.user.id),
                     "name": stats.user.username,
                     "avatar": stats.user.avatar_url,
                     "global_rank": stats.global_rank,
                     "country_rank": stats.country_rank,
                     "performance_points": stats.pp,
                 }
-                self.player_collection.update_one({"_id": stats.user.id}, {"$set": user}, upsert=True)
+                self.player_collection.update_one({"_id": str(stats.user.id)}, {"$set": user}, upsert=True)
 
         logger.info('Updated players')
