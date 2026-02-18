@@ -1,0 +1,15 @@
+.scatterPlotContainer {
+    height: 500px;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.hoverPopup {
+    background: var(--bg-primary);
+    padding: 9px;
+    border: 1px solid var(--gold-primary);
+    border-radius: 4px;
+    color: white;
+    white-space: nowrap;
+}

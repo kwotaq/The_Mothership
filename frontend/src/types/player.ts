@@ -1,5 +1,5 @@
 export interface Player {
-  _id: number;
+  _id: string;
   avatar: string;
   country_rank: number;
   global_rank: number;

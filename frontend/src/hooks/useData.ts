@@ -17,7 +17,7 @@ export function useData<T>(
     });
 
     return {
-        data,
+        data: data,
         loading: isPending,
         isFetching,
         error: error?.message ?? null,

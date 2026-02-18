@@ -1,0 +1,14 @@
+.statsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gold-secondary);
+}
+
+.statsHeader :global(h2) {
+    color: var(--gold-primary);
+    font-size: 2rem;
+    margin: 0;
+}

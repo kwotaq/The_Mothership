@@ -1,0 +1,50 @@
+.dataListContainer {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.listHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gold-secondary);
+}
+
+.listHeader :global(h2) {
+    color: var(--gold-primary);
+    font-size: 2rem;
+    margin: 0;
+}
+
+.itemCount {
+    background: var(--bg-tertiary);
+    color: var(--gold-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    border: var(--border-gold);
+    font-weight: bold;
+    box-shadow: var(--shadow-gold);
+}
+
+.flatList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .listGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .listGrid {
+        grid-template-columns: 1fr;
+    }
+}

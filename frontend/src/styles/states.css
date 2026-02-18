@@ -1,10 +1,16 @@
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 /* Containers */
@@ -36,7 +42,9 @@
     margin-bottom: 1rem;
 }
 
-.empty-state h3 { color: var(--gold-primary); }
+.empty-state h3 {
+    color: var(--gold-primary);
+}
 
 .error-state p, .empty-state p {
     max-width: 500px;
@@ -56,7 +64,9 @@
 }
 
 /* Skeletons */
-.skeleton-list { margin-top: 1rem; }
+.skeleton-list {
+    margin-top: 1rem;
+}
 
 .skeleton-item {
     background: var(--bg-secondary);
@@ -87,6 +97,14 @@
     border-radius: 4px;
 }
 
-.skeleton-text-small { width: 100px; }
-.skeleton-text-medium { width: 150px; }
-.skeleton-text-large { width: 200px; }
+.skeleton-text-small {
+    width: 100px;
+}
+
+.skeleton-text-medium {
+    width: 150px;
+}
+
+.skeleton-text-large {
+    width: 200px;
+}
