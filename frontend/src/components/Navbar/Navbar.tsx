@@ -12,12 +12,12 @@ const Navbar = () => {
                 <ul className={styles.navbarLinks}>
                     <li>
                         <Link to="/" className={styles.navLink}>
-                            Home
+                            Player Statistics
                         </Link>
                     </li>
                     <li>
                         <Link to="/statistics" className={styles.navLink}>
-                            Statistics
+                            Score Statistics
                         </Link>
                     </li>
                 </ul>

@@ -3,7 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from './components/Navbar/Navbar.tsx';
 import React from "react";
-import Home from "./pages/Home.tsx";
+import PlayerStatistics from "./pages/PlayerStatistics.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +21,7 @@ const App: React.FC = () => {
                 <Navbar/>
                 <main className="main-content">
                     <Routes>
-                        <Route path="/" element={<Home/>}/>
+                        <Route path="/" element={<PlayerStatistics/>}/>
                     </Routes>
                 </main>
             </div>

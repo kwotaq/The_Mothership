@@ -1,17 +1,20 @@
 import React from "react";
 import styles from "./StatsBoard.module.css"
 import type {GlobalStats} from "../../types/globalStats.ts";
-import ScatterPlot from "../ScatterPlot/ScatterPlot.tsx";
+import ScatterPlot from "../Graphs/ScatterPlot/ScatterPlot.tsx";
 import type {Player} from "../../types/player.ts";
+import StatDetails, {type StatItem} from "./StatDetails/StatDetails.tsx";
 
 interface StatsProps {
     data: GlobalStats;
     playerData: Player[];
     loading: boolean;
     error: string | null;
+    onToggle: (player: Player) => void;
+    activePlayer: Player | null;
 }
 
-const StatsBoard: React.FC<StatsProps> = ({data, playerData, loading, error}) => {
+const StatsBoard: React.FC<StatsProps> = ({data, playerData, loading, error, activePlayer, onToggle}) => {
 
     const renderContent = () => {
         if (loading) {
@@ -40,13 +43,23 @@ const StatsBoard: React.FC<StatsProps> = ({data, playerData, loading, error}) =>
                 </div>
             );
         }
+        const statsToDisplay: StatItem[] = [
+            {label: "Top Artists", values: data.top_artists, type: 'list'},
+            {label: "Top Songs", values: data.top_songs, type: 'list'},
+            {label: "Top Mods", values: data.top_mods, type: 'list'},
+            {label: "Top Plays By Hour", values: data.hour_histogram, type: 'histogram'}
+        ];
+
         return (
-            <ScatterPlot data={data.similarity_coordinates} playerData={playerData}/>
+            <div>
+                <ScatterPlot data={data.similarity_coordinates} playerData={playerData} onToggle={onToggle} activePlayer={activePlayer}/>
+                <StatDetails stats={statsToDisplay}/>
+            </div>
         );
     }
 
     return (
-        <div>
+        <div className={styles.statsContainer}>
             <div className={styles.statsHeader}>
                 <h2>Player Statistics</h2>
             </div>

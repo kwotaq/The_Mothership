@@ -1,0 +1,66 @@
+.detailsGrid {
+    display: grid;
+    /* This creates a 3-column layout by default */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.statSection {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+}
+
+.wideSection {
+    grid-column: 1 / -1;
+    order: -1;
+}
+
+/* Responsive: switch to 1 column on mobile */
+@media (max-width: 900px) {
+    .detailsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .wideSection {
+        grid-column: auto;
+    }
+}
+
+.statSection h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--bg-tertiary);
+    padding-bottom: 0.5rem;
+}
+
+.statContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.statRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.statRow span {
+    min-width: 25px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}

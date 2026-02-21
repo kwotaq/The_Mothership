@@ -1,15 +1,22 @@
-import type {Player} from '../../types/player.ts';
+import type {Player} from '../../../types/player.ts';
 import styles from "./PlayerCard.module.css"
 import React from "react";
 
 interface PlayerProps {
     player: Player;
     index: number;
+    onToggle: (player: Player) => void;
+    isActive: boolean;
+    "data-id"?: string;
 }
 
-const PlayerCard: React.FC<PlayerProps> = ({player, index}) => {
+const PlayerCard: React.FC<PlayerProps> = ({player, index, onToggle, isActive, "data-id": dataId}) => {
     return (
-        <div className={styles.listItem}>
+        <div
+            className={`${styles.listItem} ${isActive ? styles.activeItem : ''}`}
+            onClick={() => onToggle(player)}
+            data-id={dataId}
+        >
             <div className={styles.playerMain}>
                 <div className={styles.index}>
                     #{index}

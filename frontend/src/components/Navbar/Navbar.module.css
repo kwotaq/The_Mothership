@@ -2,7 +2,7 @@
     background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
     border-bottom: var(--border-gold);
     box-shadow: var(--shadow-soft);
-    position: sticky;
+    position: relative;
     top: 0;
     z-index: 1000;
     backdrop-filter: blur(10px);
