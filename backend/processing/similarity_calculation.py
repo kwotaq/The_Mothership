@@ -21,6 +21,7 @@ def extract_features(user_scores):
 
     avg_acc = user_scores['accuracy'].mean()
     avg_combo = user_scores['max_combo'].mean()
+    avg_pp = user_scores['pp'].mean()
 
     top_artist = artist_count.idxmax()
     top_creator = creator_count.idxmax()
@@ -33,6 +34,7 @@ def extract_features(user_scores):
         'max_same_song_count': max_same_song_count,
         'avg_acc': avg_acc,
         'avg_combo': avg_combo,
+        'avg_pp': avg_pp,
 
         'top_artist': top_artist,
         'top_creator': top_creator,
@@ -78,7 +80,7 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = TSNE(n_components=2, perplexity=40, random_state=67)
+    reducer = TSNE(n_components=2, perplexity=5, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
     formatted_coordinates = [
         {

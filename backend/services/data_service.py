@@ -20,12 +20,14 @@ class DataService:
     def update_global_stats(self):
         top_artists = self.calculate_top_artists()
         top_songs = self.calculate_top_songs()
+        top_mods = self.calculate_top_mods()
         hour_histogram = self.calculate_top_play_time_histogram()
         similarity_coordinates = self.calculate_similarity_coordinates()
 
         data = {
             'top_artists': top_artists,
             'top_songs': top_songs,
+            'top_mods': top_mods,
             'hour_histogram': hour_histogram,
             'similarity_coordinates': similarity_coordinates,
         }
@@ -48,6 +50,11 @@ class DataService:
         query = {"_id": {"$in": id_list}} if id_list else {}
         score_songs = self.scores_collection.find(query, {'title': 1})
         return most_common_x(score_songs, 'title')
+
+    def calculate_top_mods(self, id_list=None):
+        query = {"_id": {"$in": id_list}} if id_list else {}
+        score_songs = self.scores_collection.find(query, {'mods': 1})
+        return most_common_x(score_songs, 'mods')
 
     def calculate_top_play_time_histogram(self, id_list=None):
         query = {"_id": {"$in": id_list}} if id_list else {}
