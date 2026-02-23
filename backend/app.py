@@ -19,6 +19,7 @@ def home():
         {'path': '/api/update_all_player_info'},
         {'path': '/api/update_global_stats'},
         {'path': '/api/update_all_player_stats'},
+        {'path': '/api/update_similarity_coordinates'},
     ]
     return render_template('debug.html', routes=routes)
 

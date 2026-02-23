@@ -21,6 +21,9 @@ class DataService:
     def get_player_stats(self, player_id):
         return self.player_stats_collection.find_one({"_id": player_id}, {"_id": 0})
 
+    def get_similarity_coordinates(self):
+        return self.global_stats_collection.find_one({"_id": "similarity_coordinates"}, {"_id": 0})
+
     def update_all_player_stats(self):
         player_ids = self.player_collection.distinct("_id")
 
@@ -28,6 +31,12 @@ class DataService:
             self.update_player_stats(player_id)
 
         logger.info("Updated all player stats")
+
+    def update_similarity_coordinates(self):
+        data = {"similarity_coordinates": self._calculate_similarity_coordinates()}
+
+        self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
+        logger.info("Updated similarity coordinates")
 
     def update_player_stats(self, player_id):
         top_artists = self._calculate_top_artists(player_id=player_id)
@@ -50,14 +59,12 @@ class DataService:
         top_songs = self._calculate_top_songs()
         top_mods = self._calculate_top_mods()
         hour_histogram = self._calculate_top_play_time_histogram()
-        similarity_coordinates = self._calculate_similarity_coordinates()
 
         data = {
             'top_artists': top_artists,
             'top_songs': top_songs,
             'top_mods': top_mods,
             'hour_histogram': hour_histogram,
-            'similarity_coordinates': similarity_coordinates,
         }
 
         self.global_stats_collection.update_one({"_id": "global_metrics"}, {"$set": data}, upsert=True)

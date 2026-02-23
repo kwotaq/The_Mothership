@@ -31,7 +31,6 @@ def update_all_player_stats():
 
 from flask import request, jsonify
 
-
 @data_controller.route('/api/get_player_stats', methods=['POST'])
 def get_player_stats():
     data = request.get_json()
@@ -40,5 +39,17 @@ def get_player_stats():
     if not player_id:
         return jsonify({"error": "Missing player_id"}), 400
 
-    stats = data_service.calculate_top_artists(player_id)
+    stats = data_service.get_player_stats(player_id)
     return jsonify(stats)
+
+@data_controller.route('/api/get_similarity_coordinates')
+def get_similarity_coordinates():
+    logger.info('Similarity coordinates fetch requested')
+    coordinates = data_service.get_similarity_coordinates()
+    return jsonify(coordinates)
+
+@data_controller.route('/api/update_similarity_coordinates')
+def update_similarity_coordinates():
+    logger.info('Similarity coordinate update requested')
+    data_service.update_similarity_coordinates()
+    return "OK"
