@@ -1,7 +1,7 @@
 import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import React from "react";
 import styles from "./ScatterPlot.module.css"
-import type {UserCoordinate} from "../../../types/globalStats.ts";
+import type {UserCoordinate} from "../../../types/userCoordinates.ts";
 import type {Player} from "../../../types/player.ts";
 
 interface ScatterPlotProps {
@@ -67,7 +67,7 @@ const ScatterPlot: React.FC<ScatterPlotProps> = ({data, playerData, onToggle, ac
 
                 nodeComponent={({node}) => {
                     const {x, y, size, color} = node;
-                    const isActive = activePlayer?._id === node.data.userId;
+                    const isActive = node.data.isActive;
 
                     return (
                         <g

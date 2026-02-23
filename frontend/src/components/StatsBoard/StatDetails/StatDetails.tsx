@@ -17,7 +17,6 @@ const StatDetails: React.FC<StatDetailsProps> = ({ stats }) => {
     return (
         <div className={styles.detailsGrid}>
             {stats.map((stat, index) => {
-                // Determine if this is the wide section
                 const isWide = stat.type != "list";
 
                 return (

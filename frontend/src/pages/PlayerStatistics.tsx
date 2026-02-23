@@ -1,18 +1,36 @@
-import { useState } from "react";
+import {useState} from "react";
 import PlayerList from "../components/PlayerList/PlayerList.tsx";
-import { useData } from "../hooks/useData.ts";
+import {useData} from "../hooks/useData.ts";
+import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
 import StatsBoard from "../components/StatsBoard/StatsBoard.tsx";
-import type { Player } from "../types/player.ts";
+import type {Player} from "../types/player.ts";
+import DataHandler from "../components/Graphs/DataHandler/DataHandler.tsx";
+import ScatterPlot from "../components/Graphs/ScatterPlot/ScatterPlot.tsx";
 
-const fetchPlayers = () => api.get('/api/player_info_list').then(res => res.data);
-const fetchPlayerStats = () => api.get('/api/get_global_stats').then(res => res.data);
+const fetchPlayers = () => api.get('/api/get_all_player_info').then(res => res.data);
+const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data);
 
 function PlayerStatistics() {
     const playersReq = useData(['players'], fetchPlayers);
-    const statsReq = useData(['global_stats'], fetchPlayerStats);
+    const coordinatesReq = useData(['coordinates'], fetchCoordinates);
 
     const [activePlayer, setActivePlayer] = useState<Player | null>(null);
+
+    const fetchStats = async (playerId: string | undefined) => {
+        if (!playerId) {
+            const response = await api.get('/api/get_global_stats');
+            return response.data;
+        }
+
+        const response = await api.post('/api/get_player_stats', {player_id: playerId});
+        return response.data;
+    };
+
+    const statsReq = useData(
+        ['player_stats', activePlayer?._id],
+        () => fetchStats(activePlayer?._id)
+    );
 
     const handleTogglePlayer = (player: Player) => {
         setActivePlayer((prev) => (prev?._id === player._id ? null : player));
@@ -26,7 +44,7 @@ function PlayerStatistics() {
             paddingLeft: '100px',
             alignItems: 'flex-start'
         }}>
-            <div style={{ flex: '0 0 950px' }}>
+            <div style={{flex: '0 0 950px'}}>
                 <PlayerList
                     players={playersReq.data || []}
                     loading={playersReq.loading}
@@ -36,15 +54,28 @@ function PlayerStatistics() {
                 />
             </div>
 
-            <div style={{ flex: '1' }}>
-                <StatsBoard
-                    data={statsReq.data}
-                    playerData={playersReq.data || []}
-                    loading={statsReq.loading}
-                    error={statsReq.error}
-                    activePlayer={activePlayer}
-                    onToggle={handleTogglePlayer}
-                />
+            <div style={{flex: '1'}}>
+                <ErrorBoundary>
+                    <DataHandler data={coordinatesReq.data}
+                                 loading={coordinatesReq.loading}
+                                 error={coordinatesReq.error}
+                                 label={"coordinates"}>
+                        <ScatterPlot data={coordinatesReq.data} playerData={playersReq.data}
+                                     onToggle={handleTogglePlayer}
+                                     activePlayer={activePlayer}/>
+                    </DataHandler>
+                </ErrorBoundary>
+
+                <ErrorBoundary>
+                    <DataHandler data={statsReq.data}
+                                 loading={statsReq.loading}
+                                 error={statsReq.error}
+                                 label={"stats"}>
+                        <StatsBoard
+                            data={statsReq.data}
+                        />
+                    </DataHandler>
+                </ErrorBoundary>
             </div>
         </div>
     );
