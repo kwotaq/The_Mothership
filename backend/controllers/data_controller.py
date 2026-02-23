@@ -20,5 +20,25 @@ def update_global_stats():
 def get_global_stats():
     logger.info('Player stats fetch requested')
     stats = data_service.get_global_stats()
-    logger.info('Player stats fetch requested')
+    return jsonify(stats)
+
+@data_controller.route('/api/update_all_player_stats')
+def update_all_player_stats():
+    logger.info('Stats update requested for all players')
+    data_service.update_all_player_stats()
+    return "OK"
+
+
+from flask import request, jsonify
+
+
+@data_controller.route('/api/get_player_stats', methods=['POST'])
+def get_player_stats():
+    data = request.get_json()
+    player_id = data.get('player_id')
+
+    if not player_id:
+        return jsonify({"error": "Missing player_id"}), 400
+
+    stats = data_service.calculate_top_artists(player_id)
     return jsonify(stats)

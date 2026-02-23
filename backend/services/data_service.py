@@ -1,7 +1,9 @@
 import logging
 
+import pandas as pd
+
 from config.database_config import database
-from processing.data_statistic_methods import *
+from processing.similarity_calculation import analyze_profiles
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +15,42 @@ class DataService:
         self.player_stats_collection = database.get_player_stats_collection()
         self.global_stats_collection = database.get_global_stats_collection()
 
-
     def get_global_stats(self):
         return self.global_stats_collection.find_one({"_id": "global_metrics"}, {"_id": 0})
 
+    def get_player_stats(self, player_id):
+        return self.player_stats_collection.find_one({"_id": player_id}, {"_id": 0})
+
+    def update_all_player_stats(self):
+        player_ids = self.player_collection.distinct("_id")
+
+        for player_id in player_ids:
+            self.update_player_stats(player_id)
+
+        logger.info("Updated all player stats")
+
+    def update_player_stats(self, player_id):
+        top_artists = self._calculate_top_artists(player_id=player_id)
+        top_songs = self._calculate_top_songs(player_id=player_id)
+        top_mods = self._calculate_top_mods(player_id=player_id)
+        hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
+
+        data = {
+            'top_artists': top_artists,
+            'top_songs': top_songs,
+            'top_mods': top_mods,
+            'hour_histogram': hour_histogram,
+        }
+
+        self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
+        logger.info(f"Updated stats for player {player_id}")
+
     def update_global_stats(self):
-        top_artists = self.calculate_top_artists()
-        top_songs = self.calculate_top_songs()
-        top_mods = self.calculate_top_mods()
-        hour_histogram = self.calculate_top_play_time_histogram()
-        similarity_coordinates = self.calculate_similarity_coordinates()
+        top_artists = self._calculate_top_artists()
+        top_songs = self._calculate_top_songs()
+        top_mods = self._calculate_top_mods()
+        hour_histogram = self._calculate_top_play_time_histogram()
+        similarity_coordinates = self._calculate_similarity_coordinates()
 
         data = {
             'top_artists': top_artists,
@@ -35,28 +63,48 @@ class DataService:
         self.global_stats_collection.update_one({"_id": "global_metrics"}, {"$set": data}, upsert=True)
         logger.info("Updated unified stats")
 
-
-    def calculate_similarity_coordinates(self):
+    def _calculate_similarity_coordinates(self):
         scores = self.scores_collection.find({})
-        return profile_similarity_coordinates(scores)
+        df = pd.DataFrame(scores)
+        return analyze_profiles(df)
 
+    def _calculate_top_artists(self, player_id=None):
+        return self._get_top_stat_count('artist', player_id)
 
-    def calculate_top_artists(self, id_list=None):
-        query = {"_id": {"$in": id_list}} if id_list else {}
-        score_artists = self.scores_collection.find(query, {'artist': 1})
-        return most_common_x(score_artists, 'artist')
+    def _calculate_top_songs(self, player_id=None):
+        return self._get_top_stat_count('title', player_id)
 
-    def calculate_top_songs(self, id_list=None):
-        query = {"_id": {"$in": id_list}} if id_list else {}
-        score_songs = self.scores_collection.find(query, {'title': 1})
-        return most_common_x(score_songs, 'title')
+    def _calculate_top_mods(self, player_id=None):
+        return self._get_top_stat_count('mods', player_id)
 
-    def calculate_top_mods(self, id_list=None):
-        query = {"_id": {"$in": id_list}} if id_list else {}
-        score_songs = self.scores_collection.find(query, {'mods': 1})
-        return most_common_x(score_songs, 'mods')
+    def _calculate_top_play_time_histogram(self, player_id=None):
+        pipeline = []
 
-    def calculate_top_play_time_histogram(self, id_list=None):
-        query = {"_id": {"$in": id_list}} if id_list else {}
-        score_dates = self.scores_collection.find(query, {'ended_at': 1})
-        return top_play_hour_histogram(score_dates)
+        if player_id:
+            pipeline.append({"$match": {"user_id": player_id}})
+
+        pipeline.extend([
+            {"$project": {"hour": {"$hour": "$ended_at"}}},
+            {"$group": {"_id": "$hour", "count": {"$sum": 1}}},
+            {"$sort": {"_id": 1}}
+        ])
+
+        results = list(self.scores_collection.aggregate(pipeline))
+
+        counts_map = {r['_id']: r['count'] for r in results}
+        return [counts_map.get(hour, 0) for hour in range(24)]
+
+    def _get_top_stat_count(self, field_name, player_id=None, limit=5):
+        pipeline = []
+
+        if player_id:
+            pipeline.append({"$match": {"user_id": player_id}})
+
+        pipeline.extend([
+            {"$group": {"_id": f"${field_name}", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": limit},
+            {"$project": {"label": "$_id", "count": 1, "_id": 0}}
+        ])
+
+        return list(self.scores_collection.aggregate(pipeline))

@@ -15,9 +15,10 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     routes = [
-        {'path': '/api/update_top_scores'},
-        {'path': '/api/update_player_info_list'},
+        {'path': '/api/update_all_top_scores'},
+        {'path': '/api/update_all_player_info'},
         {'path': '/api/update_global_stats'},
+        {'path': '/api/update_all_player_stats'},
     ]
     return render_template('debug.html', routes=routes)
 
