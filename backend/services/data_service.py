@@ -1,12 +1,10 @@
 import logging
-
 import pandas as pd
-
+from tqdm import tqdm
 from config.database_config import database
 from processing.similarity_calculation import analyze_profiles
 
 logger = logging.getLogger(__name__)
-
 
 class DataService:
     def __init__(self):
@@ -22,21 +20,20 @@ class DataService:
         return self.player_stats_collection.find_one({"_id": player_id}, {"_id": 0})
 
     def get_similarity_coordinates(self):
-        return self.global_stats_collection.find_one({"_id": "similarity_coordinates"}, {"_id": 0})
+        return self.global_stats_collection.find_one(
+            {"_id": "similarity_coordinates"},
+            {"_id": 0, "similarity_coordinates": 1}
+        )
 
     def update_all_player_stats(self):
         player_ids = self.player_collection.distinct("_id")
 
-        for player_id in player_ids:
+        for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
             self.update_player_stats(player_id)
-
-        logger.info("Updated all player stats")
 
     def update_similarity_coordinates(self):
         data = {"similarity_coordinates": self._calculate_similarity_coordinates()}
-
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
-        logger.info("Updated similarity coordinates")
 
     def update_player_stats(self, player_id):
         top_artists = self._calculate_top_artists(player_id=player_id)
@@ -52,7 +49,6 @@ class DataService:
         }
 
         self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
-        logger.info(f"Updated stats for player {player_id}")
 
     def update_global_stats(self):
         top_artists = self._calculate_top_artists()
@@ -68,7 +64,6 @@ class DataService:
         }
 
         self.global_stats_collection.update_one({"_id": "global_metrics"}, {"$set": data}, upsert=True)
-        logger.info("Updated unified stats")
 
     def _calculate_similarity_coordinates(self):
         scores = self.scores_collection.find({})
@@ -82,7 +77,7 @@ class DataService:
         return self._get_top_stat_count('title', player_id)
 
     def _calculate_top_mods(self, player_id=None):
-        return self._get_top_stat_count('mods', player_id)
+        return self._get_top_stat_count('mods', player_id, limit=10)
 
     def _calculate_top_play_time_histogram(self, player_id=None):
         pipeline = []

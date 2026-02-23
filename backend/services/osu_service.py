@@ -1,12 +1,10 @@
 import logging
-
 from osu import Client, GameModeStr, RankingType, UserScoreType
-
-from config.database_config import database
+from tqdm import tqdm
 from config.api_config import OsuAPIConfig
+from config.database_config import database
 
 logger = logging.getLogger(__name__)
-
 
 class OsuAPIService:
     def __init__(self):
@@ -21,20 +19,15 @@ class OsuAPIService:
     def update_all_top_scores(self):
         player_ids = self.player_collection.distinct("_id")
 
-        for player_id in player_ids:
+        for player_id in tqdm(player_ids, desc="Overall Player Score Update", unit="player"):
             self.update_player_top_scores(player_id)
-
-        logger.info("Updated all top scores")
 
     def update_player_top_scores(self, player_id):
         player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, limit=100)
 
         for score in player_top_scores:
-
             mods = score.mods
-            mod_string = ''
-            for mod in mods:
-                mod_string += mod.mod.value
+            mod_string = ''.join([mod.mod.value for mod in mods]) or 'NM'
 
             score_data = {
                 "_id": str(score.id),
@@ -53,21 +46,16 @@ class OsuAPIService:
 
             self.scores_collection.update_one({"_id": str(score.id)}, {"$set": score_data}, upsert=True)
 
-        logger.info(f"Updated top scores for player {player_id}")
-
     def get_all_player_info(self):
         return list(self.player_collection.find({}).sort({"performance_points": -1}))
 
     def update_all_player_info(self):
-        logger.info('Fetching player info from osu!api')
-        cursor = None
-        for page_idx in range(2): ### Temporary for limited data
-            logger.info(f"Fetching player info from page {page_idx}")
+        for page_idx in tqdm(range(2), desc="Fetching Leaderboard Pages"):
             rankings = self.client.get_ranking(GameModeStr.STANDARD, RankingType.PERFORMANCE, country="GR",
-                                               cursor=cursor)
+                                               cursor=None if page_idx == 0 else cursor)
             cursor = rankings.cursor
 
-            for stats in rankings.ranking:
+            for stats in tqdm(rankings.ranking, desc=f"Processing Page {page_idx}", unit="player", leave=False):
                 user = {
                     "_id": str(stats.user.id),
                     "name": stats.user.username,
@@ -77,5 +65,3 @@ class OsuAPIService:
                     "performance_points": stats.pp,
                 }
                 self.player_collection.update_one({"_id": str(stats.user.id)}, {"$set": user}, upsert=True)
-
-        logger.info('Updated all players')
