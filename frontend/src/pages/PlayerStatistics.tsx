@@ -5,11 +5,12 @@ import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
 import StatsBoard from "../components/StatsBoard/StatsBoard.tsx";
 import type {Player} from "../types/player.ts";
-import DataHandler from "../components/Graphs/DataHandler/DataHandler.tsx";
+import DataHandler from "../components/Handlers/DataHandler.tsx";
+import {ErrorFallback} from "../components/Handlers/ErrorFallback.tsx";
 import ScatterPlot from "../components/Graphs/ScatterPlot/ScatterPlot.tsx";
 
 const fetchPlayers = () => api.get('/api/get_all_player_info').then(res => res.data);
-const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data);
+const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data.similarity_coordinates);
 
 function PlayerStatistics() {
     const playersReq = useData(['players'], fetchPlayers);
@@ -55,18 +56,23 @@ function PlayerStatistics() {
             </div>
 
             <div style={{flex: '1'}}>
-                <ErrorBoundary>
-                    <DataHandler data={coordinatesReq.data}
-                                 loading={coordinatesReq.loading}
-                                 error={coordinatesReq.error}
-                                 label={"coordinates"}>
-                        <ScatterPlot data={coordinatesReq.data} playerData={playersReq.data}
-                                     onToggle={handleTogglePlayer}
-                                     activePlayer={activePlayer}/>
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                    <DataHandler
+                        loading={coordinatesReq.loading || playersReq.loading}
+                        error={coordinatesReq.error || playersReq.error}
+                        data={(!coordinatesReq.loading && !playersReq.loading) ? coordinatesReq.data : null}
+                        label={"coordinates"}
+                    >
+                        <ScatterPlot
+                            data={coordinatesReq.data}
+                            playerData={playersReq.data}
+                            onToggle={handleTogglePlayer}
+                            activePlayer={activePlayer}
+                        />
                     </DataHandler>
                 </ErrorBoundary>
 
-                <ErrorBoundary>
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler data={statsReq.data}
                                  loading={statsReq.loading}
                                  error={statsReq.error}

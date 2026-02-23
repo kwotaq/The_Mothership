@@ -1,4 +1,5 @@
 import React, {type ReactNode} from "react";
+import styles from "./DataHandler.module.css"
 
 interface DataProps {
     data: any;
@@ -17,18 +18,24 @@ const DataHandler: React.FC<DataProps> = ({
                                           }) => {
     if (loading) {
         return (
-            <div className="loading-state">
-                <div className="spinner"></div>
-                <p className="text-gold">Loading {label}...</p>
+            <div className={styles.dataContainer}>
+                <div className="loading-state">
+                    <div className="spinner"></div>
+                    <p className="text-gold">Loading {label}...</p>
+                </div>
             </div>
+
         );
     }
 
     if (error) {
         return (
-            <div className="error-state">
-                <h3 className="text-gold">Failed to Load {label}</h3>
-                <p className="text-muted">{error}</p>
+            <div className={styles.dataContainer}>
+
+                <div className="error-state">
+                    <h3 className="text-gold">Failed to Load {label}</h3>
+                    <p className="text-muted">{error}</p>
+                </div>
             </div>
         );
     }
@@ -37,9 +44,11 @@ const DataHandler: React.FC<DataProps> = ({
 
     if (isEmpty) {
         return (
-            <div className="empty-state">
-                <h3>No {label} Found</h3>
-                <p className="text-muted">There are no {label.toLowerCase()} to display.</p>
+            <div className={styles.dataContainer}>
+                <div className="empty-state">
+                    <h3>No {label} Found</h3>
+                    <p className="text-muted">There are no {label.toLowerCase()} to display.</p>
+                </div>
             </div>
         );
     }

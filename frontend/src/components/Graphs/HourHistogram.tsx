@@ -1,6 +1,6 @@
 import { ResponsiveBar } from '@nivo/bar';
 
-const HourHistogram = ({ data }: { data: { hour: string, count: number }[] }) => (
+export const HourHistogram = ({ data }: { data: { hour: string, count: number }[] }) => (
     <div style={{ height: '350px', width: '100%' }}>
         <ResponsiveBar
             data={data}
@@ -30,5 +30,3 @@ const HourHistogram = ({ data }: { data: { hour: string, count: number }[] }) =>
         />
     </div>
 );
-
-export default HourHistogram;
