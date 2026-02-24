@@ -26,7 +26,15 @@ const PlayerCard: React.FC<PlayerProps> = ({player, index, onToggle, isActive, "
                     className={styles.playerAvatar}
                 />
                 <div className={styles.playerDetails}>
-                    <h3 className={styles.playerName}><a href={"https://osu.ppy.sh/users/" + player._id}>{player.name}</a>
+                    <h3 className={styles.playerName}><a href={"https://osu.ppy.sh/users/" + player._id}
+                                                         target="_blank"
+                                                         rel="noopener noreferrer"
+                                                         onClick={(e: React.MouseEvent) =>{
+                                                             e.stopPropagation();
+                                                         }}
+                    >
+                        {player.name}
+                    </a>
                     </h3>
                     <div className={styles.playerStats}>
                         <span className={styles.countryRank}>Country: #{player.country_rank}</span>

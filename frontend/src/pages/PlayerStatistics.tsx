@@ -46,13 +46,21 @@ function PlayerStatistics() {
             alignItems: 'flex-start'
         }}>
             <div style={{flex: '0 0 950px'}}>
-                <PlayerList
-                    players={playersReq.data || []}
-                    loading={playersReq.loading}
-                    error={playersReq.error}
-                    activePlayer={activePlayer}
-                    onToggle={handleTogglePlayer}
-                />
+
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                    <DataHandler
+                        loading={playersReq.loading}
+                        error={playersReq.error}
+                        data={playersReq.data}
+                        label={"players"}
+                    >
+                        <PlayerList
+                            players={playersReq.data}
+                            onToggle={handleTogglePlayer}
+                            activePlayer={activePlayer}
+                        />
+                    </DataHandler>
+                </ErrorBoundary>
             </div>
 
             <div style={{flex: '1'}}>
