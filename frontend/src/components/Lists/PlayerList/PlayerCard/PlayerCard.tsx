@@ -1,4 +1,4 @@
-import type {Player} from '../../../types/player.ts';
+import type {Player} from '../../../../types/player.ts';
 import styles from "./PlayerCard.module.css"
 import React from "react";
 
@@ -37,8 +37,7 @@ export const PlayerCard = ({player, index, onToggle, isActive, "data-id": dataId
                     </a>
                     </h3>
                     <div className={styles.playerStats}>
-                        <span className={styles.countryRank}>Country: #{player.country_rank}</span>
-                        <span className={styles.globalRank}>Global: #{player.global_rank}</span>
+                        <span className={styles.globalRank}>Global Rank: #{player.global_rank}</span>
                     </div>
                 </div>
             </div>

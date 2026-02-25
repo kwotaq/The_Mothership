@@ -3,6 +3,7 @@ import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Navbar} from './components/Navbar/Navbar.tsx';
 import {PlayerStatistics} from "./pages/PlayerStatistics.tsx";
+import {ScoreStatistics} from "./pages/ScoreStatistics.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -21,6 +22,7 @@ export const App = () => {
                 <main className="main-content">
                     <Routes>
                         <Route path="/" element={<PlayerStatistics/>}/>
+                        <Route path="/scores" element={<ScoreStatistics/>}/>
                     </Routes>
                 </main>
             </div>

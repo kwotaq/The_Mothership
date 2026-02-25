@@ -1,7 +1,8 @@
 import {ResponsiveScatterPlot} from '@nivo/scatterplot';
-import styles from "./ScatterPlot.module.css"
+import styles from "./ScatterPlot.module.css";
 import type {UserCoordinate} from "../../../types/userCoordinates.ts";
 import type {Player} from "../../../types/player.ts";
+import {SectionHeader} from "../../Utility/SectionHeader/SectionHeader.tsx";
 
 interface ScatterPlotProps {
     data: UserCoordinate[];
@@ -24,68 +25,82 @@ export const ScatterPlot = ({data, playerData, onToggle, activePlayer}: ScatterP
         },
     ];
 
-    return (
-        <div className={styles.scatterPlotContainer}>
-            <ResponsiveScatterPlot
-                data={nivoData}
-                isInteractive={true}
-                theme={{
-                    axis: {
-                        ticks: {text: {fill: 'var(--text-muted)'}},
-                        legend: {text: {fill: 'var(--text-primary)'}}
-                    },
-                    grid: {
-                        line: {stroke: 'var(--bg-tertiary)', strokeWidth: 1}
-                    }
-                }}
-                margin={{top: 40, right: 40, bottom: 40, left: 60}}
-                xScale={{type: 'linear', min: 'auto', max: 'auto'}}
-                yScale={{type: 'linear', min: 'auto', max: 'auto'}}
-                axisBottom={null}
-                axisLeft={null}
-                nodeSize={10}
-                colors={'var(--gold-primary)'}
-                blendMode="normal"
+return (
+        <section className={styles.scatterPlotContainer}>
+            <SectionHeader title='Player Similarity Map' />
+            <div className={styles.chartArea}>
+                <ResponsiveScatterPlot
+                    data={nivoData}
+                    isInteractive={true}
+                    theme={{
+                        axis: {
+                            ticks: {text: {fill: 'var(--text-muted)', fontFamily: 'JetBrains Mono'}},
+                            legend: {text: {fill: 'var(--text-primary)'}}
+                        },
+                        grid: {
+                            line: {stroke: 'var(--bg-tertiary)', strokeWidth: 1}
+                        }
+                    }}
+                    margin={{top: 40, right: 40, bottom: 40, left: 60}}
+                    xScale={{type: 'linear', min: 'auto', max: 'auto'}}
+                    yScale={{type: 'linear', min: 'auto', max: 'auto'}}
+                    axisBottom={null}
+                    axisLeft={null}
+                    nodeSize={10}
+                    colors={'var(--alien-primary)'}
 
-                onClick={(node) => {
-                    const player = playerData.find(p => p._id === node.data.userId);
-                    if (player) {
-                        onToggle(player);
-                    }
-                }}
+                    onClick={(node) => {
+                        const player = playerData.find(p => p._id === node.data.userId);
+                        if (player) onToggle(player);
+                    }}
 
-                tooltip={({node}) => {
-                    const player = playerData.find(p => p._id === node.data.userId);
-                    if (!player) return null;
-                    return (
-                        <div className={styles.hoverPopup}>
-                            <strong>{player.name}</strong>
-                        </div>
-                    );
-                }}
+                    tooltip={({node}) => {
+                        const player = playerData.find(p => p._id === node.data.userId);
+                        if (!player) return null;
+                        return (
+                            <div className={styles.hoverPopup}>
+                                <strong style={{color: 'var(--alien-primary)'}}>{player.name}</strong>
+                            </div>
+                        );
+                    }}
 
-                nodeComponent={({node}) => {
-                    const {x, y, size, color} = node;
-                    const isActive = node.data.isActive;
+                    nodeComponent={({node}) => {
+                        const {x, y, size} = node;
+                        const isActive = node.data.isActive;
 
-                    return (
-                        <g
-                            transform={`translate(${x},${y})`}
-                            style={{pointerEvents: 'none'}}
-                        >
-                            {isActive && (
-                                <circle r={size * 1.3} fill="var(--gold-primary)" opacity={0.2}/>
-                            )}
-                            <circle
-                                r={isActive ? size * 0.6 : size / 2}
-                                fill={isActive ? 'var(--gold-primary)' : color}
-                                stroke={isActive ? '#ffffff' : 'none'}
-                                strokeWidth={isActive ? 1.5 : 0}
-                            />
-                        </g>
-                    );
-                }}
-            />
-        </div>
+                        return (
+                            <g transform={`translate(${x},${y})`}>
+                                {isActive && (
+                                    <>
+                                        <circle cx="0" cy="0" r={size} className={styles.glowLayer}/>
+                                        <circle cx="0" cy="0" r={size / 2} className={styles.pulsingCircle}/>
+                                        <circle
+                                            cx="0" cy="0" r={size / 2}
+                                            className={styles.pulsingCircle}
+                                            style={{animationDelay: '1s'}}
+                                        />
+                                    </>
+                                )}
+
+                                {/* The Core Node */}
+                                <circle
+                                    cx="0" cy="0"
+                                    /* Logic: Active is larger (original 'size'), others are small (size / 2) */
+                                    r={isActive ? size * 0.7 : size / 2}
+                                    fill={isActive ? 'var(--alien-primary)' : 'rgba(0, 255, 102, 0.15)'}
+                                    stroke="var(--alien-primary)"
+                                    strokeWidth={isActive ? 2 : 0.5}
+                                    style={{
+                                        cursor: 'pointer',
+                                        filter: isActive ? 'drop-shadow(0 0 8px var(--alien-primary))' : 'none',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                />
+                            </g>
+                        );
+                    }}
+                />
+            </div>
+        </section>
     );
 };

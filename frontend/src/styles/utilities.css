@@ -1,48 +1,62 @@
-.btn-gold {
-    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+/* Button: High-Charge Energy Cell */
+.btn-default {
+    background: var(--alien-primary); /* Solid neon punch */
     color: var(--bg-primary);
     padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius);
-    font-weight: bold;
+    /* Sharp, non-human geometry */
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+    border: none;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
+    transition: var(--transition-fast);
+}
+
+.btn-default:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 20px var(--alien-glow);
+    transform: scale(1.02);
 }
 
 input, textarea, select {
-    background: var(--bg-secondary);
+    background: rgba(5, 10, 8, 0.6);
     border: 1px solid var(--bg-tertiary);
-    border-radius: var(--border-radius);
+    border-radius: 0;
     padding: 0.75rem;
     color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    backdrop-filter: blur(5px);
 }
 
 input:focus {
     outline: none;
-    border: var(--border-gold);
-    box-shadow: var(--shadow-gold);
+    border: 1px solid var(--alien-primary);
+    box-shadow: 0 0 10px var(--alien-glow), inset 0 0 5px var(--alien-glow);
 }
 
 a {
-    color: var(--gold-primary);
+    color: var(--text-primary);
     text-decoration: none;
     transition: var(--transition-normal);
+    position: relative;
 }
 
 a:hover {
-    color: var(--gold-secondary);
-    text-shadow: var(--shadow-gold);
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--alien-primary);
 }
 
-code, pre {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--gold-secondary);
-    border-radius: var(--border-radius);
-    padding: 0.5rem;
-    font-family: 'Courier New', monospace;
-    color: var(--gold-primary);
+.text-default {
+    color: var(--text-primary);
+    text-shadow: 0 0 5px var(--alien-glow);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-.text-gold { color: var(--gold-primary); }
-.card-gold { border: var(--border-gold); box-shadow: var(--shadow-gold); }
-.text-muted { color: var(--text-muted); }
+.text-muted {
+    color: var(--text-muted);
+    opacity: 0.7;
+}

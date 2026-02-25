@@ -16,7 +16,7 @@ export const DataHandler = ({loading, error, data, children, label = "Data"}: Da
             <div className={styles.dataContainer}>
                 <div className="loading-state">
                     <div className="spinner"></div>
-                    <p className="text-gold">Loading {label}...</p>
+                    <p className="text-default">Loading {label}...</p>
                 </div>
             </div>
 
@@ -28,7 +28,7 @@ export const DataHandler = ({loading, error, data, children, label = "Data"}: Da
             <div className={styles.dataContainer}>
 
                 <div className="error-state">
-                    <h3 className="text-gold">Failed to Load {label}</h3>
+                    <h3 className="text-default">Failed to Load {label}</h3>
                     <p className="text-muted">{error}</p>
                 </div>
             </div>

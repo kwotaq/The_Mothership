@@ -39,9 +39,8 @@ export const StatDetails = ({stats}: {stats: StatItem[]}) => {
                     <div className={styles.statContent}>
                         {(stat.values as CountedItem[]).map((val, i) => (
                             <div key={i} className={styles.statRow}>
-                                <span className="text-gold">{i + 1}</span>
-                                <p>{val.label}</p>
                                 <span className={styles.countBadge}>{val.count}</span>
+                                <p>{val.label}</p>
                             </div>
                         ))}
                     </div>
@@ -58,7 +57,7 @@ export const StatDetails = ({stats}: {stats: StatItem[]}) => {
                         key={index}
                         className={`${styles.statSection} ${isWide ? styles.wideSection : ''}`}
                     >
-                        <h3 className="text-gold">{stat.label}</h3>
+                        <h3 className="text-default">{stat.label}</h3>
                         {renderContent(stat)}
                     </div>
                 );

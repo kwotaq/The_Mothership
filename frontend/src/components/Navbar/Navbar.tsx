@@ -6,18 +6,18 @@ export const Navbar = () => {
         <nav className={styles.navbar}>
             <div className={styles.navbarContainer}>
                 <div className={styles.navbarBrand}>
-                    <h1 className={styles.websiteTitle}>osu!grStatistics</h1>
+                    <h1 className={styles.websiteTitle}>The_Mothership</h1>
                 </div>
 
                 <ul className={styles.navbarLinks}>
                     <li>
                         <Link to="/" className={styles.navLink}>
-                            Player Statistics
+                            Player_Statistics
                         </Link>
                     </li>
                     <li>
-                        <Link to="/statistics" className={styles.navLink}>
-                            Score Statistics
+                        <Link to="/scores" className={styles.navLink}>
+                            Score_Statistics
                         </Link>
                     </li>
                 </ul>

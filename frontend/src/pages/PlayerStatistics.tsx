@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {PlayerList} from "../components/PlayerList/PlayerList.tsx";
+import {PlayerList} from "../components/Lists/PlayerList/PlayerList.tsx";
 import {useData} from "../hooks/useData.ts";
 import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
@@ -46,7 +46,6 @@ export const PlayerStatistics = () => {
             alignItems: 'flex-start'
         }}>
             <div style={{flex: '0 0 950px'}}>
-
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={playersReq.loading}
