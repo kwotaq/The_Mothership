@@ -1,4 +1,4 @@
-import React, {type ReactNode} from "react";
+import {type ReactNode} from "react";
 import styles from "./DataHandler.module.css"
 
 interface DataProps {
@@ -9,13 +9,8 @@ interface DataProps {
     children: ReactNode;
 }
 
-const DataHandler: React.FC<DataProps> = ({
-                                              loading,
-                                              error,
-                                              data,
-                                              children,
-                                              label = "Data"
-                                          }) => {
+export const DataHandler = ({loading, error, data, children, label = "Data"}: DataProps) => {
+
     if (loading) {
         return (
             <div className={styles.dataContainer}>
@@ -55,5 +50,3 @@ const DataHandler: React.FC<DataProps> = ({
 
     return <>{children}</>;
 };
-
-export default DataHandler;

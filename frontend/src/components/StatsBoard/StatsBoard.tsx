@@ -3,7 +3,7 @@ import type {GlobalStats} from "../../types/globalStats.ts";
 import {type StatItem} from "./StatDetails/StatDetails.tsx";
 import {StatDetails} from "./StatDetails/StatDetails.tsx";
 
-const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
+export const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
     const statsToDisplay: StatItem[] = [
         {label: "Top Artists", values: stats.top_artists, type: 'list'},
         {label: "Top Songs", values: stats.top_songs, type: 'list'},
@@ -22,5 +22,3 @@ const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
         </div>
     )
 };
-
-export default StatsBoard;

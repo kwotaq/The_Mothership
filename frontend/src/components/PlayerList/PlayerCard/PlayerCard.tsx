@@ -10,7 +10,7 @@ interface PlayerProps {
     "data-id"?: string;
 }
 
-const PlayerCard: React.FC<PlayerProps> = ({player, index, onToggle, isActive, "data-id": dataId}) => {
+export const PlayerCard = ({player, index, onToggle, isActive, "data-id": dataId}: PlayerProps) => {
     return (
         <div
             className={`${styles.listItem} ${isActive ? styles.activeItem : ''}`}
@@ -48,5 +48,3 @@ const PlayerCard: React.FC<PlayerProps> = ({player, index, onToggle, isActive, "
         </div>
     );
 };
-
-export default PlayerCard;

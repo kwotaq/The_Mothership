@@ -1,7 +1,7 @@
 import type {Player} from '../../types/player.ts';
 import styles from './PlayerList.module.css';
-import PlayerCard from './PlayerCard/PlayerCard.tsx';
-import React, {useEffect, useRef} from "react";
+import {PlayerCard} from './PlayerCard/PlayerCard.tsx';
+import {useEffect, useRef} from "react";
 
 interface PlayerListProps {
     players: Player[];
@@ -10,7 +10,7 @@ interface PlayerListProps {
 
 }
 
-const PlayerList: React.FC<PlayerListProps> = ({players, activePlayer, onToggle}) => {
+export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) => {
     const listContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -50,5 +50,3 @@ const PlayerList: React.FC<PlayerListProps> = ({players, activePlayer, onToggle}
         </div>
     );
 };
-
-export default PlayerList;

@@ -1,18 +1,18 @@
 import {useState} from "react";
-import PlayerList from "../components/PlayerList/PlayerList.tsx";
+import {PlayerList} from "../components/PlayerList/PlayerList.tsx";
 import {useData} from "../hooks/useData.ts";
 import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
-import StatsBoard from "../components/StatsBoard/StatsBoard.tsx";
+import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 import type {Player} from "../types/player.ts";
-import DataHandler from "../components/Handlers/DataHandler.tsx";
+import {DataHandler} from "../components/Handlers/DataHandler.tsx";
 import {ErrorFallback} from "../components/Handlers/ErrorFallback.tsx";
-import ScatterPlot from "../components/Graphs/ScatterPlot/ScatterPlot.tsx";
+import {ScatterPlot} from "../components/Graphs/ScatterPlot/ScatterPlot.tsx";
 
 const fetchPlayers = () => api.get('/api/get_all_player_info').then(res => res.data);
 const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data.similarity_coordinates);
 
-function PlayerStatistics() {
+export const PlayerStatistics = () => {
     const playersReq = useData(['players'], fetchPlayers);
     const coordinatesReq = useData(['coordinates'], fetchCoordinates);
 
@@ -94,5 +94,3 @@ function PlayerStatistics() {
         </div>
     );
 }
-
-export default PlayerStatistics;

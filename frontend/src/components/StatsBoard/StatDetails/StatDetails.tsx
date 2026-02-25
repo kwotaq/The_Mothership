@@ -1,4 +1,3 @@
-import React from "react";
 import {HourHistogram} from "../../Graphs/HourHistogram.tsx";
 import styles from "./StatDetails.module.css";
 import type {CountedItem} from "../../../types/globalStats.ts";
@@ -10,11 +9,7 @@ export interface StatItem {
     type: "list" | "histogram" | "chart";
 }
 
-interface StatDetailsProps {
-    stats: StatItem[];
-}
-
-export const StatDetails: React.FC<StatDetailsProps> = ({stats}) => {
+export const StatDetails = ({stats}: {stats: StatItem[]}) => {
 
     const renderContent = (stat: StatItem) => {
         switch (stat.type) {

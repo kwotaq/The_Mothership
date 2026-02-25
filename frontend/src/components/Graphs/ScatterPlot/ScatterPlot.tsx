@@ -1,5 +1,4 @@
 import {ResponsiveScatterPlot} from '@nivo/scatterplot';
-import React from "react";
 import styles from "./ScatterPlot.module.css"
 import type {UserCoordinate} from "../../../types/userCoordinates.ts";
 import type {Player} from "../../../types/player.ts";
@@ -11,7 +10,7 @@ interface ScatterPlotProps {
     activePlayer: Player | null;
 }
 
-const ScatterPlot: React.FC<ScatterPlotProps> = ({data, playerData, onToggle, activePlayer}) => {
+export const ScatterPlot = ({data, playerData, onToggle, activePlayer}: ScatterPlotProps) => {
 
     const nivoData = [
         {
@@ -90,5 +89,3 @@ const ScatterPlot: React.FC<ScatterPlotProps> = ({data, playerData, onToggle, ac
         </div>
     );
 };
-
-export default ScatterPlot;

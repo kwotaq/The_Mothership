@@ -1,16 +1,7 @@
 import {ResponsivePie} from '@nivo/pie';
 import styles from "./ScatterPlot/ScatterPlot.module.css";
 
-interface PieData {
-    id: string;
-    value: number;
-}
-
-interface PieChartProps {
-    data: PieData[];
-}
-
-export const PieChart = ({data}: PieChartProps) => {
+export const PieChart = ({data}: { data: { id: string, value: number }[] }) => {
     const total = data.reduce((acc, item) => acc + item.value, 0);
 
     return (
