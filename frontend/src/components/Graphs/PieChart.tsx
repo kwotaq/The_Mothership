@@ -9,7 +9,7 @@ export const PieChart = ({ data }: { data: { id: string, value: number }[] }) =>
             <ResponsivePie
                 data={data}
                 margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-                innerRadius={0.7}
+                innerRadius={0.4}
                 padAngle={2}
                 cornerRadius={0}
                 activeOuterRadiusOffset={8}
@@ -29,8 +29,8 @@ export const PieChart = ({ data }: { data: { id: string, value: number }[] }) =>
                     labels: {
                         text: {
                             fontFamily: 'JetBrains Mono, monospace',
-                            fontWeight: '700',
-                            fontSize: 10,
+                            fontWeight: '1000',
+                            fontSize: 14,
                         },
                     },
                     tooltip: {
@@ -43,9 +43,6 @@ export const PieChart = ({ data }: { data: { id: string, value: number }[] }) =>
                         }
                     }
                 }}
-
-                borderWidth={1}
-                borderColor={{ from: 'color', modifiers: [['darker', 0.5]] }}
 
                 tooltip={({ datum }) => {
                     const percentage = ((datum.value / total) * 100).toFixed(1);

@@ -1,36 +1,40 @@
-import { ResponsiveBar } from '@nivo/bar';
+import {ResponsiveBar} from '@nivo/bar';
 
-export const HourHistogram = ({ data }: { data: { hour: string, count: number }[] }) => (
-    <div style={{ height: '400px', width: '100%' }}>
+export const HourHistogram = ({data}: { data: { hour: string, count: number }[] }) => (
+    <div style={{height: '400px', width: '100%'}}>
         <ResponsiveBar
             data={data}
             keys={['count']}
             indexBy="hour"
             isInteractive={false}
-            margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            margin={{top: 20, right: 20, bottom: 50, left: 50}}
             padding={0.4}
-            valueScale={{ type: 'linear' }}
-            indexScale={{ type: 'band', round: true }}
+            valueScale={{type: 'linear'}}
+            indexScale={{type: 'band', round: true}}
             colors={'var(--alien-primary)'}
+            labelSkipWidth={1}
+            labelSkipHeight={1}
+
             theme={{
                 axis: {
                     ticks: {
                         text: {
                             fill: 'var(--text-primary)',
                             fontFamily: 'JetBrains Mono, monospace',
-                            fontSize: 10
+                            fontSize: 12
                         }
                     },
-                    legend: { text: { fill: 'var(--text-primary)' } }
+                    legend: {text: {fill: 'var(--text-primary)'}}
                 },
                 grid: {
-                    line: { stroke: 'var(--bg-tertiary)', strokeWidth: 1 }
+                    line: {stroke: 'var(--bg-tertiary)', strokeWidth: 1}
                 },
                 labels: {
                     text: {
                         fill: 'var(--bg-primary)',
                         fontFamily: 'JetBrains Mono, monospace',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        fontSize: 15
                     }
                 }
             }}
