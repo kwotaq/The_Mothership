@@ -1,0 +1,14 @@
+export interface Score {
+    _id: string;
+    user_id: string;
+    bg_url: string;
+    artist: string;
+    title: string;
+    creator: string;
+    max_combo: number;
+    accuracy: number;
+    mods: string;
+    rank: string;
+    pp: number;
+    ended_at: string;
+}

@@ -1,10 +1,10 @@
 import {ErrorBoundary} from "react-error-boundary";
-import {ErrorFallback} from "../components/Handlers/ErrorFallback.tsx";
-import {DataHandler} from "../components/Handlers/DataHandler.tsx";
+import {ErrorFallback} from "../Utility/Handlers/ErrorFallback.tsx";
+import {DataHandler} from "../Utility/Handlers/DataHandler.tsx";
 import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 import {ScoresList} from "../components/Lists/ScoresList/ScoresList.tsx"
 import api from "../api.tsx";
-import {useData} from "../hooks/useData.ts";
+import {useData} from "../Utility/hooks/useData.ts";
 
 const fetchScores = () => api.get('/api/get_score_page').then(res => res.data);
 const fetchStats = () => api.get('/api/get_score_stats').then(res => res.data);
@@ -37,18 +37,18 @@ export const ScoreStatistics = ()=> {
                 </ErrorBoundary>
             </div>
 
-            <div style={{flex: '1'}}>
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <DataHandler data={statsReq.data}
-                                 loading={statsReq.loading}
-                                 error={statsReq.error}
-                                 label={"stats"}>
-                        <StatsBoard
-                            data={statsReq.data}
-                        />
-                    </DataHandler>
-                </ErrorBoundary>
-            </div>
+            {/*<div style={{flex: '1'}}>*/}
+            {/*    <ErrorBoundary FallbackComponent={ErrorFallback}>*/}
+            {/*        <DataHandler data={statsReq.data}*/}
+            {/*                     loading={statsReq.loading}*/}
+            {/*                     error={statsReq.error}*/}
+            {/*                     label={"stats"}>*/}
+            {/*            <StatsBoard*/}
+            {/*                data={statsReq.data}*/}
+            {/*            />*/}
+            {/*        </DataHandler>*/}
+            {/*    </ErrorBoundary>*/}
+            {/*</div>*/}
         </div>
     );
 }

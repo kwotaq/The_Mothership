@@ -4,6 +4,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Navbar} from './components/Navbar/Navbar.tsx';
 import {PlayerStatistics} from "./pages/PlayerStatistics.tsx";
 import {ScoreStatistics} from "./pages/ScoreStatistics.tsx";
+import {PlayerProvider} from "./Utility/PlayerProvider.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -17,16 +18,18 @@ const queryClient = new QueryClient({
 export const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
-            <div className="app">
-                <Navbar/>
-                <main className="main-content">
-                    <Routes>
-                        <Route path="/" element={<PlayerStatistics/>}/>
-                        <Route path="/scores" element={<ScoreStatistics/>}/>
-                    </Routes>
-                </main>
-            </div>
-            <ReactQueryDevtools initialIsOpen={false}/>
+            <PlayerProvider>
+                <div className="app">
+                    <Navbar/>
+                    <main className="main-content">
+                        <Routes>
+                            <Route path="/" element={<PlayerStatistics/>}/>
+                            <Route path="/scores" element={<ScoreStatistics/>}/>
+                        </Routes>
+                    </main>
+                </div>
+                <ReactQueryDevtools initialIsOpen={false}/>
+            </PlayerProvider>
         </QueryClientProvider>
     );
 };

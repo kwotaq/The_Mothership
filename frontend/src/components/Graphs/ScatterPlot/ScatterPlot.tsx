@@ -2,16 +2,17 @@ import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import styles from "./ScatterPlot.module.css";
 import type {UserCoordinate} from "../../../types/userCoordinates.ts";
 import type {Player} from "../../../types/player.ts";
-import {SectionHeader} from "../../Utility/SectionHeader/SectionHeader.tsx";
+import {SectionHeader} from "../../../Utility/SectionHeader/SectionHeader.tsx";
+import { usePlayers } from '../../../Utility/PlayerContext.tsx';
 
 interface ScatterPlotProps {
     data: UserCoordinate[];
-    playerData: Player[];
     onToggle: (player: Player) => void;
     activePlayer: Player | null;
 }
 
-export const ScatterPlot = ({data, playerData, onToggle, activePlayer}: ScatterPlotProps) => {
+export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) => {
+    const { playerMap } = usePlayers()
 
     const nivoData = [
         {
@@ -50,13 +51,13 @@ return (
                     colors={'var(--alien-primary)'}
 
                     onClick={(node) => {
-                        const player = playerData.find(p => p._id === node.data.userId);
+                        const player = playerMap[node.data.userId]
                         if (player) onToggle(player);
                     }}
 
                     tooltip={({node}) => {
-                        const player = playerData.find(p => p._id === node.data.userId);
-                        if (!player) return null;
+                        const player = playerMap[node.data.userId]
+                        if (!player) return <div><strong style={{color: 'var(--alien-primary)'}}>Player name not found</strong></div>;
                         return (
                             <div className={styles.hoverPopup}>
                                 <strong style={{color: 'var(--alien-primary)'}}>{player.name}</strong>

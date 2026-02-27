@@ -40,7 +40,6 @@
 
 .listItem:hover, .activeItem {
     background: var(--bg-tertiary);
-    /* High-tech glow instead of simple brightness */
     filter: drop-shadow(0 0 5px var(--alien-glow));
     box-shadow: var(--shadow-alien);
 }
@@ -67,7 +66,6 @@
 .playerAvatar {
     width: 65px;
     height: 65px;
-    /* Hexagonal cut for alien tech look */
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     border: 1px solid var(--alien-primary);
     object-fit: cover;

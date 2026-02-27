@@ -1,4 +1,3 @@
-// hooks/useData.ts
 import {useQuery} from '@tanstack/react-query';
 
 export function useData<T>(

@@ -2,7 +2,7 @@ import styles from "./StatsBoard.module.css"
 import type {GlobalStats} from "../../types/globalStats.ts";
 import {type StatItem} from "./StatDetails/StatDetails.tsx";
 import {StatDetails} from "./StatDetails/StatDetails.tsx";
-import {SectionHeader} from "../Utility/SectionHeader/SectionHeader.tsx";
+import {SectionHeader} from "../../Utility/SectionHeader/SectionHeader.tsx";
 
 export const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
     const statsToDisplay: StatItem[] = [

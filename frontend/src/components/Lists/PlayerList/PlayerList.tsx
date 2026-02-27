@@ -2,7 +2,7 @@ import type {Player} from '../../../types/player.ts';
 import styles from './PlayerList.module.css';
 import {PlayerCard} from './PlayerCard/PlayerCard.tsx';
 import {useEffect, useRef} from "react";
-import {SectionHeader} from "../../Utility/SectionHeader/SectionHeader.tsx";
+import {SectionHeader} from "../../../Utility/SectionHeader/SectionHeader.tsx";
 
 interface PlayerListProps {
     players: Player[];
