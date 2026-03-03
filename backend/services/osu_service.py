@@ -13,8 +13,26 @@ class OsuAPIService:
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()
 
-    def get_all_top_scores(self):
-        return list(self.scores_collection.find().sort({"pp": -1}))
+    def get_score_page(self, page, limit):
+        page = int(page)
+        limit = int(limit)
+
+        skip_amount = (page - 1) * limit
+
+        cursor = self.scores_collection.find() \
+            .sort("pp", -1) \
+            .skip(skip_amount) \
+            .limit(limit)
+
+        scores = list(cursor)
+
+        total_count = self.scores_collection.count_documents({})
+        total_pages = (total_count + limit - 1) // limit
+
+        return {
+            "scores": scores,
+            "total_pages": total_pages,
+        }
 
     def update_all_top_scores(self):
         player_ids = self.player_collection.distinct("_id")
@@ -23,7 +41,7 @@ class OsuAPIService:
             self.update_player_top_scores(player_id)
 
     def update_player_top_scores(self, player_id):
-        player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, limit=100)
+        player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD, limit=200)
 
         for score in player_top_scores:
             mods = score.mods
@@ -32,10 +50,11 @@ class OsuAPIService:
             score_data = {
                 "_id": str(score.id),
                 "user_id": str(score.user_id),
-                "background_url": score.beatmapset.background_url,
+                "background_url": f"https://assets.ppy.sh/beatmaps/{score.beatmapset.id}/covers/cover.jpg",
                 "artist": score.beatmapset.artist,
                 "title": score.beatmapset.title,
                 "creator": score.beatmapset.creator,
+                "difficulty": score.beatmap.version,
                 "max_combo": score.max_combo,
                 "accuracy": score.accuracy,
                 "mods": mod_string,

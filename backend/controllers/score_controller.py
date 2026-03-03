@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, request, jsonify
 
 from services.osu_service import OsuAPIService
 
@@ -10,11 +10,15 @@ osu_service = OsuAPIService()
 
 score_controller = Blueprint('score_controller', __name__)
 
-@score_controller.route('/api/get_all_top_scores')
-def get_top_scores():
-    logger.info('Score list requested')
-    score_list = osu_service.get_all_top_scores()
-    logger.info('Score list fetched from database')
+@score_controller.route('/api/get_score_page', methods=['POST'])
+def get_score_page():
+    data = request.get_json()
+    page = data.get('page')
+    limit = data.get('limit')
+
+    logger.info('Score page requested')
+    score_list = osu_service.get_score_page(page, limit)
+    logger.info(f'Score page {page} fetched from database')
     return jsonify(score_list)
 
 

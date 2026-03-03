@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, request, jsonify
 
 from services.data_service import DataService
 
@@ -27,9 +27,6 @@ def update_all_player_stats():
     logger.info('Stats update requested for all players')
     data_service.update_all_player_stats()
     return "OK"
-
-
-from flask import request, jsonify
 
 @data_controller.route('/api/get_player_stats', methods=['POST'])
 def get_player_stats():
