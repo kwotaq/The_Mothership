@@ -1,0 +1,159 @@
+.card {
+    position: relative;
+    width: 100%;
+    min-height: 120px;
+    background-color: #050a08;
+    border: 1px solid rgba(0, 255, 102, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+}
+
+.cardBackgroundImage {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.backgroundBlur {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 10, 8, 0.9);
+    z-index: 1;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.metaInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.artistTitle {
+    color: #fff;
+    font-weight: 700;
+    font-size: 20px;
+    display: block;
+}
+
+.creator {
+    color: var(--alien-primary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.XH, .X {
+    color: #f2ff00;
+    text-shadow: 0 0 10px #f2ff00;
+}
+
+.SH, .S {
+    color: #00f2ff;
+    text-shadow: 0 0 10px #00f2ff;
+}
+
+.A {
+    color: #00ff66;
+}
+
+.B {
+    color: #ff9d00;
+}
+
+.rank {
+    font-size: 42px;
+    font-weight: 900;
+    font-style: italic;
+    min-width: 60px;
+    text-align: center;
+}
+
+.mods {
+    background: rgba(0, 255, 102, 0.1);
+    color: var(--alien-primary);
+    padding: 2px 8px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.statsSection {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.statGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: var(--text-primary);
+}
+
+.statValue {
+    font-size: 20px;
+    color: #fff;
+    font-weight: 800;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    border: 2px solid var(--alien-primary);
+    background: #000;
+    object-fit: cover;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+}
+
+.titleGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.creator {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+.label {
+    color: var(--alien-primary);
+    font-weight: 800;
+    margin-right: 4px;
+}
+
+.diffBadge {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0, 255, 102, 0.1);
+    padding: 2px 10px;
+    width: fit-content;
+    margin-top: 6px;
+    text-transform: uppercase;
+}

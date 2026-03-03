@@ -35,14 +35,13 @@ return (
                     isInteractive={true}
                     theme={{
                         axis: {
-                            ticks: {text: {fill: 'var(--text-muted)', fontFamily: 'JetBrains Mono'}},
                             legend: {text: {fill: 'var(--text-primary)'}}
                         },
                         grid: {
                             line: {stroke: 'var(--bg-tertiary)', strokeWidth: 1}
                         }
                     }}
-                    margin={{top: 40, right: 40, bottom: 40, left: 60}}
+                    margin={{top: 40, right: 40, bottom: 40, left: 40}}
                     xScale={{type: 'linear', min: 'auto', max: 'auto'}}
                     yScale={{type: 'linear', min: 'auto', max: 'auto'}}
                     axisBottom={null}

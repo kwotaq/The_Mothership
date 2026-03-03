@@ -35,8 +35,8 @@ export const PieChart = ({ data }: { data: { id: string, value: number }[] }) =>
                     },
                     tooltip: {
                         container: {
-                            background: '#050a08',
-                            color: '#ffffff',
+                            background: 'var(--bg-primary)',
+                            color: 'var(--text-primary)',
                             border: '1px solid #00ff66',
                             fontFamily: 'JetBrains Mono, monospace',
                             borderRadius: '0px'
@@ -48,7 +48,7 @@ export const PieChart = ({ data }: { data: { id: string, value: number }[] }) =>
                     const percentage = ((datum.value / total) * 100).toFixed(1);
                     return (
                         <div className={styles.hoverPopup}>
-                            <strong style={{ color: '#00ff66' }}>{datum.id}</strong>
+                            <strong style={{ color: 'var(--alien-primary)' }}>{datum.id}</strong>
                             <div>{percentage}%</div>
                         </div>
                     );

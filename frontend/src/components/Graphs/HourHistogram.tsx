@@ -6,14 +6,12 @@ export const HourHistogram = ({data}: { data: { hour: string, count: number }[] 
             data={data}
             keys={['count']}
             indexBy="hour"
-            isInteractive={false}
+            isInteractive={true}
             margin={{top: 20, right: 20, bottom: 50, left: 50}}
             padding={0.4}
             valueScale={{type: 'linear'}}
             indexScale={{type: 'band', round: true}}
             colors={'var(--alien-primary)'}
-            labelSkipWidth={1}
-            labelSkipHeight={1}
 
             theme={{
                 axis: {
@@ -43,8 +41,20 @@ export const HourHistogram = ({data}: { data: { hour: string, count: number }[] 
                 tickPadding: 15,
             }}
             axisLeft={null}
-            enableLabel={true}
-            role="application"
+            enableLabel={false}
+
+            tooltip={({value}) => {
+                return (
+                    <div style={{background: 'var(--bg-primary)',
+                        padding: '9px',
+                        border: '1px solid var(--alien-primary)',
+                        borderRadius: '4px',
+                        color: 'white',
+                        whiteSpace: 'nowrap'}}>
+                        <strong style={{color: 'var(--text-primary)'}}>{value}</strong>
+                    </div>
+                );
+            }}
         />
     </div>
 );
