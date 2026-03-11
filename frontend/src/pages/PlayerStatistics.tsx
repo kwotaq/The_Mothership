@@ -7,7 +7,7 @@ import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 import type {Player} from "../types/player.ts";
 import {DataHandler} from "../Utility/Handlers/DataHandler.tsx";
 import {ErrorFallback} from "../Utility/Handlers/ErrorFallback.tsx";
-import {ScatterPlot} from "../components/Graphs/ScatterPlot/ScatterPlot.tsx";
+import {ScatterPlot} from "../components/Graphs/ScatterPlot.tsx";
 import {usePlayers} from "../Utility/PlayerContext.tsx";
 
 const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data.similarity_coordinates);
@@ -57,7 +57,7 @@ export const PlayerStatistics = () => {
                 </ErrorBoundary>
             </div>
 
-            <div className="flex-1 h-full px-10 flex flex-col gap-5 min-w-0">
+            <div className="flex-1 h-full px-20 flex flex-col gap-5 min-w-0">
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={coordinatesReq.loading}

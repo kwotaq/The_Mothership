@@ -28,7 +28,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
     return (
         <div className="relative w-full min-h-[120px] bg-[#050a08] border border-alien-primary/30 rounded shadow-sm overflow-hidden flex group">
             <img
-                className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-500 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover z-0"
                 src={score.background_url}
                 alt="map background"
             />

@@ -12,7 +12,7 @@ export const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
     ];
 
     return (
-        <div className="p-8 max-w-[1200px] mx-auto w-full">
+        <div className="p-8 mx-auto w-full">
             <SectionHeader title='Player Statistics'/>
             <div>
                 <StatDetails stats={statsToDisplay}/>
