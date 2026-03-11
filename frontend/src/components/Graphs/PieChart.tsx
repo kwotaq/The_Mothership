@@ -1,11 +1,10 @@
 import { ResponsivePie } from '@nivo/pie';
-import styles from "./ScatterPlot/ScatterPlot.module.css";
 
 export const PieChart = ({ data }: { data: { id: string, value: number }[] }) => {
     const total = data.reduce((acc, item) => acc + item.value, 0);
 
     return (
-        <div style={{ height: '300px' }}>
+        <div className="h-[300px]">
             <ResponsivePie
                 data={data}
                 margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
@@ -47,8 +46,8 @@ export const PieChart = ({ data }: { data: { id: string, value: number }[] }) =>
                 tooltip={({ datum }) => {
                     const percentage = ((datum.value / total) * 100).toFixed(1);
                     return (
-                        <div className={styles.hoverPopup}>
-                            <strong style={{ color: 'var(--alien-primary)' }}>{datum.id}</strong>
+                        <div className="bg-bg-primary p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap">
+                            <strong className="text-alien-primary">{datum.id}</strong>
                             <div>{percentage}%</div>
                         </div>
                     );

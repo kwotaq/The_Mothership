@@ -1,7 +1,7 @@
 import {Route, Routes} from "react-router-dom";
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {Navbar} from './components/Navbar/Navbar.tsx';
+import {Navbar} from './pages/Navbar.tsx';
 import {PlayerStatistics} from "./pages/PlayerStatistics.tsx";
 import {ScoreStatistics} from "./pages/ScoreStatistics.tsx";
 import {PlayerProvider} from "./Utility/PlayerProvider.tsx";

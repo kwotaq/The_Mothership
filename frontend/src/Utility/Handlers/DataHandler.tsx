@@ -1,5 +1,4 @@
-import {type ReactNode} from "react";
-import styles from "./DataHandler.module.css"
+import { type ReactNode } from "react";
 
 interface DataProps {
     data: any;
@@ -9,41 +8,36 @@ interface DataProps {
     children: ReactNode;
 }
 
-export const DataHandler = ({loading, error, data, children, label = "Data"}: DataProps) => {
+export const DataHandler = ({ loading, error, data, children, label = "Data" }: DataProps) => {
+    let content: ReactNode = null;
 
     if (loading) {
-        return (
-            <div className={styles.dataContainer}>
-                <div className="loading-state">
-                    <div className="spinner"></div>
-                    <p className="text-default">Loading {label}...</p>
-                </div>
+        content = (
+            <div className="loading-state">
+                <div className="spinner"></div>
+                <p className="text-default">Loading {label}...</p>
             </div>
-
+        );
+    } else if (error) {
+        content = (
+            <div className="error-state">
+                <h3 className="text-default">Failed to Load {label}</h3>
+                <p className="text-muted">{error}</p>
+            </div>
+        );
+    } else if (!data || (Array.isArray(data) && data.length === 0)) {
+        content = (
+            <div className="empty-state">
+                <h3>No {label} Found</h3>
+                <p className="text-muted">There are no {label.toLowerCase()} to display.</p>
+            </div>
         );
     }
 
-    if (error) {
+    if (content) {
         return (
-            <div className={styles.dataContainer}>
-
-                <div className="error-state">
-                    <h3 className="text-default">Failed to Load {label}</h3>
-                    <p className="text-muted">{error}</p>
-                </div>
-            </div>
-        );
-    }
-
-    const isEmpty = !data || (Array.isArray(data) && data.length === 0);
-
-    if (isEmpty) {
-        return (
-            <div className={styles.dataContainer}>
-                <div className="empty-state">
-                    <h3>No {label} Found</h3>
-                    <p className="text-muted">There are no {label.toLowerCase()} to display.</p>
-                </div>
+            <div className="py-8 px-4 mx-auto w-full">
+                {content}
             </div>
         );
     }

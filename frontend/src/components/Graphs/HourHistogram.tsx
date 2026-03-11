@@ -1,7 +1,7 @@
 import {ResponsiveBar} from '@nivo/bar';
 
 export const HourHistogram = ({data}: { data: { hour: string, count: number }[] }) => (
-    <div style={{height: '400px', width: '100%'}}>
+    <div className="h-[400px] w-full">
         <ResponsiveBar
             data={data}
             keys={['count']}
@@ -45,13 +45,11 @@ export const HourHistogram = ({data}: { data: { hour: string, count: number }[] 
 
             tooltip={({value}) => {
                 return (
-                    <div style={{background: 'var(--bg-primary)',
-                        padding: '9px',
-                        border: '1px solid var(--alien-primary)',
-                        borderRadius: '4px',
-                        color: 'white',
-                        whiteSpace: 'nowrap'}}>
-                        <strong style={{color: 'var(--text-primary)'}}>{value}</strong>
+                    <div
+                        className="bg-bg-primary p-[9px] border border-alien-primary rounded text-white whitespace-nowrap">
+                        <strong className="text-text-primary font-bold">
+                            {value}
+                        </strong>
                     </div>
                 );
             }}

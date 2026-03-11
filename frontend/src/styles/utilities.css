@@ -1,62 +1,50 @@
-/* Button: High-Charge Energy Cell */
-.btn-default {
-    background: var(--alien-primary); /* Solid neon punch */
-    color: var(--bg-primary);
-    padding: 0.75rem 1.5rem;
-    /* Sharp, non-human geometry */
-    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-    border: none;
-    font-weight: 800;
-    font-family: 'JetBrains Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: var(--transition-fast);
-}
+@layer components {
+    .loading-state, .error-state, .empty-state {
+        @apply text-center py-16 px-8 flex flex-col justify-center items-center min-h-[300px];
+        background: var(--bg-secondary);
+        border: 1px solid var(--bg-tertiary);
+    }
 
-.btn-default:hover {
-    filter: brightness(1.2);
-    box-shadow: 0 0 20px var(--alien-glow);
-    transform: scale(1.02);
-}
+    .spinner {
+        @apply w-[60px] h-[60px] rounded-full animate-spin mb-6;
+        border: 3px solid var(--bg-tertiary);
+        border-top: 3px solid var(--alien-primary);
+    }
 
-input, textarea, select {
-    background: rgba(5, 10, 8, 0.6);
-    border: 1px solid var(--bg-tertiary);
-    border-radius: 0;
-    padding: 0.75rem;
-    color: var(--text-primary);
-    font-family: 'JetBrains Mono', monospace;
-    backdrop-filter: blur(5px);
-}
+    .interactive-panel {
+        @apply bg-bg-secondary border border-alien-primary/40 transition-all duration-300 relative;
+    }
 
-input:focus {
-    outline: none;
-    border: 1px solid var(--alien-primary);
-    box-shadow: 0 0 10px var(--alien-glow), inset 0 0 5px var(--alien-glow);
-}
+    .interactive-panel:hover {
+        @apply bg-bg-tertiary shadow-[0_0_15px_var(--alien-glow)] border-alien-primary/80;
+    }
 
-a {
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: var(--transition-normal);
-    position: relative;
-}
+    .interactive-panel.active {
+        @apply bg-bg-tertiary shadow-[0_0_15px_var(--alien-glow)] border-alien-primary brightness-125;
+    }
 
-a:hover {
-    color: #ffffff;
-    text-shadow: 0 0 8px var(--alien-primary);
-}
+    .btn-nav {
+        @apply bg-transparent border border-alien-primary text-alien-primary px-5 py-2.5
+               font-mono font-bold cursor-pointer min-w-[100px] transition-all duration-300 uppercase;
+    }
 
-.text-default {
-    color: var(--text-primary);
-    text-shadow: 0 0 5px var(--alien-glow);
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-}
+    .btn-nav:hover:not(:disabled) {
+        @apply bg-alien-primary text-black;
+        box-shadow: 0 0 20px var(--alien-primary);
+    }
 
-.text-muted {
-    color: var(--text-muted);
-    opacity: 0.7;
+    .btn-nav:disabled {
+        @apply border-[#333] text-[#333] cursor-not-allowed;
+        box-shadow: none;
+    }
+
+    .nav-link {
+        @apply px-5 py-2 font-mono text-[0.85rem] uppercase tracking-wider transition-all duration-75 text-white border border-transparent;
+        clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+    }
+
+    .nav-link:hover, .nav-link-active {
+        @apply bg-[rgba(0,255,102,0.15)] text-[var(--text-primary)] border-[rgba(0,255,102,0.3)];
+        box-shadow: 0 0 15px var(--alien-glow);
+    }
 }

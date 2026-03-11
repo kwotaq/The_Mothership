@@ -1,8 +1,7 @@
-import styles from "./StatsBoard.module.css"
 import type {GlobalStats} from "../../types/globalStats.ts";
-import {type StatItem} from "./StatDetails/StatDetails.tsx";
-import {StatDetails} from "./StatDetails/StatDetails.tsx";
-import {SectionHeader} from "../../Utility/SectionHeader/SectionHeader.tsx";
+import {type StatItem} from "./StatDetails.tsx";
+import {StatDetails} from "./StatDetails.tsx";
+import {SectionHeader} from "../../Utility/SectionHeader.tsx";
 
 export const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
     const statsToDisplay: StatItem[] = [
@@ -13,7 +12,7 @@ export const StatsBoard = ({data: stats}: { data: GlobalStats }) => {
     ];
 
     return (
-        <div className={styles.statsContainer}>
+        <div className="p-8 max-w-[1200px] mx-auto w-full">
             <SectionHeader title='Player Statistics'/>
             <div>
                 <StatDetails stats={statsToDisplay}/>

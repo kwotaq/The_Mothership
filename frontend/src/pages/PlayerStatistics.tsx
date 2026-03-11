@@ -13,7 +13,7 @@ import {usePlayers} from "../Utility/PlayerContext.tsx";
 const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data.similarity_coordinates);
 
 export const PlayerStatistics = () => {
-    const { players, loading: playersLoading, error: playersError } = usePlayers();
+    const {players, loading: playersLoading, error: playersError} = usePlayers();
 
     const coordinatesReq = useData(['coordinates'], fetchCoordinates);
 
@@ -38,9 +38,9 @@ export const PlayerStatistics = () => {
     };
 
     return (
-        <div style={{ display: 'flex', gap: '20px', padding: '20px', paddingLeft: '100px', alignItems: 'flex-start' }}>
+        <div className="flex gap-5 p-5 pl-20 items-start">
 
-            <div style={{flex: '0 0 950px'}}>
+            <div className="w-[40%] shrink-0">
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={playersLoading}
@@ -57,7 +57,7 @@ export const PlayerStatistics = () => {
                 </ErrorBoundary>
             </div>
 
-            <div style={{flex: '1'}}>
+            <div className="flex-1 h-full px-10 flex flex-col gap-5 min-w-0">
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={coordinatesReq.loading}

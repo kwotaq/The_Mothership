@@ -1,48 +1,37 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@layer base {
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+        scrollbar-color: var(--alien-primary) transparent;
+    }
 
-body {
-    background-color: var(--bg-primary);
-    background-image:
-        linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
+    body {
+        background-color: var(--bg-primary);
+        background-image: linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 255, 102, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
-    background-position: center;
-}
+        background-size: 50px 50px;
+        background-position: center;
+        color: var(--text-primary);
+    }
 
-#root {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+    #root, .app {
+        @apply min-h-screen flex flex-col;
+    }
 
-.app {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
 
-.main-content {
-    flex: 1;
-    padding: 0;
-}
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--alien-secondary);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--alien-primary);
+    ::-webkit-scrollbar-thumb {
+        background: var(--alien-primary);
+        border-radius: 10px;
+        box-shadow: 0 0 10px var(--alien-primary);
+    }
 }

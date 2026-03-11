@@ -2,7 +2,7 @@ import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import styles from "./ScatterPlot.module.css";
 import type {UserCoordinate} from "../../../types/userCoordinates.ts";
 import type {Player} from "../../../types/player.ts";
-import {SectionHeader} from "../../../Utility/SectionHeader/SectionHeader.tsx";
+import {SectionHeader} from "../../../Utility/SectionHeader.tsx";
 import { usePlayers } from '../../../Utility/PlayerContext.tsx';
 
 interface ScatterPlotProps {
@@ -27,9 +27,9 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
     ];
 
 return (
-        <section className={styles.scatterPlotContainer}>
+        <section className="mx-auto w-full">
             <SectionHeader title='Player Similarity Map' />
-            <div className={styles.chartArea}>
+            <div className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative">
                 <ResponsiveScatterPlot
                     data={nivoData}
                     isInteractive={true}
@@ -56,10 +56,10 @@ return (
 
                     tooltip={({node}) => {
                         const player = playerMap[node.data.userId]
-                        if (!player) return <div><strong style={{color: 'var(--alien-primary)'}}>Player name not found</strong></div>;
+                        if (!player) return <div><strong className="text-text-primary">Player name not found</strong></div>;
                         return (
-                            <div className={styles.hoverPopup}>
-                                <strong style={{color: 'var(--alien-primary)'}}>{player.name}</strong>
+                            <div className="bg-bg-primary p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap">
+                                <strong className="text-text-primary">{player.name}</strong>
                             </div>
                         );
                     }}
@@ -82,10 +82,8 @@ return (
                                     </>
                                 )}
 
-                                {/* The Core Node */}
                                 <circle
                                     cx="0" cy="0"
-                                    /* Logic: Active is larger (original 'size'), others are small (size / 2) */
                                     r={isActive ? size * 0.7 : size / 2}
                                     fill={isActive ? 'var(--alien-primary)' : 'rgba(0, 255, 102, 0.15)'}
                                     stroke="var(--alien-primary)"

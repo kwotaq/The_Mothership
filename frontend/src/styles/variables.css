@@ -1,3 +1,23 @@
+@theme {
+    --color-bg-primary: var(--bg-primary);
+    --color-bg-secondary: var(--bg-secondary);
+    --color-bg-tertiary: var(--bg-tertiary);
+
+    --color-alien-primary: var(--alien-primary);
+    --color-alien-secondary: var(--alien-secondary);
+    --color-alien-data: var(--alien-data);
+    --color-alien-glow: var(--alien-glow);
+
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-muted: var(--text-muted);
+
+    --shadow-alien: var(--shadow-alien);
+    --shadow-inset: var(--shadow-inset);
+
+    --transition-timing-function-alien-normal: cubic-bezier(0, 1, 0, 1);
+}
+
 :root {
     --bg-primary: #020403;
     --bg-secondary: #050a08;
@@ -14,7 +34,6 @@
 
     --border-radius: 0px;
     --border-alien: 1px solid rgba(0, 255, 102, 0.4);
-
 
     --shadow-alien: 0 0 15px var(--alien-glow);
     --shadow-inset: inset 0 0 10px rgba(0, 255, 102, 0.1);

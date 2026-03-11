@@ -24,9 +24,8 @@ export const ScoreStatistics = () => {
     const totalPages = scoresReq.data?.total_pages || 1;
 
     return (
-        <div
-            style={{display: 'flex', gap: '20px', padding: '20px', paddingLeft: '100px', alignItems: 'flex-start'}}>
-            <div style={{flex: '0 0 950px'}}>
+        <div className="flex gap-5 p-5 pl-20 items-start">
+            <div className="w-[40%] shrink-0">
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={scoresReq.loading}
