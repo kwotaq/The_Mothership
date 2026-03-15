@@ -9,7 +9,7 @@ import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 
 const fetchScores = () => api.get('/api/get_top_scores').then(res => res.data);
 
-const fetchStats = () => api.get("/api/get_global_score_metrics").then(res => ({...res.data, kind: 'scoreStats'}));
+const fetchStats = () => api.get("/api/get_global_score_metrics").then(res => ({...res.data, kind: 'scoreMetrics'}));
 
 export const ScoreStatistics = () => {
     const scoresReq = useData(["scores"], fetchScores);

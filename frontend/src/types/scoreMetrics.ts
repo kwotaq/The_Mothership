@@ -3,7 +3,7 @@ export interface CountedItem {
   count: number;
 }
 
-export interface ScoreStats {
+export interface ScoreMetrics {
   kind: 'scoreStats';
   top_players: CountedItem[];
   top_mappers: CountedItem[];

@@ -1,11 +1,11 @@
 import {HourHistogram} from "../Graphs/HourHistogram.tsx";
 import {PieChart} from "../Graphs/PieChart.tsx";
-import type {CountedItem} from "../../types/playerStats.ts";
+import type {CountedItem} from "../../types/playerMetrics.ts";
 
 export interface StatItem {
     label: string;
     values: CountedItem[] | number[];
-    type: "list" | "histogram" | "chart";
+    type: "list" | "histogram" | "chart" | "similarity";
     width?: 1 | 2 | 3; // 1 = small, 2 = medium, 3 = full width
 }
 
@@ -31,6 +31,26 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                             value: v.count
                         }))}
                     />
+                );
+
+            case "similarity":
+                return (
+                    <div className="flex flex-col gap-4">
+                        {(stat.values as CountedItem[]).map((val, i) => (
+                            <div key={i} className="flex flex-col gap-1">
+                                <div className="flex justify-between items-center text-white text-[1rem]">
+                                    <span className="font-medium">{val.label}</span>
+                                    <span className="font-mono text-alien-primary">{val.count}% Match</span>
+                                </div>
+                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-alien-primary shadow-[0_0_8px_#00ff66] transition-all duration-1000"
+                                        style={{width: `${val.count}%`}}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 );
 
             case "list":

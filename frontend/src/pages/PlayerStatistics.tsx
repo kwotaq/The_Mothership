@@ -25,13 +25,13 @@ export const PlayerStatistics = () => {
             const response = await api.get('/api/get_global_player_metrics');
             return {
                 ...response.data,
-                kind: 'playerStats'
+                kind: 'globalMetrics'
             };
         }
-        const response = await api.post('/api/get_player_stats', {player_id: playerId});
+        const response = await api.post('/api/get_individual_player_metrics', {player_id: playerId});
         return {
             ...response.data,
-            kind: 'playerStats'
+            kind: 'playerMetrics'
         };
     };
 

@@ -1,49 +1,53 @@
-import type {PlayerStats} from "../../types/playerStats.ts";
+import type {PlayerMetrics} from "../../types/playerMetrics.ts";
 import {StatDetails, type StatItem} from "./StatDetails.tsx";
-import type {ScoreStats} from "../../types/scoreStats.ts";
+import type {ScoreMetrics} from "../../types/scoreMetrics.ts";
 import {usePlayers} from "../../Utility/PlayerContext.tsx";
+import type {GlobalMetrics} from "../../types/globalMetrics.ts";
 
-const isScoreStats = (stats: PlayerStats | ScoreStats): stats is ScoreStats => {
-    return (stats as ScoreStats).kind === 'scoreStats';
-};
+export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | GlobalMetrics }) => {
+    const {playerMap} = usePlayers();
 
-export const StatsBoard = ({stats}: { stats: PlayerStats | ScoreStats }) => {
-    const {playerMap} = usePlayers()
+    const isScore = (s: any): s is ScoreMetrics => s.kind === 'scoreMetrics';
+    const isPlayer = (s: any): s is PlayerMetrics => s.kind === 'playerMetrics';
 
-    let statsToDisplay: StatItem[];
-
-    if (isScoreStats(stats)) {
-        statsToDisplay = [
-            {
-                label: "Top Players",
-                type: 'chart',
-                width: 2,
-                values: stats.top_players?.map((item) => ({
-                    label: playerMap[item.label]?.name || `${item.label}`,
-                    count: item.count
-                })) || []
-            },
-            {
-                label: "Top Mappers",
-                values: stats.top_mappers || [],
-                type: 'list',
-                width: 1
-            },
-        ];
-    } else {
-        statsToDisplay = [
-            {label: "Top Plays By Hour", values: stats.hour_histogram || [], type: 'histogram', width: 3},
-            {label: "Top Artists", values: stats.top_artists || [], type: 'list', width: 1},
-            {label: "Top Songs", values: stats.top_songs || [], type: 'list', width: 1},
-            {label: "Top Mods", values: stats.top_mods || [], type: 'chart', width: 1},
-        ];
+    if (isScore(stats)) {
+        return (
+            <div className="mx-auto w-full">
+                <StatDetails stats={[
+                    {
+                        label: "Top Players",
+                        type: 'chart',
+                        width: 2,
+                        values: stats.top_players?.map((item) => ({
+                            label: playerMap[item.label]?.name || `${item.label}`,
+                            count: item.count
+                        })) || []
+                    },
+                    {label: "Top Mappers", values: stats.top_mappers || [], type: 'list', width: 1},
+                ]}/>
+            </div>
+        );
     }
+
+    const statsToDisplay: StatItem[] = [
+        {label: "Top Mods", values: stats.top_mods || [], type: 'chart', width: 1},
+        ...(isPlayer(stats) ? [{
+            label: "Most Similar Players",
+            type: 'similarity' as const,
+            width: 2 as const,
+            values: stats.closest_neighbours?.map(item => ({
+                label: playerMap[item.label]?.name || item.label,
+                count: item.count
+            })) || []
+        }] : []),
+        {label: "Top Artists", values: stats.top_artists || [], type: 'list', width: 1},
+        {label: "Top Songs", values: stats.top_songs || [], type: 'list', width: 1},
+        {label: "Top Plays By Hour", values: stats.hour_histogram || [], type: 'histogram', width: 3},
+    ];
 
     return (
         <div className="mx-auto w-full">
-            <div>
-                <StatDetails stats={statsToDisplay}/>
-            </div>
+            <StatDetails stats={statsToDisplay}/>
         </div>
-    )
+    );
 };
