@@ -1,10 +1,14 @@
 import logging
+import math
+
 import pandas as pd
 from tqdm import tqdm
+
 from config.database_config import database
 from processing.similarity_calculation import analyze_profiles
 
 logger = logging.getLogger(__name__)
+
 
 class DataService:
     def __init__(self):
@@ -39,24 +43,26 @@ class DataService:
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
 
     def update_player_stats(self, player_id):
-        top_artists = self._get_top_stat_count('artist', player_id)
-        top_songs = self._get_top_stat_count('title', player_id)
-        top_mods = self._get_top_stat_count('mods', player_id, results_limit=10)
+        top_artists = self._get_score_top_stat_count('artist', player_id)
+        top_songs = self._get_score_top_stat_count('title', player_id)
+        top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
         hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
+        closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
 
         data = {
             'top_artists': top_artists,
             'top_songs': top_songs,
             'top_mods': top_mods,
             'hour_histogram': hour_histogram,
+            'closest_neighbours': closest_neighbours,
         }
 
         self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
 
     def update_global_player_metrics(self):
-        top_artists = self._get_top_stat_count('artist')
-        top_songs = self._get_top_stat_count('title')
-        top_mods = self._get_top_stat_count('mods', results_limit=10)
+        top_artists = self._get_score_top_stat_count('artist')
+        top_songs = self._get_score_top_stat_count('title')
+        top_mods = self._get_score_top_stat_count('mods', results_limit=10)
         hour_histogram = self._calculate_top_play_time_histogram()
 
         data = {
@@ -68,10 +74,9 @@ class DataService:
 
         self.global_stats_collection.update_one({"_id": "global_player_metrics"}, {"$set": data}, upsert=True)
 
-
     def update_global_score_metrics(self):
-        top_players = self._get_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
-        top_mappers = self._get_top_stat_count('creator', results_limit=5, top_scores_limit=200)
+        top_players = self._get_score_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
+        top_mappers = self._get_score_top_stat_count('creator', results_limit=5, top_scores_limit=200)
 
         data = {
             'top_players': top_players,
@@ -84,6 +89,36 @@ class DataService:
         scores = self.scores_collection.find({})
         df = pd.DataFrame(scores)
         return analyze_profiles(df)
+
+    def _calculate_closest_neighbours(self, user_id, results_limit=5):
+        doc = self.global_stats_collection.find_one({"_id": "similarity_coordinates"})
+        if not doc: return []
+
+        all_players = doc.get("similarity_coordinates", [])
+        user_id = str(user_id)
+
+        target = next((p for p in all_players if p['user_id'] == user_id), None)
+        if not target: return []
+
+        tx, ty = target['x'], target['y']
+        raw_results = []
+
+        for p in all_players:
+            if p['user_id'] == user_id: continue
+
+            d = math.sqrt((p['x'] - tx) ** 2 + (p['y'] - ty) ** 2)
+            raw_results.append({"label": p['user_id'], "d": d})
+
+        if not raw_results: return []
+
+        sigma = 5.0
+
+        for r in raw_results:
+            score = math.exp(-r["d"] / sigma) * 100
+            r["count"] = round(score, 1)
+
+        raw_results.sort(key=lambda x: x["count"], reverse=True)
+        return raw_results[:results_limit]
 
     def _calculate_top_play_time_histogram(self, player_id=None):
         pipeline = []
@@ -102,7 +137,7 @@ class DataService:
         counts_map = {r['_id']: r['count'] for r in results}
         return [counts_map.get(hour, 0) for hour in range(24)]
 
-    def _get_top_stat_count(self, field_name, player_id=None, results_limit=5, top_scores_limit=None):
+    def _get_score_top_stat_count(self, field_name, player_id=None, results_limit=5, top_scores_limit=None):
         pipeline = []
 
         if player_id:

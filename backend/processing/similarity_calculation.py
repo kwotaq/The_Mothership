@@ -59,18 +59,41 @@ def _create_feature_matrix(scores):
     logger.info('Finished feature extraction.')
 
     numerical = ['unique_artists', 'unique_creators', 'max_same_song_count',
-                 'avg_acc', 'avg_combo']
-
+                 'avg_acc', 'avg_combo', 'avg_pp']
     categorical = ['top_artist', 'top_creator', 'top_mod', 'top_song']
 
     preprocessor = ColumnTransformer(
-        verbose=True,
         transformers=[
             ('num', StandardScaler(), numerical),
-            ('cat', OneHotEncoder(), categorical)
+            ('cat', OneHotEncoder(handle_unknown='ignore'), categorical)
         ])
 
     feature_matrix = preprocessor.fit_transform(feature_df)
+
+    if hasattr(feature_matrix, "toarray"):
+        feature_matrix = feature_matrix.toarray()
+
+    feature_weights = {
+        'num__unique_artists': 1.6,
+        'num__unique_creators': 1.2,
+        'num__max_same_song_count': 1.0,
+        'num__avg_acc': 1.6,
+        'num__avg_pp': 1.8,
+        'num__avg_combo': 1.0,
+
+        'cat__top_mod': 2.5,
+        'cat__top_artist': 2.0,
+        'cat__top_creator': 1.8,
+        'cat__top_song': 1.5,
+    }
+
+    feature_names = preprocessor.get_feature_names_out()
+
+    for i, col_name in enumerate(feature_names):
+        for prefix, weight in feature_weights.items():
+            if col_name.startswith(prefix):
+                feature_matrix[:, i] *= weight
+                break
 
     return feature_matrix, user_idx
 
@@ -80,7 +103,7 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = TSNE(n_components=2, perplexity=15, random_state=727)
+    reducer = TSNE(n_components=2, perplexity=10, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
     formatted_coordinates = [
         {
@@ -92,4 +115,3 @@ def analyze_profiles(scores):
     ]
 
     return formatted_coordinates
-

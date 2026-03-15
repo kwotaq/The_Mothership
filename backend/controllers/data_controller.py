@@ -34,14 +34,14 @@ def get_global_score_metrics():
     stats = data_service.get_global_score_metrics()
     return jsonify(stats)
 
-@data_controller.route('/api/update_all_player_stats')
-def update_all_player_stats():
+@data_controller.route('/api/update_individual_player_metrics')
+def update_individual_player_metrics():
     logger.info('Stats update requested for all players')
     data_service.update_all_player_stats()
     return "OK"
 
-@data_controller.route('/api/get_player_stats', methods=['POST'])
-def get_player_stats():
+@data_controller.route('/api/get_individual_player_metrics', methods=['POST'])
+def get_individual_player_metrics():
     data = request.get_json()
     player_id = data.get('player_id')
 
