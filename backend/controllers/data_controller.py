@@ -10,16 +10,28 @@ data_service = DataService()
 
 data_controller = Blueprint('data_controller', __name__)
 
-@data_controller.route('/api/update_global_stats')
-def update_global_stats():
-    logger.info('Player stats update requested')
-    data_service.update_global_stats()
+@data_controller.route('/api/update_global_player_metrics')
+def update_global_player_metrics():
+    logger.info('Global player metrics update requested')
+    data_service.update_global_player_metrics()
     return "OK"
 
-@data_controller.route('/api/get_global_stats')
-def get_global_stats():
-    logger.info('Player stats fetch requested')
-    stats = data_service.get_global_stats()
+@data_controller.route('/api/update_global_score_metrics')
+def update_global_score_metrics():
+    logger.info('Global score metrics update requested')
+    data_service.update_global_score_metrics()
+    return "OK"
+
+@data_controller.route('/api/get_global_player_metrics')
+def get_global_player_metrics():
+    logger.info('Global player metrics fetch requested')
+    stats = data_service.get_global_player_metrics()
+    return jsonify(stats)
+
+@data_controller.route('/api/get_global_score_metrics')
+def get_global_score_metrics():
+    logger.info('Global score metrics fetch requested')
+    stats = data_service.get_global_score_metrics()
     return jsonify(stats)
 
 @data_controller.route('/api/update_all_player_stats')

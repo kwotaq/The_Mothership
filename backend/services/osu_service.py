@@ -13,26 +13,8 @@ class OsuAPIService:
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()
 
-    def get_score_page(self, page, limit):
-        page = int(page)
-        limit = int(limit)
-
-        skip_amount = (page - 1) * limit
-
-        cursor = self.scores_collection.find() \
-            .sort("pp", -1) \
-            .skip(skip_amount) \
-            .limit(limit)
-
-        scores = list(cursor)
-
-        total_count = self.scores_collection.count_documents({})
-        total_pages = (total_count + limit - 1) // limit
-
-        return {
-            "scores": scores,
-            "total_pages": total_pages,
-        }
+    def get_top_scores(self):
+        return list(self.scores_collection.find().sort("pp", -1).limit(200))
 
     def update_all_top_scores(self):
         player_ids = self.player_collection.distinct("_id")
@@ -69,7 +51,7 @@ class OsuAPIService:
         return list(self.player_collection.find({}).sort({"performance_points": -1}))
 
     def update_all_player_info(self):
-        for page_idx in tqdm(range(2), desc="Fetching Leaderboard Pages"):
+        for page_idx in tqdm(range(10), desc="Fetching Leaderboard Pages"):
             rankings = self.client.get_ranking(GameModeStr.STANDARD, RankingType.PERFORMANCE, country="GR",
                                                cursor=None if page_idx == 0 else cursor)
             cursor = rankings.cursor
