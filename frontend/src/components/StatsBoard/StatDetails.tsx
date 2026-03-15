@@ -1,11 +1,12 @@
 import {HourHistogram} from "../Graphs/HourHistogram.tsx";
 import {PieChart} from "../Graphs/PieChart.tsx";
-import type {CountedItem} from "../../types/globalStats.ts";
+import type {CountedItem} from "../../types/playerStats.ts";
 
 export interface StatItem {
     label: string;
     values: CountedItem[] | number[];
     type: "list" | "histogram" | "chart";
+    width?: 1 | 2 | 3; // 1 = small, 2 = medium, 3 = full width
 }
 
 export const StatDetails = ({stats}: { stats: StatItem[] }) => {
@@ -53,14 +54,20 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
     return (
         <div className="grid grid-cols-3 gap-6 mt-8">
             {stats.map((stat, index) => {
-                const isWide = stat.type === "histogram";
+                const widthMap = {
+                    1: 'col-span-1',
+                    2: 'col-span-2',
+                    3: 'col-span-3'
+                };
+
+                const spanClass = widthMap[stat.width || 1];
 
                 return (
                     <div
                         key={index}
                         className={`
                             interactive-panel
-                            ${isWide ? 'col-span-3 order-first' : 'col-span-1'}
+                            ${spanClass} 
                             p-6 flex flex-col min-h-0
                         `}
                     >

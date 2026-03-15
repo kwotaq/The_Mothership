@@ -9,6 +9,7 @@ import {DataHandler} from "../Utility/Handlers/DataHandler.tsx";
 import {ErrorFallback} from "../Utility/Handlers/ErrorFallback.tsx";
 import {ScatterPlot} from "../components/Graphs/ScatterPlot.tsx";
 import {usePlayers} from "../Utility/PlayerContext.tsx";
+import {SectionHeader} from "../Utility/SectionHeader.tsx";
 
 const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data.similarity_coordinates);
 
@@ -21,11 +22,17 @@ export const PlayerStatistics = () => {
 
     const fetchStats = async (playerId: string | undefined) => {
         if (!playerId) {
-            const response = await api.get('/api/get_global_stats');
-            return response.data;
+            const response = await api.get('/api/get_global_player_metrics');
+            return {
+                ...response.data,
+                kind: 'playerStats'
+            };
         }
         const response = await api.post('/api/get_player_stats', {player_id: playerId});
-        return response.data;
+        return {
+            ...response.data,
+            kind: 'playerStats'
+        };
     };
 
     const statsReq = useData(
@@ -39,8 +46,8 @@ export const PlayerStatistics = () => {
 
     return (
         <div className="flex gap-5 p-5 pl-20 items-start">
-
             <div className="w-[40%] shrink-0">
+                <SectionHeader title='Player Rankings'/>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={playersLoading}
@@ -58,33 +65,39 @@ export const PlayerStatistics = () => {
             </div>
 
             <div className="flex-1 h-full px-20 flex flex-col gap-5 min-w-0">
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <DataHandler
-                        loading={coordinatesReq.loading}
-                        error={coordinatesReq.error}
-                        data={coordinatesReq.data}
-                        label={"coordinates"}
-                    >
-                        <ScatterPlot
+                <div>
+                    <SectionHeader title='Player Similarity Map'/>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                        <DataHandler
+                            loading={coordinatesReq.loading}
+                            error={coordinatesReq.error}
                             data={coordinatesReq.data}
-                            onToggle={handleTogglePlayer}
-                            activePlayer={activePlayer}
-                        />
-                    </DataHandler>
-                </ErrorBoundary>
+                            label={"coordinates"}
+                        >
+                            <ScatterPlot
+                                data={coordinatesReq.data}
+                                onToggle={handleTogglePlayer}
+                                activePlayer={activePlayer}
+                            />
+                        </DataHandler>
+                    </ErrorBoundary>
+                </div>
 
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <DataHandler
-                        data={statsReq.data}
-                        loading={statsReq.loading}
-                        error={statsReq.error}
-                        label={"stats"}
-                    >
-                        <StatsBoard
+                <div>
+                    <SectionHeader title='Player Statistics'/>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                        <DataHandler
                             data={statsReq.data}
-                        />
-                    </DataHandler>
-                </ErrorBoundary>
+                            loading={statsReq.loading}
+                            error={statsReq.error}
+                            label={"stats"}
+                        >
+                            <StatsBoard
+                                stats={statsReq.data}
+                            />
+                        </DataHandler>
+                    </ErrorBoundary>
+                </div>
             </div>
         </div>
     );

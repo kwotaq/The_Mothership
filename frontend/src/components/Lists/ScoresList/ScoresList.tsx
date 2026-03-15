@@ -1,46 +1,30 @@
 import {ScoreCard} from './ScoreCard.tsx';
 import type {Score} from '../../../types/score';
-import {SectionHeader} from "../../../Utility/SectionHeader.tsx";
 
-interface ScoresListProps {
-    scores: Score[];
-    currentPage: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-    isFetching?: boolean;
-}
-
-export const ScoresList = ({scores, currentPage, totalPages, onPageChange}: ScoresListProps) => {
+export const ScoresList = ({scores}: { scores: Score[] }) => {
     return (
-        <div className="flex flex-col h-[calc(110vh)]">
-            <SectionHeader title='Top Scores'/>
-
-            <div className="flex-1 min-h-0 overflow-y-auto p-[15px] flex flex-col gap-2.5">
-                {scores.map(score => (
-                    <ScoreCard key={score._id} score={score}/>
-                ))}
+        <div className="flex flex-col h-full">
+            <div
+                className="h-[calc(110vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
+            >
+                <div className="flex flex-col gap-4">
+                    {scores.map((score, index) => (
+                        <ScoreCard
+                            key={score._id}
+                            score={score}
+                            index={index + 1}
+                        />
+                    ))}
+                </div>
             </div>
 
-            <div className="flex justify-center items-center gap-10 p-5 bg-alien-primary/5 border-t-2 border-alien-primary shrink-0">
-                <button
-                    className="btn-nav"
-                    onClick={() => onPageChange(currentPage - 1)}
-                    disabled={currentPage <= 1}
-                >
-                    &lt; PREV
-                </button>
-
-                <span className="text-white tracking-[3px] text-sm [text-shadow:0_0_5px_rgba(255,255,255,0.5)]">
-                    PAGE: {currentPage} / {totalPages}
-                </span>
-
-                <button
-                    className="btn-nav"
-                    onClick={() => onPageChange(currentPage + 1)}
-                    disabled={currentPage >= totalPages}
-                >
-                    NEXT &gt;
-                </button>
+            <div
+                className="flex items-center justify-center gap-10 p-5 bg-alien-primary/5 border-t-2 border-alien-primary mt-4">
+                <div className="w-1.5 h-1.5 bg-alien-primary rotate-45"/>
+                <span className="font-mono uppercase tracking-[0.3em] text-text-primary">
+                / --------------------- /
+            </span>
+                <div className="w-1.5 h-1.5 bg-alien-primary rotate-45"/>
             </div>
         </div>
     );

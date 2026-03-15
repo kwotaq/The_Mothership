@@ -3,7 +3,8 @@ export interface CountedItem {
   count: number;
 }
 
-export interface GlobalStats {
+export interface PlayerStats {
+  kind: 'playerStats';
   top_artists: CountedItem[];
   top_songs: CountedItem[];
   top_mods: CountedItem[];

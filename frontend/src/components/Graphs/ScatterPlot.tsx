@@ -1,7 +1,6 @@
 import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import type {UserCoordinate} from "../../types/userCoordinates.ts";
 import type {Player} from "../../types/player.ts";
-import {SectionHeader} from "../../Utility/SectionHeader.tsx";
 import {usePlayers} from '../../Utility/PlayerContext.tsx';
 
 interface ScatterPlotProps {
@@ -27,7 +26,6 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
 
     return (
         <section className="mx-auto w-full">
-            <SectionHeader title='Player Similarity Map'/>
             <div className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative">
                 <ResponsiveScatterPlot
                     data={nivoData}
