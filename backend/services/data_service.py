@@ -23,7 +23,7 @@ class DataService:
     def get_global_score_metrics(self):
         return self.global_stats_collection.find_one({"_id": "global_score_metrics"}, {"_id": 0})
 
-    def get_player_stats(self, player_id):
+    def get_individual_player_metrics(self, player_id):
         return self.player_stats_collection.find_one({"_id": player_id}, {"_id": 0})
 
     def get_similarity_coordinates(self):
@@ -32,7 +32,7 @@ class DataService:
             {"_id": 0, "similarity_coordinates": 1}
         )
 
-    def update_all_player_stats(self):
+    def update_individual_player_metrics(self):
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
@@ -127,7 +127,7 @@ class DataService:
             pipeline.append({"$match": {"user_id": player_id}})
 
         pipeline.extend([
-            {"$project": {"hour": {"$hour": "$ended_at"}}},
+            {"$project": {"hour": {"$hour": {"date": "$ended_at", "timezone": "Europe/Athens"}}}},
             {"$group": {"_id": "$hour", "count": {"$sum": 1}}},
             {"$sort": {"_id": 1}}
         ])

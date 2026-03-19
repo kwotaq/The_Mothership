@@ -21,6 +21,9 @@ class Database:
     def get_scores_collection(self):
         return self.db['scores']
 
+    def get_recent_scores_collection(self):
+        return self.db['recent_scores_cache']
+
     def get_player_stats_collection(self):
         return self.db['player_stats']
 

@@ -1,10 +1,13 @@
 import logging
+
 from osu import Client, GameModeStr, RankingType, UserScoreType
 from tqdm import tqdm
+
 from config.api_config import OsuAPIConfig
 from config.database_config import database
 
 logger = logging.getLogger(__name__)
+
 
 class OsuAPIService:
     def __init__(self):
@@ -12,9 +15,13 @@ class OsuAPIService:
                                               OsuAPIConfig.redirect_url)
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()
+        self.recent_score_cache = database.get_recent_scores_collection()
 
     def get_top_scores(self):
         return list(self.scores_collection.find().sort("pp", -1).limit(200))
+
+    def get_recent_scores(self):
+        return list(self.recent_score_cache.find().sort("ended_at", 1))
 
     def update_all_top_scores(self):
         player_ids = self.player_collection.distinct("_id")
@@ -23,7 +30,8 @@ class OsuAPIService:
             self.update_player_top_scores(player_id)
 
     def update_player_top_scores(self, player_id):
-        player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD, limit=200)
+        player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD,
+                                                        limit=200)
 
         for score in player_top_scores:
             mods = score.mods
