@@ -5,13 +5,13 @@ import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
 import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 import type {Player} from "../types/player.ts";
-import {DataHandler} from "../Utility/Handlers/DataHandler.tsx";
-import {ErrorFallback} from "../Utility/Handlers/ErrorFallback.tsx";
-import {ScatterPlot} from "../components/Graphs/ScatterPlot.tsx";
-import {usePlayers} from "../Utility/PlayerContext.tsx";
+import {DataHandler} from "../Utility/handlers/DataHandler.tsx";
+import {ErrorFallback} from "../Utility/handlers/ErrorFallback.tsx";
+import {ScatterPlot} from "../components/graphs/ScatterPlot.tsx";
+import {usePlayers} from "../Utility/context/PlayerContext.tsx";
 import {SectionHeader} from "../Utility/SectionHeader.tsx";
 
-const fetchCoordinates = () => api.get('/api/get_similarity_coordinates').then(res => res.data.similarity_coordinates);
+const fetchCoordinates = () => api.get('/api/players/similarity').then(res => res.data.similarity_coordinates);
 
 export const PlayerStatistics = () => {
     const {players, loading: playersLoading, error: playersError} = usePlayers();
@@ -22,13 +22,13 @@ export const PlayerStatistics = () => {
 
     const fetchStats = async (playerId: string | undefined) => {
         if (!playerId) {
-            const response = await api.get('/api/get_global_player_metrics');
+            const response = await api.get('/api/players/metrics/global');
             return {
                 ...response.data,
                 kind: 'globalMetrics'
             };
         }
-        const response = await api.post('/api/get_individual_player_metrics', {player_id: playerId});
+        const response = await api.post('/api/players/metrics', {player_id: playerId});
         return {
             ...response.data,
             kind: 'playerMetrics'

@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { PlayerContext } from './PlayerContext';
-import { useData } from './hooks/useData';
-import api from '../api';
-import type { Player } from '../types/player';
+import { PlayerContext } from '../context/PlayerContext.tsx';
+import { useData } from '../hooks/useData.ts';
+import api from '../../api.tsx';
+import type { Player } from '../../types/player.ts';
 
-const fetchPlayers = () => api.get('/api/get_all_player_info').then(res => res.data);
+const fetchPlayers = () => api.get('/api/players').then(res => res.data);
 
 export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     const { data: players, loading, error, isFetching, refetch } = useData<Player[]>(['players'], fetchPlayers);

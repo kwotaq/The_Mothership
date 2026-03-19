@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { Player } from '../types/player';
+import type { Player } from '../../types/player.ts';
 
 interface PlayerContextType {
     players: Player[];

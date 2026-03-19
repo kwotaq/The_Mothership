@@ -1,7 +1,7 @@
 import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import type {UserCoordinate} from "../../types/userCoordinates.ts";
 import type {Player} from "../../types/player.ts";
-import {usePlayers} from '../../Utility/PlayerContext.tsx';
+import {usePlayers} from '../../Utility/context/PlayerContext.tsx';
 
 interface ScatterPlotProps {
     data: UserCoordinate[];
@@ -53,11 +53,14 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
 
                     tooltip={({node}) => {
                         const player = playerMap[node.data.userId]
-                        if (!player) return <div><strong className="text-text-primary">Player name not found</strong></div>;
+                        if (!player) return <div><strong className="text-text-primary">Player name not found</strong>
+                        </div>;
                         return (
-                            <div
-                                className="bg-bg-primary p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap">
-                                <strong className="text-text-primary">{player.name}</strong>
+                            <div>
+                                <div
+                                    className="bg-bg-primary p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap">
+                                    <strong className="text-text-primary">{player.name}</strong>
+                                </div>
                             </div>
                         );
                     }}
@@ -85,12 +88,6 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                                             className="fill-none stroke-alien-primary stroke-[2px]
                                             pointer-events-none origin-center [transform-box:fill-box]
                                             [animation:steady-pulse_2s_ease-out_infinite]"
-                                        />
-                                        <circle
-                                            cx="0" cy="0" r={size / 2}
-                                            className="fill-none stroke-alien-primary stroke-[2px]
-                                            pointer-events-none origin-center [transform-box:fill-box]
-                                            [animation:steady-pulse_2s_ease-out_infinite] [animation-delay:1s]"
                                         />
                                     </>
                                 )}

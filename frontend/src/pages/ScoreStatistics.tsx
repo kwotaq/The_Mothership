@@ -1,26 +1,27 @@
-import {ScoresList} from "../components/Lists/ScoresList/ScoresList.tsx"
+import {ScoresList} from "../components/Lists/ScoresList/ScoresList.tsx";
 import api from "../api.tsx";
 import {useData} from "../Utility/hooks/useData.ts";
 import {SectionHeader} from "../Utility/SectionHeader.tsx";
 import {ErrorBoundary} from "react-error-boundary";
-import {ErrorFallback} from "../Utility/Handlers/ErrorFallback.tsx";
-import {DataHandler} from "../Utility/Handlers/DataHandler.tsx";
+import {ErrorFallback} from "../Utility/handlers/ErrorFallback.tsx";
+import {DataHandler} from "../Utility/handlers/DataHandler.tsx";
 import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
+import {LiveScoreGraph} from "../components/graphs/LiveScoreGraph.tsx";
+import {useLiveStream} from "../Utility/context/LiveStreamContext.tsx";
 
-const fetchScores = () => api.get('/api/get_top_scores').then(res => res.data);
-
-const fetchStats = () => api.get("/api/get_global_score_metrics").then(res => ({...res.data, kind: 'scoreMetrics'}));
+const fetchScores = () => api.get('/api/scores/top').then(res => res.data);
+const fetchStats = () => api.get("/api/scores/metrics/global").then(res => ({...res.data, kind: 'scoreMetrics'}));
 
 export const ScoreStatistics = () => {
     const scoresReq = useData(["scores"], fetchScores);
-
     const statsReq = useData(['scores_metrics'], fetchStats);
+
+    const {liveData, isConnected} = useLiveStream();
 
     return (
         <div className="flex gap-5 p-5 pl-20 items-start">
             <div className="w-[40%] shrink-0">
                 <SectionHeader title='Top Scores'/>
-
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={scoresReq.loading}
@@ -28,14 +29,29 @@ export const ScoreStatistics = () => {
                         data={scoresReq.data}
                         label={"scores"}
                     >
-                        <ScoresList
-                            scores={scoresReq.data}
-                        />
+                        <ScoresList scores={scoresReq.data}/>
                     </DataHandler>
                 </ErrorBoundary>
             </div>
 
             <div className="flex-1 h-full px-20 flex flex-col gap-5 min-w-0">
+                <div>
+                    <SectionHeader title='Live Score Stream'/>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                        <div
+                            className="min-h-[400px] w-full border border-alien-primary/20 rounded bg-bg-secondary/30 relative">
+                            {!isConnected && (
+                                <div
+                                    className="absolute inset-0 flex items-center justify-center z-10 bg-black/20">
+                        <span className="text-alien-primary animate-pulse font-mono text-xs">
+                        </span>
+                                </div>
+                            )}
+                            <LiveScoreGraph data={liveData}/>
+                        </div>
+                    </ErrorBoundary>
+                </div>
+
                 <div>
                     <SectionHeader title='Score Statistics'/>
                     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -45,9 +61,7 @@ export const ScoreStatistics = () => {
                             error={statsReq.error}
                             label={"stats"}
                         >
-                            <StatsBoard
-                                stats={statsReq.data}
-                            />
+                            <StatsBoard stats={statsReq.data}/>
                         </DataHandler>
                     </ErrorBoundary>
                 </div>

@@ -13,7 +13,11 @@ export const PieChart = ({data}: { data: { id: string, value: number }[] }) => {
                 cornerRadius={0}
                 activeOuterRadiusOffset={8}
 
-                colors={['#00f2ff', '#00ff66', '#00ccbb', '#009944', '#064e3b']}
+                colors={[
+                    '#00f2ff', '#00ff66', '#84cc16', '#2dd4bf',
+                    '#fbbf24', '#3b82f6', '#f97316', '#a855f7',
+                    '#bc13fe', '#ef4444', '#ff0055', '#6366f1'
+                ]}
 
                 enableArcLabels={false}
                 enableArcLinkLabels={true}
