@@ -18,15 +18,18 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
     const [hoveredPlayerId, setHoveredPlayerId] = useState<string | null>(null);
 
     const transformedData = useMemo(() => {
+        if (!playerMap || Object.keys(playerMap).length === 0) return [];
         return data.map((series) => ({
             ...series,
-            id: playerMap[series.id].name || `User ${series.id}`,
+            id: playerMap[series.id]?.name || `User ${series.id}`,
             data: series.data.map(point => ({
                 ...point,
                 x: new Date(point.x)
             }))
         }));
     }, [data, playerMap]);
+
+    if (transformedData.length === 0) return null;
 
     return (
         <section className="flex w-full gap-4">
@@ -52,6 +55,7 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                     pointSize={8}
                     pointColor={(point) => {
                         const seriesIndex = transformedData.findIndex(s => s.id === point.series.id);
+                        if (seriesIndex === -1) return '#ffffff';
                         const originalId = data[seriesIndex]?.id;
                         const isHovered = hoveredPlayerId === null || hoveredPlayerId === originalId;
                         const color = COLOR_PALETTE[seriesIndex % COLOR_PALETTE.length];
@@ -61,39 +65,9 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                     pointBorderColor="var(--bg-secondary)"
                     enablePointLabel={false}
                     useMesh={true}
+                    lineWidth={0}
 
-                    layers={[
-                        'grid',
-                        'markers',
-                        'axes',
-                        'areas',
-                        ({series, lineGenerator, xScale, yScale}) =>
-                            series.map((s) => {
-                                const originalId = data.find(
-                                    (d) => (playerMap[d.id]?.name || `User ${d.id}`) === s.id
-                                )?.id;
-                                const isHovered = hoveredPlayerId === null || hoveredPlayerId === originalId;
-
-                                return (
-                                    <path
-                                        key={s.id}
-                                        d={lineGenerator(s.data.map(d => ({
-                                            x: xScale(d.data.x),
-                                            y: yScale(d.data.y)
-                                        })))}
-                                        fill="none"
-                                        stroke={s.color}
-                                        strokeWidth={hoveredPlayerId === originalId ? 3 : 1.5}
-                                        strokeOpacity={isHovered ? 1 : 0.15}
-                                        style={{transition: 'stroke-opacity 0.2s, stroke-width 0.2s'}}
-                                    />
-                                );
-                            }),
-                        'points',
-                        'slices',
-                        'mesh',
-                        'legends',
-                    ]}
+                    layers={['grid', 'axes', 'areas', 'points', 'slices', 'mesh', 'legends']}
 
                     tooltip={({point}) => {
                         const player = playerMap[point.data.score.user_id];
@@ -118,8 +92,9 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                                 <strong className="text-sm text-text-primary border-b border-alien-primary/20 pb-1">
                                     {player.name}
                                 </strong>
-                                <span className="font-mono text-alien-primary font-bold text-xs">{point.data.y}pp</span>
-                                <div className="absolute bottom-[-5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-bg-primary border-r border-b border-alien-primary rotate-45"/>
+                                <span className="font-mono text-alien-primary font-bold text-xs">{point.data.y === 0 ? 'Unranked' : `${point.data.y}pp`}</span>
+                                <div
+                                    className="absolute bottom-[-5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-bg-primary border-r border-b border-alien-primary rotate-45"/>
                             </div>
                         );
                     }}
@@ -133,13 +108,6 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                         grid: {
                             line: {stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1}
                         },
-                        crosshair: {
-                            line: {
-                                stroke: '#00f2ff',
-                                strokeWidth: 2,
-                                strokeDasharray: '4 4',
-                            }
-                        }
                     }}
                 />
             </div>
