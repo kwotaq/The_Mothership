@@ -4,8 +4,8 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Navbar} from './pages/Navbar.tsx';
 import {PlayerStatistics} from "./pages/PlayerStatistics.tsx";
 import {ScoreStatistics} from "./pages/ScoreStatistics.tsx";
-import {PlayerProvider} from "./Utility/providers/PlayerProvider.tsx";
-import {LiveStreamProvider} from "./Utility/providers/LiveStreamProvider.tsx";
+import {PlayerProvider} from "./utility/providers/PlayerProvider.tsx";
+import {LiveStreamProvider} from "./utility/providers/LiveStreamProvider.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {

@@ -1,7 +1,7 @@
 import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import type {UserCoordinate} from "../../types/userCoordinates.ts";
 import type {Player} from "../../types/player.ts";
-import {usePlayers} from '../../Utility/context/PlayerContext.tsx';
+import {usePlayers} from '../../utility/context/playerContext.tsx';
 
 interface ScatterPlotProps {
     data: UserCoordinate[];

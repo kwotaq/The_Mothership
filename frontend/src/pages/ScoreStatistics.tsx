@@ -1,13 +1,13 @@
 import {ScoresList} from "../components/Lists/ScoresList/ScoresList.tsx";
 import api from "../api.tsx";
-import {useData} from "../Utility/hooks/useData.ts";
-import {SectionHeader} from "../Utility/SectionHeader.tsx";
+import {useData} from "../utility/hooks/useData.ts";
+import {SectionHeader} from "../utility/SectionHeader.tsx";
 import {ErrorBoundary} from "react-error-boundary";
-import {ErrorFallback} from "../Utility/handlers/ErrorFallback.tsx";
-import {DataHandler} from "../Utility/handlers/DataHandler.tsx";
+import {ErrorFallback} from "../utility/handlers/ErrorFallback.tsx";
+import {DataHandler} from "../utility/handlers/DataHandler.tsx";
 import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
-import {LiveScoreGraph} from "../components/graphs/LiveScoreGraph.tsx";
-import {useLiveStream} from "../Utility/context/LiveStreamContext.tsx";
+import {LiveScoreGraph} from "../components/Graphs/LiveScoreGraph.tsx";
+import {useLiveStream} from "../utility/context/liveStreamContext.tsx";
 
 const fetchScores = () => api.get('/api/scores/top').then(res => res.data);
 const fetchStats = () => api.get("/api/scores/metrics/global").then(res => ({...res.data, kind: 'scoreMetrics'}));

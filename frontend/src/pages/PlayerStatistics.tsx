@@ -1,15 +1,15 @@
 import {useState} from "react";
 import {PlayerList} from "../components/Lists/PlayerList/PlayerList.tsx";
-import {useData} from "../Utility/hooks/useData.ts";
+import {useData} from "../utility/hooks/useData.ts";
 import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
 import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 import type {Player} from "../types/player.ts";
-import {DataHandler} from "../Utility/handlers/DataHandler.tsx";
-import {ErrorFallback} from "../Utility/handlers/ErrorFallback.tsx";
-import {ScatterPlot} from "../components/graphs/ScatterPlot.tsx";
-import {usePlayers} from "../Utility/context/PlayerContext.tsx";
-import {SectionHeader} from "../Utility/SectionHeader.tsx";
+import {DataHandler} from "../utility/handlers/DataHandler.tsx";
+import {ErrorFallback} from "../utility/handlers/ErrorFallback.tsx";
+import {ScatterPlot} from "../components/Graphs/ScatterPlot.tsx";
+import {usePlayers} from "../utility/context/playerContext.tsx";
+import {SectionHeader} from "../utility/SectionHeader.tsx";
 
 const fetchCoordinates = () => api.get('/api/players/similarity').then(res => res.data.similarity_coordinates);
 

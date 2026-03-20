@@ -1,6 +1,6 @@
 import {ResponsiveLine} from '@nivo/line';
-import {usePlayers} from "../../Utility/context/PlayerContext.tsx";
-import type {LiveScoreSeries} from "../../Utility/context/LiveStreamContext.tsx";
+import {usePlayers} from "../../utility/context/playerContext.tsx";
+import type {LiveScoreSeries} from "../../utility/context/liveStreamContext.tsx";
 import {useMemo, useState} from "react";
 
 const COLOR_PALETTE = [

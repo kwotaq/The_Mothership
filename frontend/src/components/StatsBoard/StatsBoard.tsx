@@ -1,7 +1,7 @@
 import type {PlayerMetrics} from "../../types/playerMetrics.ts";
 import {StatDetails, type StatItem} from "./StatDetails.tsx";
 import type {ScoreMetrics} from "../../types/scoreMetrics.ts";
-import {usePlayers} from "../../Utility/context/PlayerContext.tsx";
+import {usePlayers} from "../../utility/context/playerContext.tsx";
 import type {GlobalMetrics} from "../../types/globalMetrics.ts";
 
 export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | GlobalMetrics }) => {

@@ -1,5 +1,5 @@
-import {HourHistogram} from "../graphs/HourHistogram.tsx";
-import {PieChart} from "../graphs/PieChart.tsx";
+import {HourHistogram} from "../Graphs/HourHistogram.tsx";
+import {PieChart} from "../Graphs/PieChart.tsx";
 import type {CountedItem} from "../../types/playerMetrics.ts";
 
 export interface StatItem {

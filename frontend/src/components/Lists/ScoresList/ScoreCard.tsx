@@ -1,4 +1,4 @@
-import {usePlayers} from '../../../Utility/context/PlayerContext.tsx';
+import {usePlayers} from '../../../utility/context/playerContext.tsx';
 import type {Score} from '../../../types/score.ts';
 
 const rankStyles: Record<string, string> = {
