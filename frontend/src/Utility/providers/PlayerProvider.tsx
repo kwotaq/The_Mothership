@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { PlayerContext } from '../context/PlayerContext.tsx';
+import { PlayerContext } from '../context/playerContext.tsx';
 import { useData } from '../hooks/useData.ts';
 import api from '../../api.tsx';
 import type { Player } from '../../types/player.ts';

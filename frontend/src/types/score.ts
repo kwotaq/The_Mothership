@@ -1,6 +1,7 @@
 export interface Score {
     _id: string;
     user_id: string;
+    beatmap_id: string;
     background_url: string;
     artist: string;
     title: string;

@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {type LiveScoreSeries, LiveStreamContext} from '../context/LiveStreamContext';
+import {type LiveScoreSeries, LiveStreamContext} from '../context/liveStreamContext.tsx';
 import {useData} from '../hooks/useData.ts';
 import io from 'socket.io-client';
 import api from '../../api.tsx';

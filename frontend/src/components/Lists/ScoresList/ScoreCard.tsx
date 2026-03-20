@@ -56,7 +56,14 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
 
                     <div className="flex flex-col gap-0.5 min-w-0 overflow-hidden">
                         <span className="text-white font-bold text-[18px] leading-tight truncate">
+                            <a href={`https://osu.ppy.sh/beatmapsets/${score.beatmap_id}`}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               className="hover:underline"
+                               onClick={(e) => e.stopPropagation()}
+                            >
                             {score.artist} - {score.title}
+                            </a>
                         </span>
                         <span className="text-white/50 text-[10px] uppercase tracking-widest">
                             BY <span className="text-alien-primary/80">{score.creator}</span>
