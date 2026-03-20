@@ -1,14 +1,13 @@
 import { createContext, useContext } from 'react';
-import type { LiveScore } from '../../types/liveScore';
+import type {LiveScore} from "../../types/liveScore.ts";
 
 export interface LiveScorePoint {
-    x: string;
-    y: number;
-    score: LiveScore;
+    x: LiveScore['ended_at'];
+    y: LiveScore['pp'];
 }
 
 export interface LiveScoreSeries {
-    id: string;
+    id: LiveScore['user_id'];
     data: LiveScorePoint[];
 }
 

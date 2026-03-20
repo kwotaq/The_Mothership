@@ -3,17 +3,13 @@ import {usePlayers} from "../../Utility/context/PlayerContext.tsx";
 import type {LiveScoreSeries} from "../../Utility/context/LiveStreamContext.tsx";
 import {useMemo, useState} from "react";
 
-interface LiveScoreGraphProps {
-    data: LiveScoreSeries[];
-}
-
 const COLOR_PALETTE = [
     '#00f2ff', '#ff0055', '#00ff66', '#bc13fe',
     '#fbbf24', '#3b82f6', '#f97316', '#a855f7',
     '#2dd4bf', '#ef4444', '#84cc16', '#6366f1'
 ];
 
-export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
+export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const {playerMap} = usePlayers();
     const [hoveredPlayerId, setHoveredPlayerId] = useState<string | null>(null);
 
@@ -21,13 +17,16 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
         if (!playerMap || Object.keys(playerMap).length === 0) return [];
         return data.map((series) => ({
             ...series,
-            id: playerMap[series.id]?.name || `User ${series.id}`,
             data: series.data.map(point => ({
                 ...point,
                 x: new Date(point.x)
             }))
         }));
     }, [data, playerMap]);
+
+    const colorIndexMap = useMemo(() => {
+        return Object.fromEntries(data.map((series, i) => [series.id, i]));
+    }, [data]);
 
     if (transformedData.length === 0) return null;
 
@@ -40,8 +39,8 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                     xScale={{type: 'time', format: 'native', useUTC: false, precision: 'second'}}
                     yScale={{type: 'linear', min: 0, max: 'auto'}}
                     axisBottom={{
-                        format: '%H:%M',
-                        tickValues: 5,
+                        format: '%d/%m %H:%M',
+                        tickValues: 13,
                         legend: 'Time',
                         legendOffset: 34,
                         legendPosition: 'middle'
@@ -53,12 +52,9 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                     }}
                     colors={COLOR_PALETTE}
                     pointSize={8}
-                    pointColor={(point) => {
-                        const seriesIndex = transformedData.findIndex(s => s.id === point.series.id);
-                        if (seriesIndex === -1) return '#ffffff';
-                        const originalId = data[seriesIndex]?.id;
-                        const isHovered = hoveredPlayerId === null || hoveredPlayerId === originalId;
-                        const color = COLOR_PALETTE[seriesIndex % COLOR_PALETTE.length];
+                    pointColor={({point}) => {
+                        const isHovered = hoveredPlayerId === null || hoveredPlayerId === point.seriesId;
+                        const color = COLOR_PALETTE[colorIndexMap[point.seriesId] % COLOR_PALETTE.length];
                         return isHovered ? color : `${color}26`;
                     }}
                     pointBorderWidth={2}
@@ -70,7 +66,7 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                     layers={['grid', 'axes', 'areas', 'points', 'slices', 'mesh', 'legends']}
 
                     tooltip={({point}) => {
-                        const player = playerMap[point.data.score.user_id];
+                        const player = playerMap[point.seriesId];
 
                         if (!player) return (
                             <div
@@ -92,7 +88,8 @@ export const LiveScoreGraph = ({data}: LiveScoreGraphProps) => {
                                 <strong className="text-sm text-text-primary border-b border-alien-primary/20 pb-1">
                                     {player.name}
                                 </strong>
-                                <span className="font-mono text-alien-primary font-bold text-xs">{point.data.y === 0 ? 'Unranked' : `${point.data.y}pp`}</span>
+                                <span
+                                    className="font-mono text-alien-primary font-bold text-xs">{point.data.y === 0 ? 'Unranked' : `${point.data.y}pp`}</span>
                                 <div
                                     className="absolute bottom-[-5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-bg-primary border-r border-b border-alien-primary rotate-45"/>
                             </div>
