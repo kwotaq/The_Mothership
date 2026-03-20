@@ -40,6 +40,7 @@ class OsuAPIService:
             score_data = {
                 "_id": str(score.id),
                 "user_id": str(score.user_id),
+                "beatmap_id": score.beatmapset.id,
                 "background_url": f"https://assets.ppy.sh/beatmaps/{score.beatmapset.id}/covers/cover.jpg",
                 "artist": score.beatmapset.artist,
                 "title": score.beatmapset.title,
