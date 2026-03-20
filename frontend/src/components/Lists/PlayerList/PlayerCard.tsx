@@ -36,7 +36,7 @@ export const PlayerCard = ({player, index, onToggle, isActive, "data-id": dataId
                         <a href={`https://osu.ppy.sh/users/${player._id}`}
                            target="_blank"
                            rel="noopener noreferrer"
-                           className="text-text-primary hover:text-alien-primary text-2xl font-semibold tracking-wider uppercase transition-colors"
+                           className="text-text-primary hover:underline text-2xl font-semibold tracking-wider uppercase transition-colors"
                            onClick={(e) => e.stopPropagation()}
                         >
                             {player.name}
