@@ -3,7 +3,6 @@ import logging
 import threading
 import time
 from datetime import datetime
-import pytz
 
 import websocket
 from flask_socketio import SocketIO
@@ -60,7 +59,6 @@ class OsuStreamService:
                         formatted_score = {
                             "_id": str(raw_data.get('id')),
                             "user_id": u_id,
-                            "max_combo": raw_data.get('max_combo'),
                             "pp": raw_data.get('pp'),
                             "ended_at": bson_date
                         }
