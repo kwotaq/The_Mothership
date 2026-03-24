@@ -10,7 +10,7 @@ from processing.similarity_calculation import analyze_profiles
 logger = logging.getLogger(__name__)
 
 
-class DataService:
+class MetricsService:
     def __init__(self):
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()

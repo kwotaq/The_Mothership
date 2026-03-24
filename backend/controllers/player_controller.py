@@ -8,16 +8,9 @@ logger = logging.getLogger(__name__)
 
 osu_service = OsuAPIService()
 
-player_controller = Blueprint('player_controller', __name__)
+players_bp = Blueprint('players', __name__)
 
-@player_controller.route('/api/admin/players/update')
-def update_all_player_info():
-    logger.info('Player info list update requested')
-    osu_service.update_all_player_info()
-    return 'OK'
-
-
-@player_controller.route('/api/players')
+@players_bp.route('/api/players')
 def get_all_player_info():
     logger.info('Player info list requested')
     player_list = osu_service.get_all_player_info()

@@ -2,37 +2,20 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-from controllers.data_controller import data_controller
-from controllers.player_controller import player_controller
-from controllers.score_controller import score_controller, osu_stream_service
+from controllers.metrics_controller import metrics_bp
+from controllers.player_controller import players_bp
+from controllers.score_controller import scores_bp
 
-from flask import Flask, render_template
+from flask import Flask
 from flask_socketio import SocketIO
 
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
-
-
-@app.route('/')
-def home():
-    routes = [
-        {'path': '/api/admin/scores/update'},
-        {'path': '/api/admin/players/update'},
-        {'path': '/api//api/admin/metrics/player/global/update'},
-        {'path': '/api/admin/metrics/score/global/update'},
-        {'path': '/api/admin/metrics/player/individual'},
-        {'path': '/api/admin/metrics/similarity'},
-    ]
-    return render_template('debug.html', routes=routes)
-
-
-app.register_blueprint(player_controller)
-app.register_blueprint(score_controller)
-app.register_blueprint(data_controller)
-
-osu_stream_service.init_app(socketio)
+app.register_blueprint(players_bp)
+app.register_blueprint(scores_bp)
+app.register_blueprint(metrics_bp)
 
 if __name__ == '__main__':
     app.run()
