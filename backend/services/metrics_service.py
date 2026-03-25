@@ -36,28 +36,25 @@ class MetricsService:
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
-            self.update_player_stats(player_id)
+            top_artists = self._get_score_top_stat_count('artist', player_id)
+            top_songs = self._get_score_top_stat_count('title', player_id)
+            top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
+            hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
+            closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
+
+            data = {
+                'top_artists': top_artists,
+                'top_songs': top_songs,
+                'top_mods': top_mods,
+                'hour_histogram': hour_histogram,
+                'closest_neighbours': closest_neighbours,
+            }
+
+            self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
 
     def update_similarity_coordinates(self):
         data = {"similarity_coordinates": self._calculate_similarity_coordinates()}
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
-
-    def update_player_stats(self, player_id):
-        top_artists = self._get_score_top_stat_count('artist', player_id)
-        top_songs = self._get_score_top_stat_count('title', player_id)
-        top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
-        hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
-        closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
-
-        data = {
-            'top_artists': top_artists,
-            'top_songs': top_songs,
-            'top_mods': top_mods,
-            'hour_histogram': hour_histogram,
-            'closest_neighbours': closest_neighbours,
-        }
-
-        self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
 
     def update_global_player_metrics(self):
         top_artists = self._get_score_top_stat_count('artist')

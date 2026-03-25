@@ -27,9 +27,9 @@ class OsuAPIService:
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Overall Player Score Update", unit="player"):
-            self.update_player_top_scores(player_id)
+            self._fetch_player_top_scores(player_id)
 
-    def update_player_top_scores(self, player_id):
+    def _fetch_player_top_scores(self, player_id):
         player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD,
                                                         limit=200)
 
