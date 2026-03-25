@@ -41,11 +41,11 @@ def sync_score_metrics():
 @celery.task
 def sync_all():
     chain(
-        sync_players.s(),
-        sync_scores.s(),
-        sync_player_metrics.s(),
-        sync_score_metrics.s(),
-        sync_similarity_coordinates.s()
+        sync_players.si(),
+        sync_scores.si(),
+        sync_player_metrics.si(),
+        sync_score_metrics.si(),
+        sync_similarity_coordinates.si()
     ).apply_async()
 
 
