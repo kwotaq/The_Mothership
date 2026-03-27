@@ -38,7 +38,7 @@ export const HourHistogram = ({data}: { data: { hour: string, count: number }[] 
             }}
             axisBottom={{
                 tickSize: 0,
-                tickPadding: 15,
+                tickPadding: 30,
             }}
             axisLeft={null}
             enableLabel={false}
