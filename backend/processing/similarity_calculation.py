@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.manifold import TSNE
+from umap import UMAP
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
@@ -103,7 +103,7 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = TSNE(n_components=2, perplexity=10, random_state=727)
+    reducer = UMAP(n_components=2, n_neighbors=10, min_dist=0.1, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
     formatted_coordinates = [
         {
