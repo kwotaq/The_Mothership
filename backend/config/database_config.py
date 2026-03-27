@@ -22,6 +22,16 @@ class Database:
         return self.db['scores']
 
     def get_recent_scores_collection(self):
+        if 'recent_scores_cache' not in self.db.list_collection_names():
+            self.db.create_collection(
+                'recent_scores_cache',
+                timeseries={
+                    'timeField': 'ended_at',
+                    'metaField': 'user_id',
+                    'granularity': 'seconds'
+                },
+                expireAfterSeconds=259200
+            )
         return self.db['recent_scores_cache']
 
     def get_player_stats_collection(self):
