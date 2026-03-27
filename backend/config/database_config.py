@@ -12,6 +12,12 @@ load_dotenv(find_dotenv())
 class Database:
     def __init__(self):
         self.client = MongoClient(os.getenv('DB_URL'))
+        try:
+            self.client.admin.command('ping')
+            logger.info('Connected to MongoDB')
+        except Exception as e:
+            logger.error(f'MongoDB connection failed: {e}')
+
         self.db = self.client['data']
         self.create_indexes()
 
