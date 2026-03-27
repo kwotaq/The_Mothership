@@ -1,5 +1,7 @@
 import logging
 
+from services.osu_stream_service import OsuStreamService
+
 logging.basicConfig(level=logging.INFO)
 
 from controllers.metrics_controller import metrics_bp
@@ -12,6 +14,7 @@ from flask_socketio import SocketIO
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
+OsuStreamService().init_app(socketio)
 app.register_blueprint(players_bp)
 app.register_blueprint(scores_bp)
 app.register_blueprint(metrics_bp)
