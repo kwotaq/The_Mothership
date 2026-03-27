@@ -12,7 +12,7 @@ load_dotenv(find_dotenv())
 class Database:
     def __init__(self):
         self.client = MongoClient(os.getenv('DB_URL'))
-        self.db = self.client['osu!apiData']
+        self.db = self.client['data']
         self.create_indexes()
 
     def get_player_collection(self):
