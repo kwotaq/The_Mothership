@@ -1,6 +1,7 @@
 import logging
 import os
 
+import certifi
 from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
 
@@ -11,7 +12,7 @@ load_dotenv(find_dotenv())
 
 class Database:
     def __init__(self):
-        self.client = MongoClient(os.getenv('DB_URL'))
+        self.client = MongoClient(os.getenv('DB_URL'), tlsCAFile=certifi.where())
         try:
             self.client.admin.command('ping')
             logger.info('Connected to MongoDB')
