@@ -1,7 +1,7 @@
 import {ResponsiveLine} from '@nivo/line';
 import {usePlayers} from "../../utility/context/playerContext.tsx";
 import type {LiveScoreSeries} from "../../utility/context/liveStreamContext.tsx";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 
 const COLOR_PALETTE = [
     '#00f2ff', '#ff0055', '#00ff66', '#bc13fe',
@@ -12,6 +12,34 @@ const COLOR_PALETTE = [
 export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const {playerMap} = usePlayers();
     const [hoveredPlayerId, setHoveredPlayerId] = useState<string | null>(null);
+    const isDragging = useRef(false);
+    const dragStart = useRef<number | null>(null);
+    const chartRef = useRef<HTMLDivElement>(null);
+    const [xDomain, setXDomain] = useState<[Date, Date]>(() => {
+        const now = new Date();
+        const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+        return [sixHoursAgo, now];
+    });
+
+    useEffect(() => {
+        const el = chartRef.current;
+        if (!el) return;
+        const onWheel = (e: WheelEvent) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY > 0 ? 1.2 : 0.8;
+            setXDomain(([min, max]) => {
+                const center = new Date((min.getTime() + max.getTime()) / 2);
+                const range = max.getTime() - min.getTime();
+                const newRange = range * zoomFactor;
+                return [
+                    new Date(center.getTime() - newRange / 2),
+                    new Date(center.getTime() + newRange / 2)
+                ];
+            });
+        };
+        el.addEventListener('wheel', onWheel, {passive: false});
+        return () => el.removeEventListener('wheel', onWheel);
+    }, []);
 
     const transformedData = useMemo(() => {
         if (!playerMap || Object.keys(playerMap).length === 0) return [];
@@ -28,21 +56,61 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
         return Object.fromEntries(data.map((series, i) => [series.id, i]));
     }, [data]);
 
+    const visiblePoints = useMemo(() => {
+        const [min, max] = xDomain;
+        return transformedData.map(series => ({
+            ...series,
+            data: series.data.filter(point => point.x >= min && point.x <= max)
+        }));
+    }, [transformedData, xDomain]);
+
     if (transformedData.length === 0) return null;
 
     return (
         <section className="flex w-full gap-4">
-            <div className="flex-1 h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative">
+            <div
+                ref={chartRef}
+                style={{touchAction: 'none'}}
+                className="flex-1 h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
+                onMouseDown={(e) => {
+                    isDragging.current = true;
+                    dragStart.current = e.clientX;
+                }}
+                onMouseMove={(e) => {
+                    if (!isDragging.current || dragStart.current === null) return;
+                    const dx = e.clientX - dragStart.current;
+                    dragStart.current = e.clientX;
+                    setXDomain(([min, max]) => {
+                        const range = max.getTime() - min.getTime();
+                        const shift = (dx / chartRef.current!.clientWidth) * range * -1;
+                        return [new Date(min.getTime() + shift), new Date(max.getTime() + shift)];
+                    });
+                }}
+                onMouseUp={() => {
+                    isDragging.current = false;
+                }}
+                onMouseLeave={() => {
+                    isDragging.current = false;
+                }}
+            >
                 <ResponsiveLine
-                    data={transformedData}
+                    data={visiblePoints}
                     margin={{top: 80, right: 40, bottom: 60, left: 80}}
-                    xScale={{type: 'time', format: 'native', useUTC: false, precision: 'second'}}
+                    xScale={{
+                        type: 'time',
+                        format: 'native',
+                        useUTC: false,
+                        precision: 'second',
+                        min: xDomain[0],
+                        max: xDomain[1]
+                    }}
                     yScale={{type: 'linear', min: 0, max: 'auto'}}
                     axisBottom={{
                         format: '%d/%m %H:%M',
-                        tickValues: 13,
+                        tickValues: 5,
+                        tickPadding: 20,
                         legend: 'Time',
-                        legendOffset: 34,
+                        legendOffset: 36,
                         legendPosition: 'middle'
                     }}
                     axisLeft={{
@@ -62,6 +130,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     enablePointLabel={false}
                     useMesh={true}
                     lineWidth={0}
+                    animate={false}
 
                     layers={['grid', 'axes', 'areas', 'points', 'slices', 'mesh', 'legends']}
 
@@ -79,10 +148,13 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                             <div
                                 className="bg-bg-primary p-[9px] border border-alien-primary text-text-primary flex flex-col gap-1 min-w-[120px] -mt-2 relative z-50">
                                 <span className="text-[10px] font-mono text-text-secondary uppercase tracking-tighter">
-                                    {new Date(point.data.x).toLocaleTimeString([], {
+                                    {new Date(point.data.x).toLocaleString([], {
+                                        day: '2-digit',
+                                        month: '2-digit',
                                         hour: '2-digit',
                                         minute: '2-digit',
-                                        second: '2-digit'
+                                        second: '2-digit',
+                                        hour12: false
                                     })}
                                 </span>
                                 <strong className="text-sm text-text-primary border-b border-alien-primary/20 pb-1">
@@ -118,9 +190,9 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                 </div>
 
                 <div className="flex flex-col">
-                    {data.map((series, i) => {
+                    {visiblePoints.filter(series => series.data.length > 0).map((series) => {
                         const playerName = playerMap[series.id]?.name || `User ${series.id}`;
-                        const color = COLOR_PALETTE[i % COLOR_PALETTE.length];
+                        const color = COLOR_PALETTE[colorIndexMap[series.id] % COLOR_PALETTE.length];
                         const isHovered = hoveredPlayerId === series.id;
 
                         return (
@@ -149,7 +221,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                         );
                     })}
 
-                    {data.length === 0 && (
+                    {visiblePoints.filter(s => s.data.length > 0).length === 0 && (
                         <div className="text-text-tertiary text-xs italic py-4 text-center">
                             Waiting for scores...
                         </div>
