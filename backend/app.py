@@ -13,7 +13,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
 OsuStreamService().init_app(socketio)
 app.register_blueprint(players_bp)
 app.register_blueprint(scores_bp)
