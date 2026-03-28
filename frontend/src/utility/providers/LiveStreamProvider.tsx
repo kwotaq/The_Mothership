@@ -5,7 +5,9 @@ import io from 'socket.io-client';
 import api from '../../api.tsx';
 import type {LiveScore} from '../../types/liveScore';
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5000", {
+    transports: ['websocket']
+});
 
 const fetchRecentScores = () => api.get<LiveScore[]>('/api/scores/recent').then(res => res.data);
 
