@@ -5,8 +5,10 @@ import io from 'socket.io-client';
 import api from '../../api.tsx';
 import type {LiveScore} from '../../types/liveScore';
 
-const socket = io("http://localhost:5000", {
-    transports: ['websocket']
+const socket = io(import.meta.env.VITE_API_URL, {
+    transports: ['websocket'],
+    reconnectionDelay: 500,
+    reconnectionAttempts: 5
 });
 
 const fetchRecentScores = () => api.get<LiveScore[]>('/api/scores/recent').then(res => res.data);
@@ -61,7 +63,7 @@ export const LiveStreamProvider = ({children}: { children: React.ReactNode }) =>
         return () => {
             socket.off('new_live_score', handleNewScore);
         };
-    }, []);
+    }, [history]);
 
     const value = useMemo(() => ({
         liveData,
