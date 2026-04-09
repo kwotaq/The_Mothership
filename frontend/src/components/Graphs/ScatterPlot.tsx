@@ -2,6 +2,7 @@ import {ResponsiveScatterPlot} from '@nivo/scatterplot';
 import type {UserCoordinate} from "../../types/userCoordinates.ts";
 import type {Player} from "../../types/player.ts";
 import {usePlayers} from '../../utility/context/playerContext.tsx';
+import {useEffect, useMemo, useRef, useState} from "react";
 
 interface ScatterPlotProps {
     data: UserCoordinate[];
@@ -11,25 +12,88 @@ interface ScatterPlotProps {
 
 export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) => {
     const {playerMap} = usePlayers()
+    const isDragging = useRef(false);
+    const hasDragged = useRef(false);
+    const dragStart = useRef<[number, number] | null>(null);
+    const chartRef = useRef<HTMLDivElement>(null);
+    const [domain, setDomain] = useState<{ x: [number, number], y: [number, number] }>({
+        x: [-60, 60],
+        y: [-60, 60]
+    });
 
-    const nivoData = [
-        {
-            id: "Player Similarity",
-            data: data.map((point) => ({
-                x: point.x,
-                y: point.y,
-                userId: point.user_id,
-                isActive: activePlayer?._id === point.user_id
-            })),
-        },
-    ];
+    useEffect(() => {
+        const el = chartRef.current;
+        if (!el) return;
+        const onWheel = (e: WheelEvent) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY > 0 ? 1.2 : 0.8;
+            setDomain(({x, y}) => {
+                const xCenter = (x[0] + x[1]) / 2;
+                const yCenter = (y[0] + y[1]) / 2;
+                const xRange = (x[1] - x[0]) * zoomFactor;
+                const yRange = (y[1] - y[0]) * zoomFactor;
+                return {
+                    x: [xCenter - xRange / 2, xCenter + xRange / 2],
+                    y: [yCenter - yRange / 2, yCenter + yRange / 2]
+                };
+            });
+        };
+        el.addEventListener('wheel', onWheel, {passive: false});
+        return () => el.removeEventListener('wheel', onWheel);
+    }, []);
+
+
+    const nivoData = useMemo(() => [{
+        id: "Player Similarity",
+        data: data.map((point) => ({
+            x: point.x,
+            y: point.y,
+            userId: point.user_id,
+            isActive: activePlayer?._id === point.user_id
+        })),
+    }], [data, activePlayer]);
 
     return (
         <section className="mx-auto w-full">
-            <div className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative">
+            <div
+                ref={chartRef}
+                style={{touchAction: 'none'}}
+                onMouseDown={(e) => {
+                    isDragging.current = true;
+                    hasDragged.current = false;
+                    dragStart.current = [e.clientX, e.clientY];
+                }}
+
+                onMouseMove={(e) => {
+                    if (!isDragging.current || dragStart.current === null) return;
+                    hasDragged.current = true;
+                    const dx = e.clientX - dragStart.current[0];
+                    const dy = e.clientY - dragStart.current[1];
+                    dragStart.current = [e.clientX, e.clientY];
+
+                    setDomain(({x, y}) => {
+                        const xRange = x[1] - x[0];
+                        const yRange = y[1] - y[0];
+                        const xShift = (dx / chartRef.current!.clientWidth) * xRange * -1;
+                        const yShift = (dy / chartRef.current!.clientHeight) * yRange;
+                        return {
+                            x: [x[0] + xShift, x[1] + xShift],
+                            y: [y[0] + yShift, y[1] + yShift]
+                        };
+                    });
+                }}
+
+                onMouseUp={() => {
+                    isDragging.current = false;
+                }}
+                onMouseLeave={() => {
+                    isDragging.current = false;
+                }}
+                className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative">
                 <ResponsiveScatterPlot
                     data={nivoData}
                     isInteractive={true}
+                    animate={false}
                     theme={{
                         axis: {
                             legend: {text: {fill: 'var(--text-primary)'}}
@@ -39,14 +103,15 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                         }
                     }}
                     margin={{top: 40, right: 40, bottom: 40, left: 40}}
-                    xScale={{type: 'linear', min: 'auto', max: 'auto'}}
-                    yScale={{type: 'linear', min: 'auto', max: 'auto'}}
+                    xScale={{type: "linear", min: domain.x[0], max: domain.x[1], nice: false}}
+                    yScale={{type: "linear", min: domain.y[0], max: domain.y[1], nice: false}}
                     axisBottom={null}
                     axisLeft={null}
                     nodeSize={10}
                     colors={'var(--alien-primary)'}
 
                     onClick={(node) => {
+                        if (hasDragged.current) return;
                         const player = playerMap[node.data.userId]
                         if (player) onToggle(player);
                     }}

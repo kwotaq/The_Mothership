@@ -17,8 +17,8 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const chartRef = useRef<HTMLDivElement>(null);
     const [xDomain, setXDomain] = useState<[Date, Date]>(() => {
         const now = new Date();
-        const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
-        return [sixHoursAgo, now];
+        const defaultTimeLimit = new Date(now.getTime() - 6 * 60 * 60 * 1000); // 6 hours
+        return [defaultTimeLimit, now];
     });
 
     useEffect(() => {
@@ -109,9 +109,6 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                         format: '%d/%m %H:%M',
                         tickValues: 5,
                         tickPadding: 20,
-                        legend: 'Time',
-                        legendOffset: 36,
-                        legendPosition: 'middle'
                     }}
                     axisLeft={{
                         legend: 'PP',
