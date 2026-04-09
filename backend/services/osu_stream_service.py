@@ -71,9 +71,6 @@ class OsuStreamService:
                     if u_id in self.greek_player_info:
                         score_pp = raw_data.get('pp')
                         bottom = self.greek_player_info[u_id]["bottom_score"]
-                        logger.info(
-                            f"Score received: user={u_id} pp={score_pp} ({type(score_pp)}) bottom={bottom} ({type(bottom)})")
-
                         try:
                             if score_pp is not None and (bottom is None or bottom < score_pp):
                                 self.on_new_top_score(u_id)
