@@ -74,15 +74,15 @@ def _create_feature_matrix(scores):
         feature_matrix = feature_matrix.toarray()
 
     feature_weights = {
-        'num__unique_artists': 1.6,
-        'num__unique_creators': 1.2,
+        'num__unique_artists': 1.4,
+        'num__unique_creators': 1.0,
         'num__max_same_song_count': 1.0,
         'num__avg_acc': 1.6,
         'num__avg_pp': 1.8,
         'num__avg_combo': 1.0,
 
-        'cat__top_mod': 2.5,
-        'cat__top_artist': 2.0,
+        'cat__top_mod': 2.0,
+        'cat__top_artist': 1.5,
         'cat__top_creator': 1.8,
         'cat__top_song': 1.5,
     }
