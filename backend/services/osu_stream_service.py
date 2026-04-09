@@ -69,8 +69,8 @@ class OsuStreamService:
                     u_id = str(raw_data.get('user_id', ''))
 
                     if u_id in self.greek_player_info:
-
-                        if self.greek_player_info[u_id]["bottom_score"] < raw_data.get('pp') or self.greek_player_info[u_id]["bottom_score"] is None:
+                        score_pp = raw_data.get('pp')
+                        if score_pp is not None and self.greek_player_info[u_id]["bottom_score"] is None or self.greek_player_info[u_id]["bottom_score"] < score_pp:
                             self.on_new_top_score(u_id)
 
                         raw_date = raw_data.get('ended_at')
