@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from celery import Celery, chain
@@ -18,11 +19,13 @@ def sync_all_scores():
     from services.osu_api_service import OsuAPIService
     OsuAPIService().update_all_top_scores()
 
+
 @celery.task
 def sync_player_all(player_id):
     from services.osu_api_service import OsuAPIService
     OsuAPIService().update_player_info(player_id)
     OsuAPIService().update_player_top_scores(player_id)
+
 
 @celery.task
 def sync_similarity_coordinates():
@@ -47,9 +50,9 @@ def sync_score_metrics():
 @celery.task
 def sync_metrics():
     chain(
+        sync_similarity_coordinates.si(),
         sync_player_metrics.si(),
-        sync_score_metrics.si(),
-        sync_similarity_coordinates.si()
+        sync_score_metrics.si()
     ).apply_async()
 
 
