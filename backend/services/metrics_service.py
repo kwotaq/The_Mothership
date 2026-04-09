@@ -112,10 +112,11 @@ class MetricsService:
         if not raw_results: return []
 
         distances = [r["distance"] for r in raw_results]
-        sigma = sorted(distances)[len(distances) // 2]
+        max_distance = max(distances)
 
         for r in raw_results:
-            score = math.exp(-r["distance"] / sigma) * 100
+            normalized = r["distance"] / max_distance
+            score = (1 - normalized ** 0.25) * 100
             r["count"] = round(score, 1)
 
         raw_results.sort(key=lambda x: x["count"], reverse=True)

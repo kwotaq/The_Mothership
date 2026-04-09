@@ -29,6 +29,12 @@ class OsuAPIService:
         for player_id in tqdm(player_ids, desc="Overall Player Score Update", unit="player"):
             self.update_player_top_scores(player_id)
 
+    def update_x_top_scores(self, amount):
+        player_ids = self.player_collection.distinct("_id")
+
+        for player_id in tqdm(player_ids[:int(amount)], desc="Limited Player Score Update", unit="player"):
+            self.update_player_top_scores(player_id)
+
     def update_player_top_scores(self, player_id):
         player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD,
                                                         limit=200)
@@ -40,12 +46,16 @@ class OsuAPIService:
             score_data = {
                 "_id": str(score.id),
                 "user_id": str(score.user_id),
+
                 "beatmap_id": score.beatmapset.id,
                 "background_url": f"https://assets.ppy.sh/beatmaps/{score.beatmapset.id}/covers/cover.jpg",
                 "artist": score.beatmapset.artist,
                 "title": score.beatmapset.title,
                 "creator": score.beatmapset.creator,
                 "difficulty": score.beatmap.version,
+                "last_updated": score.beatmap.last_updated,
+                "bpm": score.beatmap.bpm,
+
                 "max_combo": score.max_combo,
                 "accuracy": score.accuracy,
                 "mods": mod_string,

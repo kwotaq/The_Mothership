@@ -19,6 +19,11 @@ def sync_all_scores():
     from services.osu_api_service import OsuAPIService
     OsuAPIService().update_all_top_scores()
 
+@celery.task
+def sync_x_scores(amount):
+    from services.osu_api_service import OsuAPIService
+    OsuAPIService().update_x_top_scores(amount)
+
 
 @celery.task
 def sync_player_all(player_id):

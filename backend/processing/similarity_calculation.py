@@ -14,6 +14,7 @@ def extract_features(user_scores):
     creator_count = user_scores.groupby('creator').size().sort_values(ascending=False)
     mod_count = user_scores.groupby('mods').size().sort_values(ascending=False)
     same_song_count = user_scores.groupby('title').size().sort_values(ascending=False)
+    most_common_year = user_scores['last_updated'].dt.year.mode()[0]
 
     unique_artists = len(artist_count)
     unique_creators = len(creator_count)
@@ -22,6 +23,7 @@ def extract_features(user_scores):
     avg_acc = user_scores['accuracy'].mean()
     avg_combo = user_scores['max_combo'].mean()
     avg_pp = user_scores['pp'].mean()
+    avg_bpm = user_scores['bpm'].mean()
 
     top_artist = artist_count.idxmax()
     top_creator = creator_count.idxmax()
@@ -32,9 +34,11 @@ def extract_features(user_scores):
         'unique_artists': unique_artists,
         'unique_creators': unique_creators,
         'max_same_song_count': max_same_song_count,
+        'most_common_year': most_common_year,
         'avg_acc': avg_acc,
         'avg_combo': avg_combo,
         'avg_pp': avg_pp,
+        'avg_bpm': avg_bpm,
 
         'top_artist': top_artist,
         'top_creator': top_creator,
@@ -59,7 +63,7 @@ def _create_feature_matrix(scores):
     logger.info('Finished feature extraction.')
 
     numerical = ['unique_artists', 'unique_creators', 'max_same_song_count',
-                 'avg_acc', 'avg_combo', 'avg_pp']
+                 'avg_acc', 'avg_combo', 'avg_pp', 'most_common_year', 'avg_bpm',]
     categorical = ['top_artist', 'top_creator', 'top_mod', 'top_song']
 
     preprocessor = ColumnTransformer(
@@ -74,17 +78,19 @@ def _create_feature_matrix(scores):
         feature_matrix = feature_matrix.toarray()
 
     feature_weights = {
-        'num__unique_artists': 1.4,
-        'num__unique_creators': 1.0,
-        'num__max_same_song_count': 1.0,
-        'num__avg_acc': 1.6,
-        'num__avg_pp': 1.8,
-        'num__avg_combo': 1.0,
+        'num__unique_artists': 2.0,
+        'num__unique_creators': 1.7,
+        'num__max_same_song_count': 0.6,
+        'num__most_common_year': 2.0,
+        'num__avg_acc': 1.4,
+        'num__avg_pp': 1.0,
+        'num__avg_combo': 1.8,
+        'num__avg_bpm': 1.0,
 
-        'cat__top_mod': 2.0,
-        'cat__top_artist': 1.5,
-        'cat__top_creator': 1.8,
-        'cat__top_song': 1.5,
+        'cat__top_mod': 3.0,
+        'cat__top_artist': 1.2,
+        'cat__top_creator': 1.7,
+        'cat__top_song': 1.0,
     }
 
     feature_names = preprocessor.get_feature_names_out()
@@ -103,7 +109,7 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = UMAP(n_components=2, n_neighbors=10, min_dist=0.1, random_state=727)
+    reducer = UMAP(n_components=2, n_neighbors=8, min_dist=0.1, spread=1.0, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
     formatted_coordinates = [
         {
