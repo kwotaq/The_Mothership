@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {PlayerList} from "../components/Lists/PlayerList/PlayerList.tsx";
 import {useData} from "../utility/hooks/useData.ts";
 import {ErrorBoundary} from 'react-error-boundary';
@@ -10,6 +10,7 @@ import {ErrorFallback} from "../utility/handlers/ErrorFallback.tsx";
 import {ScatterPlot} from "../components/Graphs/ScatterPlot.tsx";
 import {usePlayers} from "../utility/context/playerContext.tsx";
 import {SectionHeader} from "../utility/SectionHeader.tsx";
+import {SearchBox} from "../utility/SearchBox.tsx";
 
 const fetchCoordinates = () => api.get('/api/players/similarity').then(res => res.data.similarity_coordinates);
 
@@ -44,10 +45,22 @@ export const PlayerStatistics = () => {
         setActivePlayer((prev) => (prev?._id === player._id ? null : player));
     };
 
+    const [filter, setFilter] = useState<string>('');
+
+    const filteredPlayers = useMemo(() => {
+        if (!players || !filter) return players;
+        return players.filter(p =>
+            p.name.toLowerCase().includes(filter.toLowerCase())
+        );
+    }, [players, filter]);
+
     return (
         <div className="flex gap-5 p-5 pl-20 items-start">
             <div className="w-[40%] shrink-0">
-                <SectionHeader title='Player Rankings'/>
+                <div className="pb-6">
+                    <SectionHeader title='Player Rankings'/>
+                    <SearchBox setFilter={setFilter}/>
+                </div>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
                         loading={playersLoading}
@@ -56,7 +69,7 @@ export const PlayerStatistics = () => {
                         label={"players"}
                     >
                         <PlayerList
-                            players={players}
+                            players={filteredPlayers}
                             onToggle={handleTogglePlayer}
                             activePlayer={activePlayer}
                         />
