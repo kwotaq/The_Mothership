@@ -116,7 +116,7 @@ class MetricsService:
 
         for r in raw_results:
             normalized = r["distance"] / max_distance
-            score = (1 - normalized ** 0.25) * 100
+            score = (1 - normalized ** 0.35) * 100
             r["count"] = round(score, 1)
 
         raw_results.sort(key=lambda x: x["count"], reverse=True)

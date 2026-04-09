@@ -2,9 +2,9 @@ import logging
 
 import pandas as pd
 from sklearn.compose import ColumnTransformer
-from umap import UMAP
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from umap import UMAP
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def _create_feature_matrix(scores):
     logger.info('Finished feature extraction.')
 
     numerical = ['unique_artists', 'unique_creators', 'max_same_song_count',
-                 'avg_acc', 'avg_combo', 'avg_pp', 'most_common_year', 'avg_bpm',]
+                 'avg_acc', 'avg_combo', 'avg_pp', 'most_common_year', 'avg_bpm', ]
     categorical = ['top_artist', 'top_creator', 'top_mod', 'top_song']
 
     preprocessor = ColumnTransformer(
@@ -111,6 +111,8 @@ def analyze_profiles(scores):
     similarity_matrix = cosine_similarity(feature_matrix)
     reducer = UMAP(n_components=2, n_neighbors=8, min_dist=0.1, spread=1.0, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
+    coordinates[:, 0] = (coordinates[:, 0] - coordinates[:, 0].min()) / (coordinates[:, 0].max() - coordinates[:, 0].min()) * 20 - 10
+    coordinates[:, 1] = (coordinates[:, 1] - coordinates[:, 1].min()) / (coordinates[:, 1].max() - coordinates[:, 1].min()) * 20 - 10
     formatted_coordinates = [
         {
             "user_id": str(uid),
