@@ -27,9 +27,9 @@ class OsuAPIService:
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Overall Player Score Update", unit="player"):
-            self._fetch_player_top_scores(player_id)
+            self.update_player_top_scores(player_id)
 
-    def _fetch_player_top_scores(self, player_id):
+    def update_player_top_scores(self, player_id):
         player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD,
                                                         limit=200)
 
@@ -59,7 +59,19 @@ class OsuAPIService:
     def get_all_player_info(self):
         return list(self.player_collection.find({}).sort({"performance_points": -1}))
 
-    def update_all_player_info(self):
+    def update_player_info(self, player_id):
+        data = self.client.get_user(player_id, GameModeStr.STANDARD)
+        user = {
+            "_id": str(data.id),
+            "name": data.username,
+            "avatar": data.avatar_url,
+            "global_rank": data.statistics.global_rank,
+            "performance_points": data.statistics.pp,
+        }
+        self.player_collection.update_one({"_id": str(data.id)}, {"$set": user}, upsert=True)
+
+
+    def update_player_info_by_page(self):
         for page_idx in tqdm(range(10), desc="Fetching Leaderboard Pages"):
             rankings = self.client.get_ranking(GameModeStr.STANDARD, RankingType.PERFORMANCE, country="GR",
                                                cursor=None if page_idx == 0 else cursor)
@@ -71,7 +83,6 @@ class OsuAPIService:
                     "name": stats.user.username,
                     "avatar": stats.user.avatar_url,
                     "global_rank": stats.global_rank,
-                    "country_rank": stats.country_rank,
                     "performance_points": stats.pp,
                 }
                 self.player_collection.update_one({"_id": str(stats.user.id)}, {"$set": user}, upsert=True)

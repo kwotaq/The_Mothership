@@ -36,21 +36,24 @@ class MetricsService:
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
-            top_artists = self._get_score_top_stat_count('artist', player_id)
-            top_songs = self._get_score_top_stat_count('title', player_id)
-            top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
-            hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
-            closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
+            self.update_player_metrics(player_id)
 
-            data = {
-                'top_artists': top_artists,
-                'top_songs': top_songs,
-                'top_mods': top_mods,
-                'hour_histogram': hour_histogram,
-                'closest_neighbours': closest_neighbours,
-            }
+    def update_player_metrics(self, player_id):
+        top_artists = self._get_score_top_stat_count('artist', player_id)
+        top_songs = self._get_score_top_stat_count('title', player_id)
+        top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
+        hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
+        closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
 
-            self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
+        data = {
+            'top_artists': top_artists,
+            'top_songs': top_songs,
+            'top_mods': top_mods,
+            'hour_histogram': hour_histogram,
+            'closest_neighbours': closest_neighbours,
+        }
+
+        self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
 
     def update_similarity_coordinates(self):
         data = {"similarity_coordinates": self._calculate_similarity_coordinates()}
@@ -103,15 +106,15 @@ class MetricsService:
         for p in all_players:
             if p['user_id'] == user_id: continue
 
-            d = math.sqrt((p['x'] - tx) ** 2 + (p['y'] - ty) ** 2)
-            raw_results.append({"label": p['user_id'], "d": d})
+            distance = math.sqrt((p['x'] - tx) ** 2 + (p['y'] - ty) ** 2)
+            raw_results.append({"label": p['user_id'], "distance": distance})
 
         if not raw_results: return []
 
         sigma = 5.0
 
         for r in raw_results:
-            score = math.exp(-r["d"] / sigma) * 100
+            score = math.exp(-r["distance"] / sigma) * 100
             r["count"] = round(score, 1)
 
         raw_results.sort(key=lambda x: x["count"], reverse=True)
