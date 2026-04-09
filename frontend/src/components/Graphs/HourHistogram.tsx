@@ -26,19 +26,12 @@ export const HourHistogram = ({data}: { data: { hour: string, count: number }[] 
                 },
                 grid: {
                     line: {stroke: 'var(--bg-tertiary)', strokeWidth: 1}
-                },
-                labels: {
-                    text: {
-                        fill: 'var(--bg-primary)',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontWeight: 'bold',
-                        fontSize: 15
-                    }
                 }
             }}
             axisBottom={{
-                tickSize: 0,
-                tickPadding: 30,
+                tickSize: 10,
+                tickPadding: 10,
+                tickRotation: -30
             }}
             axisLeft={null}
             enableLabel={false}

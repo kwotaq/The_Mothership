@@ -56,6 +56,7 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
     return (
         <section className="mx-auto w-full">
             <div
+                className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
                 ref={chartRef}
                 style={{touchAction: 'none'}}
                 onMouseDown={(e) => {
@@ -89,7 +90,7 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                 onMouseLeave={() => {
                     isDragging.current = false;
                 }}
-                className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative">
+            >
                 <ResponsiveScatterPlot
                     data={nivoData}
                     isInteractive={true}
