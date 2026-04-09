@@ -111,7 +111,8 @@ class MetricsService:
 
         if not raw_results: return []
 
-        sigma = 5.0
+        distances = [r["distance"] for r in raw_results]
+        sigma = sorted(distances)[len(distances) // 2]
 
         for r in raw_results:
             score = math.exp(-r["distance"] / sigma) * 100
