@@ -1,6 +1,7 @@
 export interface CountedItem {
   label: string;
   count: number;
+  [key: string]: unknown;
 }
 
 export interface PlayerMetrics {

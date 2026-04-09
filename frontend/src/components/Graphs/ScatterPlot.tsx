@@ -16,26 +16,10 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
     const hasDragged = useRef(false);
     const dragStart = useRef<[number, number] | null>(null);
     const chartRef = useRef<HTMLDivElement>(null);
-    const defaultDomain = useMemo(() => {
-        if (!data || data.length === 0) return {x: [-60, 60] as [number, number], y: [-60, 60] as [number, number]};
-
-        const xs = data.map(p => p.x);
-        const ys = data.map(p => p.y);
-        const minX = Math.min(...xs);
-        const maxX = Math.max(...xs);
-        const minY = Math.min(...ys);
-        const maxY = Math.max(...ys);
-
-        const xPad = (maxX - minX) * 0.1;
-        const yPad = (maxY - minY) * 0.1;
-
-        return {
-            x: [minX - xPad, maxX + xPad] as [number, number],
-            y: [minY - yPad, maxY + yPad] as [number, number]
-        };
-    }, [data]);
-
-    const [domain, setDomain] = useState(defaultDomain);
+    const [domain, setDomain] = useState({
+        x: [-11, 11] as [number, number],
+        y: [-11, 11] as [number, number]
+    });
 
     useEffect(() => {
         const el = chartRef.current;
@@ -125,7 +109,7 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                     yScale={{type: "linear", min: domain.y[0], max: domain.y[1], nice: false}}
                     axisBottom={null}
                     axisLeft={null}
-                    nodeSize={10}
+                    nodeSize={8}
                     colors={'var(--alien-primary)'}
 
                     onClick={(node) => {
@@ -177,7 +161,7 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
 
                                 <circle
                                     cx="0" cy="0"
-                                    r={isActive ? size * 0.7 : size / 2}
+                                    r={isActive ? size : size / 2}
                                     fill={isActive ? 'var(--alien-primary)' : 'rgba(0, 255, 102, 0.15)'}
                                     stroke="var(--alien-primary)"
                                     strokeWidth={isActive ? 2 : 0.5}

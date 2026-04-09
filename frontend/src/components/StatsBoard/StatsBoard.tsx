@@ -37,6 +37,7 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
             width: 2 as const,
             values: stats.closest_neighbours?.map(item => ({
                 label: playerMap[item.label]?.name || item.label,
+                id: item.label,
                 count: item.count
             })) || []
         }] : []),

@@ -39,7 +39,15 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                         {(stat.values as CountedItem[]).map((val, i) => (
                             <div key={i} className="flex flex-col gap-1">
                                 <div className="flex justify-between items-center text-white text-[1rem]">
-                                    <span className="font-medium">{val.label}</span>
+                                    <a href={`https://osu.ppy.sh/users/${val.id}`}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       className="hover:underline"
+                                       onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <span className="font-medium">{val.label}</span>
+                                    </a>
+
                                     <span className="font-mono text-alien-primary">{val.count}% Match</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
