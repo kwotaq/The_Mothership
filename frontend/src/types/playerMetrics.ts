@@ -1,6 +1,6 @@
 export interface CountedItem {
     label: string;
-    count: number | string;
+    count: number;
     id?: string;
 }
 
