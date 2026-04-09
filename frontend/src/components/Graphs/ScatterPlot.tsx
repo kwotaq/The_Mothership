@@ -16,10 +16,26 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
     const hasDragged = useRef(false);
     const dragStart = useRef<[number, number] | null>(null);
     const chartRef = useRef<HTMLDivElement>(null);
-    const [domain, setDomain] = useState<{ x: [number, number], y: [number, number] }>({
-        x: [-60, 60],
-        y: [-60, 60]
-    });
+    const defaultDomain = useMemo(() => {
+        if (!data || data.length === 0) return {x: [-60, 60] as [number, number], y: [-60, 60] as [number, number]};
+
+        const xs = data.map(p => p.x);
+        const ys = data.map(p => p.y);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+
+        const xPad = (maxX - minX) * 0.1;
+        const yPad = (maxY - minY) * 0.1;
+
+        return {
+            x: [minX - xPad, maxX + xPad] as [number, number],
+            y: [minY - yPad, maxY + yPad] as [number, number]
+        };
+    }, [data]);
+
+    const [domain, setDomain] = useState(defaultDomain);
 
     useEffect(() => {
         const el = chartRef.current;
@@ -92,6 +108,7 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                 }}
             >
                 <ResponsiveScatterPlot
+                    key={data?.length}
                     data={nivoData}
                     isInteractive={true}
                     animate={false}
