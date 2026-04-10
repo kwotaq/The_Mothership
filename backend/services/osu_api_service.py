@@ -42,6 +42,12 @@ class OsuAPIService:
         for score in player_top_scores:
             mods = score.mods
             mod_string = ''.join([mod.mod.value for mod in mods]) or 'NM'
+            if "DT" in mod_string or "NC" in mod_string:
+                bpm_scaler = 1.5
+            elif "HT" in mod_string:
+                bpm_scaler = 0.75
+            else:
+                bpm_scaler = 1.0
 
             score_data = {
                 "_id": str(score.id),
@@ -54,7 +60,7 @@ class OsuAPIService:
                 "creator": score.beatmapset.creator,
                 "difficulty": score.beatmap.version,
                 "last_updated": score.beatmap.last_updated,
-                "bpm": score.beatmap.bpm,
+                "bpm": score.beatmap.bpm * bpm_scaler,
 
                 "max_combo": score.max_combo,
                 "accuracy": score.accuracy,

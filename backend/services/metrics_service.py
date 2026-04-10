@@ -2,6 +2,7 @@ import logging
 import math
 
 import pandas as pd
+from jedi.inference.helpers import is_number
 from tqdm import tqdm
 
 from config.database_config import database
@@ -40,12 +41,14 @@ class MetricsService:
 
 
     def update_player_metrics(self, player_id):
-        top_artists = self._get_score_top_stat_count('artist', player_id, results_limit=7)
-        top_songs = self._get_score_top_stat_count('title', player_id, results_limit=7)
-        top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
-        top_mappers = self._get_score_top_stat_count('creator', player_id, results_limit=7)
-        hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
+        top_artists = self._get_top_stat_count('artist', player_id, results_limit=7)
+        top_songs = self._get_top_stat_count('title', player_id, results_limit=7)
+        top_mods = self._get_top_stat_count('mods', player_id, results_limit=10)
+        top_mappers = self._get_top_stat_count('creator', player_id, results_limit=7)
+        hour_histogram = self._get_top_stat_count("hour", player_id=player_id)
         recent_scores = self._get_recent_tops(player_id=player_id, results_limit=5)
+        bpm_histogram = self._get_top_stat_count("bpm", player_id=player_id)
+        year_created_histogram = self._get_top_stat_count("year", player_id=player_id)
 
         data = {
             'top_artists': top_artists,
@@ -54,6 +57,8 @@ class MetricsService:
             'top_mappers': top_mappers,
             'hour_histogram': hour_histogram,
             'recent_scores': recent_scores,
+            'bpm_histogram': bpm_histogram,
+            'year_created_histogram': year_created_histogram,
         }
 
         self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
@@ -68,11 +73,13 @@ class MetricsService:
             self.player_stats_collection.update_one({"_id": player_id}, {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
     def update_global_player_metrics(self):
-        top_artists = self._get_score_top_stat_count('artist', results_limit=10)
-        top_songs = self._get_score_top_stat_count('title', results_limit=10)
-        top_mods = self._get_score_top_stat_count('mods', results_limit=10)
-        top_mappers = self._get_score_top_stat_count('creator', results_limit=10)
-        hour_histogram = self._calculate_top_play_time_histogram()
+        top_artists = self._get_top_stat_count('artist', results_limit=10)
+        top_songs = self._get_top_stat_count('title', results_limit=10)
+        top_mods = self._get_top_stat_count('mods', results_limit=10)
+        top_mappers = self._get_top_stat_count('creator', results_limit=10)
+        hour_histogram = self._get_top_stat_count("hour")
+        bpm_histogram = self._get_top_stat_count("bpm")
+        year_created_histogram = self._get_top_stat_count("year")
 
         data = {
             'top_artists': top_artists,
@@ -80,13 +87,15 @@ class MetricsService:
             'top_mods': top_mods,
             'top_mappers': top_mappers,
             'hour_histogram': hour_histogram,
+            'bpm_histogram': bpm_histogram,
+            'year_created_histogram': year_created_histogram,
         }
 
         self.global_stats_collection.update_one({"_id": "global_player_metrics"}, {"$set": data}, upsert=True)
 
     def update_global_score_metrics(self):
-        top_players = self._get_score_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
-        top_mappers = self._get_score_top_stat_count('creator', results_limit=7, top_scores_limit=200)
+        top_players = self._get_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
+        top_mappers = self._get_top_stat_count('creator', results_limit=7, top_scores_limit=200)
         recent_scores= self._get_recent_tops(results_limit=10, top_scores_limit=200)
 
         data = {
@@ -134,24 +143,7 @@ class MetricsService:
         raw_results.sort(key=lambda x: x["count"], reverse=True)
         return raw_results[:results_limit]
 
-    def _calculate_top_play_time_histogram(self, player_id=None):
-        pipeline = []
-
-        if player_id:
-            pipeline.append({"$match": {"user_id": player_id}})
-
-        pipeline.extend([
-            {"$project": {"hour": {"$hour": {"date": "$ended_at", "timezone": "Europe/Athens"}}}},
-            {"$group": {"_id": "$hour", "count": {"$sum": 1}}},
-            {"$sort": {"_id": 1}}
-        ])
-
-        results = list(self.scores_collection.aggregate(pipeline))
-
-        counts_map = {r['_id']: r['count'] for r in results}
-        return [counts_map.get(hour, 0) for hour in range(24)]
-
-    def _get_score_top_stat_count(self, field_name, player_id=None, results_limit=5, top_scores_limit=None):
+    def _get_top_stat_count(self, field_name, player_id=None, results_limit=None, top_scores_limit=None):
         pipeline = []
 
         if player_id:
@@ -163,14 +155,64 @@ class MetricsService:
                 {"$limit": top_scores_limit}
             ])
 
-        pipeline.extend([
-            {"$group": {"_id": f"${field_name}", "count": {"$sum": 1}}},
-            {"$sort": {"count": -1}},
-            {"$limit": results_limit},
-            {"$project": {"label": "$_id", "count": 1, "_id": 0}}
-        ])
+        if field_name == "hour":
+            pipeline.append({
+                "$project": {
+                    "val": {"$hour": {"date": "$ended_at", "timezone": "Europe/Athens"}}
+                }
+            })
+            group_id = "$val"
+        elif field_name == "year":
+            pipeline.append({
+                "$project": {
+                    "val": {"$year": {"date": "$last_updated", "timezone": "Europe/Athens"}}
+                }
+            })
+            group_id = "$val"
 
-        return list(self.scores_collection.aggregate(pipeline))
+        elif field_name == "bpm":
+            pipeline.append({
+                "$project": {
+                    "val": {
+                        "$subtract": [
+                            "$bpm",
+                            {"$mod": ["$bpm", 5]}
+                        ]
+                    }
+                }
+            })
+            group_id = "$val"
+        else:
+            group_id = f"${field_name}"
+
+        pipeline.append({"$group": {"_id": group_id, "count": {"$sum": 1}}})
+
+
+        is_number_field = field_name in ["hour", "year", "bpm"]
+        sort_order = {"_id": 1} if is_number_field else {"count": -1}
+        pipeline.append({"$sort": sort_order})
+
+        if results_limit and results_limit > 0:
+            pipeline.append({"$limit": results_limit})
+
+        pipeline.append({
+            "$project": {
+                "label": {"$toString": "$_id"},
+                "count": 1,
+                "_id": 0
+            }
+        })
+
+        results = list(self.scores_collection.aggregate(pipeline))
+
+        if field_name == "hour":
+            counts_map = {r['label']: r['count'] for r in results}
+            return [
+                {"label": str(h), "count": counts_map.get(str(h), 0)}
+                for h in range(24)
+            ]
+
+        return results
 
     def _get_recent_tops(self, player_id=None, results_limit=5, top_scores_limit=None):
         pipeline = []
