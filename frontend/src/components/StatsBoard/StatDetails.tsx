@@ -71,6 +71,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                     month: 'short',
                                     day: 'numeric',
                                     hour: 'numeric',
+                                    year: 'numeric',
                                     minute: '2-digit'
                                 })
                                 : "";
