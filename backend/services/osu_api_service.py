@@ -16,6 +16,7 @@ class OsuAPIService:
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()
         self.recent_score_cache = database.get_recent_scores_collection()
+        self.player_stats_collection = database.get_player_stats_collection()
 
     def get_top_scores(self):
         return list(self.scores_collection.find().sort("pp", -1).limit(200))
@@ -86,19 +87,34 @@ class OsuAPIService:
         }
         self.player_collection.update_one({"_id": str(data.id)}, {"$set": user}, upsert=True)
 
-
     def update_player_info_by_page(self):
+        active_ids = []
+
         for page_idx in tqdm(range(10), desc="Fetching Leaderboard Pages"):
             rankings = self.client.get_ranking(GameModeStr.STANDARD, RankingType.PERFORMANCE, country="GR",
                                                cursor=None if page_idx == 0 else cursor)
             cursor = rankings.cursor
 
             for stats in tqdm(rankings.ranking, desc=f"Processing Page {page_idx}", unit="player", leave=False):
+                user_id = str(stats.user.id)
+                active_ids.append(user_id)
                 user = {
-                    "_id": str(stats.user.id),
+                    "_id": user_id,
                     "name": stats.user.username,
                     "avatar": stats.user.avatar_url,
                     "global_rank": stats.global_rank,
                     "performance_points": stats.pp,
                 }
-                self.player_collection.update_one({"_id": str(stats.user.id)}, {"$set": user}, upsert=True)
+                self.player_collection.update_one({"_id": user_id}, {"$set": user}, upsert=True)
+
+        removed = list(self.player_collection.find(
+            {"_id": {"$nin": active_ids}}, {"_id": 1}
+        ))
+        removed_ids = [p["_id"] for p in removed]
+
+        if removed_ids:
+            self.player_collection.delete_many({"_id": {"$in": removed_ids}})
+            self.scores_collection.delete_many({"user_id": {"$in": removed_ids}})
+            self.recent_score_cache.delete_many({"user_id": {"$in": removed_ids}})
+            self.player_stats_collection.delete_many({"user_id": {"$in": removed_ids}})
+            logger.info(f"Trimmed {len(removed_ids)} players and their data")
