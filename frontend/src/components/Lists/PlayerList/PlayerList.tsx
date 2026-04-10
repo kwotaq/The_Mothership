@@ -40,7 +40,7 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
         <div className="flex flex-col h-full">
             <div
                 ref={listContainerRef}
-                className="h-[calc(110vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
+                className="h-[calc(160vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
             >
                 <div style={{height: virtualizer.getTotalSize(), position: 'relative'}}>
                     {virtualizer.getVirtualItems().map(virtualItem => {

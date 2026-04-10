@@ -1,4 +1,4 @@
-import {HourHistogram} from "../Graphs/HourHistogram.tsx";
+import {Histogram} from "../Graphs/Histogram.tsx";
 import {PieChart} from "../Graphs/PieChart.tsx";
 import type {CountedItem} from "../../types/playerMetrics.ts";
 
@@ -15,10 +15,10 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
         switch (stat.type) {
             case "histogram":
                 return (
-                    <HourHistogram
-                        data={(stat.values as number[]).map((count, hr) => ({
-                            hour: `${hr}:00`,
-                            count: count
+                    <Histogram
+                        data={(stat.values as CountedItem[]).map((item) => ({
+                            label: item.label,
+                            count: item.count
                         }))}
                     />
                 );
@@ -26,9 +26,9 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
             case "chart":
                 return (
                     <PieChart
-                        data={(stat.values as CountedItem[]).map(v => ({
-                            id: v.label,
-                            value: v.count
+                        data={(stat.values as CountedItem[]).map(item => ({
+                            id: item.label,
+                            value: item.count
                         }))}
                     />
                 );
@@ -63,7 +63,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
 
             case "score":
                 return (
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1">
                         {(stat.values as CountedItem[]).map((val, i) => {
                             const info = val.info as any;
                             const date = info?.date
@@ -85,7 +85,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                         </span>
                                     </div>
                                     <div className="flex flex-col min-w-0 ml-4 w-full">
-                                        <div className="flex justify-between items-baseline gap-2">
+                                        <div className="flex justify-between items-baseline">
                                             {val.label && (
                                                 <span>
                                                     <a href={`https://osu.ppy.sh/users/${val.info.user_id}`}

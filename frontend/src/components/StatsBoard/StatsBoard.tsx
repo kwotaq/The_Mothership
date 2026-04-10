@@ -15,19 +15,9 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
                 <div className="mx-auto w-full">
                     <StatDetails stats={[
                         {
-                            label: "Top Players",
-                            type: 'chart',
-                            width: 2,
-                            values: stats.top_players?.map((item) => ({
-                                label: playerMap[item.label]?.name || `${item.label}`,
-                                count: item.count
-                            })) || []
-                        },
-                        {label: "Top Mappers", values: stats.top_mappers || [], type: 'list', width: 1},
-                        {
                             label: "Recent Tops",
                             type: 'score' as const, // Our new case
-                            width: 2 as const,
+                            width: 3 as const,
                             values: stats.recent_scores?.map(score => ({
                                 label: playerMap[score.user_id]?.name || "Unknown",
                                 count: Math.round(score.pp),
@@ -40,6 +30,17 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
                                 }
                             })) || []
                         },
+                        {
+                            label: "Top Players",
+                            type: 'chart',
+                            width: 2,
+                            values: stats.top_players?.map((item) => ({
+                                label: playerMap[item.label]?.name || `${item.label}`,
+                                count: item.count
+                            })) || []
+                        },
+                        {label: "Top Mappers", values: stats.top_mappers || [], type: 'list', width: 1},
+
                     ]}/>
                 </div>
             );
@@ -50,13 +51,14 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
             ...(isPlayer(stats) ? [{
                 label: "Most Similar Players",
                 type: 'similarity' as const,
-                width: 2 as const,
+                width: 1 as const,
                 values: stats.closest_neighbours?.map(item => ({
                     label: playerMap[item.label as string]?.name || item.label,
                     id: item.label,
                     count: item.count
                 })) || []
             }] : []),
+            {label: "Top Mappers", values: stats.top_mappers || [], type: 'list', width: 1},
             ...(isPlayer(stats) ? [{
                 label: "Recent Tops",
                 type: 'score' as const,
@@ -73,10 +75,20 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
                     }
                 }))
             }] : []),
-            {label: "Top Mappers", values: stats.top_mappers || [], type: 'list', width: 1},
             {label: "Top Artists", values: stats.top_artists || [], type: 'list', width: 1},
+            {label: "Top Plays By Year Created", values: stats.year_created_histogram || [], type: 'histogram', width: 2},
             {label: "Top Songs", values: stats.top_songs || [], type: 'list', width: 1},
-            {label: "Top Plays By Hour", values: stats.hour_histogram || [], type: 'histogram', width: 3},
+            {label: "Top Plays By BPM", values: stats.bpm_histogram || [], type: 'histogram', width: 3},
+            {
+                label: "Top Plays By Hour",
+                type: 'histogram',
+                width: 3,
+                values: stats.hour_histogram.map(item => ({
+                        label: `${item.label}:00`,
+                        count: item.count
+                    }))
+                    || []
+            },
         ];
 
         return (

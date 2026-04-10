@@ -9,5 +9,7 @@ export interface GlobalMetrics {
   top_songs: CountedItem[];
   top_mappers: CountedItem[];
   top_mods: CountedItem[];
-  hour_histogram: number[];
+  hour_histogram: CountedItem[];
+  bpm_histogram: CountedItem[];
+  year_created_histogram: CountedItem[];
 }
