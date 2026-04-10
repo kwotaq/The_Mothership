@@ -78,19 +78,19 @@ def _create_feature_matrix(scores):
         feature_matrix = feature_matrix.toarray()
 
     feature_weights = {
-        'num__unique_artists': 2.0,
-        'num__unique_creators': 1.7,
-        'num__max_same_song_count': 0.6,
-        'num__most_common_year': 2.0,
-        'num__avg_acc': 1.4,
-        'num__avg_pp': 1.0,
-        'num__avg_combo': 1.8,
-        'num__avg_bpm': 1.0,
+        'num__unique_artists': 1.3,
+        'num__unique_creators': 1.8,
+        'num__max_same_song_count': 1.0,
+        'num__most_common_year': 1.2,
+        'num__avg_acc': 1.1,
+        'num__avg_pp': 1.2,
+        'num__avg_combo': 1.0,
+        'num__avg_bpm': 1.6,
 
-        'cat__top_mod': 3.0,
-        'cat__top_artist': 1.2,
-        'cat__top_creator': 1.7,
-        'cat__top_song': 1.0,
+        'cat__top_mod': 2.5,
+        'cat__top_artist': 1.4,
+        'cat__top_creator': 1.4,
+        'cat__top_song': 0.9,
     }
 
     feature_names = preprocessor.get_feature_names_out()
@@ -109,7 +109,7 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = UMAP(n_components=2, n_neighbors=8, min_dist=0.1, spread=1.0, n_epochs=500, random_state=727)
+    reducer = UMAP(n_components=2, n_neighbors=8, min_dist=0.01, spread=1.0, n_epochs=500, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
     coordinates[:, 0] = (coordinates[:, 0] - coordinates[:, 0].min()) / (coordinates[:, 0].max() - coordinates[:, 0].min()) * 20 - 10
     coordinates[:, 1] = (coordinates[:, 1] - coordinates[:, 1].min()) / (coordinates[:, 1].max() - coordinates[:, 1].min()) * 20 - 10
