@@ -56,11 +56,9 @@ export const Histogram = ({data}: { data: { label: string | null, count: number 
                 tooltip={({value, indexValue}) => {
                     return (
                         <div
-                            className="bg-bg-primary p-[9px] border border-alien-primary rounded text-white whitespace-nowrap flex flex-col gap-1">
-                            <span className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">
-                                {indexValue}
-                            </span>
-                            <strong className="text-alien-primary font-mono text-[1.1rem]">{value}</strong>
+                            className="bg-bg-primary p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap">
+                            <strong className="text-alien-primary">{indexValue}</strong>
+                            <div>{value}</div>
                         </div>
                     );
                 }}
