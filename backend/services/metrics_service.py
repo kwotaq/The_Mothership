@@ -2,7 +2,6 @@ import logging
 import math
 
 import pandas as pd
-from jedi.inference.helpers import is_number
 from tqdm import tqdm
 
 from config.database_config import database
@@ -39,7 +38,6 @@ class MetricsService:
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
             self.update_player_metrics(player_id)
 
-
     def update_player_metrics(self, player_id):
         top_artists = self._get_top_stat_count('artist', player_id, results_limit=7)
         top_songs = self._get_top_stat_count('title', player_id, results_limit=7)
@@ -70,7 +68,8 @@ class MetricsService:
         player_ids = self.player_collection.distinct("_id")
         for player_id in tqdm(player_ids, desc="Updating Similarities", unit="player"):
             closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
-            self.player_stats_collection.update_one({"_id": player_id}, {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
+            self.player_stats_collection.update_one({"_id": player_id},
+                                                    {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
     def update_global_player_metrics(self):
         top_artists = self._get_top_stat_count('artist', results_limit=10)
@@ -96,7 +95,7 @@ class MetricsService:
     def update_global_score_metrics(self):
         top_players = self._get_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
         top_mappers = self._get_top_stat_count('creator', results_limit=7, top_scores_limit=200)
-        recent_scores= self._get_recent_tops(results_limit=10, top_scores_limit=200)
+        recent_scores = self._get_recent_tops(results_limit=10, top_scores_limit=200)
 
         data = {
             'top_players': top_players,
@@ -186,7 +185,6 @@ class MetricsService:
             group_id = f"${field_name}"
 
         pipeline.append({"$group": {"_id": group_id, "count": {"$sum": 1}}})
-
 
         is_number_field = field_name in ["hour", "year", "bpm"]
         sort_order = {"_id": 1} if is_number_field else {"count": -1}
