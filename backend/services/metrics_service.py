@@ -42,15 +42,19 @@ class MetricsService:
         top_artists = self._get_score_top_stat_count('artist', player_id)
         top_songs = self._get_score_top_stat_count('title', player_id)
         top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
+        top_mappers = self._get_score_top_stat_count('creator', player_id)
         hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
         closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
+        recent_scores= self._get_recent_tops(player_id= player_id,results_limit=5)
 
         data = {
             'top_artists': top_artists,
             'top_songs': top_songs,
             'top_mods': top_mods,
+            'top_mappers': top_mappers,
             'hour_histogram': hour_histogram,
             'closest_neighbours': closest_neighbours,
+            'recent_scores': recent_scores,
         }
 
         self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
@@ -63,12 +67,14 @@ class MetricsService:
         top_artists = self._get_score_top_stat_count('artist')
         top_songs = self._get_score_top_stat_count('title')
         top_mods = self._get_score_top_stat_count('mods', results_limit=10)
+        top_mappers = self._get_score_top_stat_count('creator')
         hour_histogram = self._calculate_top_play_time_histogram()
 
         data = {
             'top_artists': top_artists,
             'top_songs': top_songs,
             'top_mods': top_mods,
+            'top_mappers': top_mappers,
             'hour_histogram': hour_histogram,
         }
 
@@ -76,11 +82,13 @@ class MetricsService:
 
     def update_global_score_metrics(self):
         top_players = self._get_score_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
-        top_mappers = self._get_score_top_stat_count('creator', results_limit=5, top_scores_limit=200)
+        top_mappers = self._get_score_top_stat_count('creator', results_limit=7, top_scores_limit=200)
+        recent_scores= self._get_recent_tops(results_limit=10, top_scores_limit=200)
 
         data = {
             'top_players': top_players,
             'top_mappers': top_mappers,
+            'recent_scores': recent_scores
         }
 
         self.global_stats_collection.update_one({"_id": "global_score_metrics"}, {"$set": data}, upsert=True)
@@ -156,6 +164,25 @@ class MetricsService:
             {"$sort": {"count": -1}},
             {"$limit": results_limit},
             {"$project": {"label": "$_id", "count": 1, "_id": 0}}
+        ])
+
+        return list(self.scores_collection.aggregate(pipeline))
+
+    def _get_recent_tops(self, player_id=None, results_limit=5, top_scores_limit=None):
+        pipeline = []
+
+        if player_id:
+            pipeline.append({"$match": {"user_id": player_id}})
+
+        if top_scores_limit:
+            pipeline.extend([
+                {"$sort": {"pp": -1}},
+                {"$limit": top_scores_limit}
+            ])
+
+        pipeline.extend([
+            {"$sort": {"ended_at": -1}},
+            {"$limit": results_limit},
         ])
 
         return list(self.scores_collection.aggregate(pipeline))
