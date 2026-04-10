@@ -76,7 +76,15 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
                 }))
             }] : []),
             {label: "Top Artists", values: stats.top_artists || [], type: 'list', width: 1},
-            {label: "Top Plays By Year Created", values: stats.year_created_histogram || [], type: 'histogram', width: 2},
+            {
+                label: "Top Plays By Year Created",
+                values: stats.year_created_histogram.map(item => ({
+                    label: item.label === "2014" ? "≤ 2014" : item.label,
+                    count: item.count
+                })) || [],
+                type: 'histogram',
+                width: 2
+            },
             {label: "Top Songs", values: stats.top_songs || [], type: 'list', width: 1},
             {label: "Top Plays By BPM", values: stats.bpm_histogram || [], type: 'histogram', width: 3},
             {

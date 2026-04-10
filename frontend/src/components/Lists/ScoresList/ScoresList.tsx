@@ -5,7 +5,7 @@ export const ScoresList = ({scores}: { scores: Score[] }) => {
     return (
         <div className="flex flex-col h-full">
             <div
-                className="h-[calc(110vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
+                className="h-[calc(160vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
             >
                 <div className="flex flex-col gap-4">
                     {scores.map((score, index) => (
