@@ -109,7 +109,7 @@ def analyze_profiles(scores):
     df = df.groupby('user_id')
     feature_matrix, user_idx = _create_feature_matrix(df)
     similarity_matrix = cosine_similarity(feature_matrix)
-    reducer = UMAP(n_components=2, n_neighbors=8, min_dist=0.1, spread=1.0, random_state=727)
+    reducer = UMAP(n_components=2, n_neighbors=8, min_dist=0.1, spread=1.0, n_epochs=500, random_state=727)
     coordinates = reducer.fit_transform(similarity_matrix)
     coordinates[:, 0] = (coordinates[:, 0] - coordinates[:, 0].min()) / (coordinates[:, 0].max() - coordinates[:, 0].min()) * 20 - 10
     coordinates[:, 1] = (coordinates[:, 1] - coordinates[:, 1].min()) / (coordinates[:, 1].max() - coordinates[:, 1].min()) * 20 - 10
