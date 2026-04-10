@@ -1,5 +1,4 @@
-import {useMemo, useState} from "react";
-import {PlayerList} from "../components/Lists/PlayerList/PlayerList.tsx";
+import {useState} from "react";
 import {useData} from "../utility/hooks/useData.ts";
 import {ErrorBoundary} from 'react-error-boundary';
 import api from "../api.tsx";
@@ -8,14 +7,12 @@ import type {Player} from "../types/player.ts";
 import {DataHandler} from "../utility/handlers/DataHandler.tsx";
 import {ErrorFallback} from "../utility/handlers/ErrorFallback.tsx";
 import {ScatterPlot} from "../components/Graphs/ScatterPlot.tsx";
-import {usePlayers} from "../utility/context/playerContext.tsx";
 import {SectionHeader} from "../utility/SectionHeader.tsx";
-import {SearchBox} from "../utility/SearchBox.tsx";
+import {PlayerPanel} from "../components/Lists/PlayerList/PlayerPanel.tsx";
 
 const fetchCoordinates = () => api.get('/api/players/similarity').then(res => res.data.similarity_coordinates);
 
 export const PlayerStatistics = () => {
-    const {players, loading: playersLoading, error: playersError} = usePlayers();
 
     const coordinatesReq = useData(['coordinates'], fetchCoordinates);
 
@@ -45,37 +42,9 @@ export const PlayerStatistics = () => {
         setActivePlayer((prev) => (prev?._id === player._id ? null : player));
     };
 
-    const [filter, setFilter] = useState<string>('');
-
-    const filteredPlayers = useMemo(() => {
-        if (!players || !filter) return players;
-        return players.filter(p =>
-            p.name.toLowerCase().includes(filter.toLowerCase())
-        );
-    }, [players, filter]);
-
     return (
         <div className="flex gap-5 p-5 pl-20 items-start">
-            <div className="w-[40%] shrink-0">
-                <div className="pb-6">
-                    <SectionHeader title='Player Rankings'/>
-                    <SearchBox setFilter={setFilter}/>
-                </div>
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <DataHandler
-                        loading={playersLoading}
-                        error={playersError}
-                        data={players}
-                        label={"players"}
-                    >
-                        <PlayerList
-                            players={filteredPlayers}
-                            onToggle={handleTogglePlayer}
-                            activePlayer={activePlayer}
-                        />
-                    </DataHandler>
-                </ErrorBoundary>
-            </div>
+            <PlayerPanel onToggle={handleTogglePlayer} activePlayer={activePlayer}/>
 
             <div className="flex-1 h-full px-20 flex flex-col gap-5 min-w-0">
                 <div>

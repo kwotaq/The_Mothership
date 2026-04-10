@@ -1,6 +1,7 @@
 import type {Player} from '../../../types/player.ts';
 import {PlayerCard} from './PlayerCard.tsx';
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
+import {useVirtualizer} from '@tanstack/react-virtual';
 
 interface PlayerListProps {
     players: Player[];
@@ -12,21 +13,28 @@ interface PlayerListProps {
 export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) => {
     const listContainerRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (activePlayer && listContainerRef.current) {
-            const activeElement = listContainerRef.current.querySelector(
-                `[data-id="${activePlayer._id}"]`
-            );
+    const firstItemRef = useRef<HTMLDivElement>(null);
+    const [estimatedSize, setEstimatedSize] = useState(88);
 
-            if (activeElement) {
-                activeElement.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest",
-                    inline: "start"
-                });
-            }
+    useEffect(() => {
+        if (firstItemRef.current) {
+            setEstimatedSize(firstItemRef.current.getBoundingClientRect().height);
         }
-    }, [activePlayer]);
+    }, [players]);
+
+    const virtualizer = useVirtualizer({
+        count: players?.length ?? 0,
+        getScrollElement: () => listContainerRef.current,
+        estimateSize: () => estimatedSize,
+        measureElement: (el) => el.getBoundingClientRect().height,
+        overscan: 5
+    });
+
+    useEffect(() => {
+        if (!activePlayer) return;
+        const index = players.findIndex(p => p._id === activePlayer._id);
+        if (index !== -1) virtualizer.scrollToIndex(index, {behavior: 'smooth'});
+    }, [activePlayer, players, virtualizer]);
 
     return (
         <div className="flex flex-col h-full">
@@ -34,17 +42,34 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
                 ref={listContainerRef}
                 className="h-[calc(110vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
             >
-                <div className="flex flex-col gap-4">
-                    {players.map((player, index) => (
-                        <PlayerCard
-                            key={player._id}
-                            player={player}
-                            index={index + 1}
-                            onToggle={onToggle}
-                            isActive={activePlayer?._id === player._id}
-                            data-id={player._id}
-                        />
-                    ))}
+                <div style={{height: virtualizer.getTotalSize(), position: 'relative'}}>
+                    {virtualizer.getVirtualItems().map(virtualItem => {
+                        const player = players[virtualItem.index];
+                        return (
+                            <div
+                                key={virtualItem.key}
+                                data-index={virtualItem.index}
+                                ref={(el) => {
+                                    virtualizer.measureElement(el);
+                                    if (virtualItem.index === 0 && el) firstItemRef.current = el;
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: virtualItem.start,
+                                    width: '100%',
+                                    paddingBottom: '1rem'
+                                }}
+                            >
+                                <PlayerCard
+                                    player={player}
+                                    index={virtualItem.index + 1}
+                                    onToggle={onToggle}
+                                    isActive={activePlayer?._id === player._id}
+                                    data-id={player._id}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 

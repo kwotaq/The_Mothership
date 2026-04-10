@@ -188,7 +188,8 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
 
                 <div className="flex flex-col">
                     {visiblePoints.filter(series => series.data.length > 0).map((series) => {
-                        const playerName = playerMap[series.id]?.name || `User ${series.id}`;
+                        const player = playerMap[series.id]
+                        const playerName = player.name || `User ${series.id}`;
                         const color = COLOR_PALETTE[colorIndexMap[series.id] % COLOR_PALETTE.length];
                         const isHovered = hoveredPlayerId === series.id;
 
@@ -212,7 +213,14 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                                     className={`text-sm truncate font-medium transition-colors ${
                                         isHovered ? 'text-white' : 'text-text-primary'
                                     }`} title={playerName}>
-                                    {playerName}
+                                    <a href={`https://osu.ppy.sh/users/${player._id}`}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       className="text-text-primary hover:underline text-2xl font-semibold tracking-wider uppercase transition-colors"
+                                       onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {player.name}
+                                    </a>
                                 </span>
                             </div>
                         );

@@ -43,10 +43,15 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
                             className="w-[45px] h-[45px] border-2 border-alien-primary bg-black object-cover [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]"
                             alt={player?.name}
                         />
-                        <span
-                            className="text-alien-primary text-[10px] font-mono font-extrabold uppercase tracking-tighter w-full line-clamp-1 text-center mt-1 [text-shadow:0_0_5px_rgba(0,255,102,0.4)]">
-                            {player?.name || 'Unknown'}
-                        </span>
+
+                        <a href={`https://osu.ppy.sh/users/${player._id}`}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="text-alien-primary hover:underline text-[10px] font-mono font-extrabold uppercase tracking-tighter w-full line-clamp-1 text-center mt-1"
+                           onClick={(e) => e.stopPropagation()}
+                        >
+                            {player.name}
+                        </a>
                     </div>
 
                     <div

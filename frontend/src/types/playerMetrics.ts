@@ -1,7 +1,9 @@
+import type {Score} from "./score.ts";
+
 export interface CountedItem {
-    label: string;
+    label: string | null;
     count: number;
-    id?: string;
+    info?: any;
 }
 
 export interface PlayerMetrics {
@@ -9,6 +11,8 @@ export interface PlayerMetrics {
   top_artists: CountedItem[];
   top_songs: CountedItem[];
   top_mods: CountedItem[];
+  top_mappers: CountedItem[];
   hour_histogram: number[];
   closest_neighbours: CountedItem[];
+  recent_scores: Score[];
 }

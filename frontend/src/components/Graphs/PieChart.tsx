@@ -1,6 +1,6 @@
 import {ResponsivePie} from '@nivo/pie';
 
-export const PieChart = ({data}: { data: { id: string, value: number }[] }) => {
+export const PieChart = ({data}: { data: { id: string | null, value: number }[] }) => {
     const total = data.reduce((acc, item) => acc + item.value, 0);
 
     return (

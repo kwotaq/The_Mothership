@@ -5,7 +5,7 @@ import type {CountedItem} from "../../types/playerMetrics.ts";
 export interface StatItem {
     label: string;
     values: CountedItem[] | number[];
-    type: "list" | "histogram" | "chart" | "similarity";
+    type: "list" | "histogram" | "chart" | "similarity" | "score";
     width?: 1 | 2 | 3; // 1 = small, 2 = medium, 3 = full width
 }
 
@@ -39,7 +39,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                         {(stat.values as CountedItem[]).map((val, i) => (
                             <div key={i} className="flex flex-col gap-1">
                                 <div className="flex justify-between items-center text-white text-[1rem]">
-                                    <a href={`https://osu.ppy.sh/users/${val.id}`}
+                                    <a href={`https://osu.ppy.sh/users/${val.info as string}`}
                                        target="_blank"
                                        rel="noopener noreferrer"
                                        className="hover:underline"
@@ -58,6 +58,65 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                );
+
+            case "score":
+                return (
+                    <div className="flex flex-col gap-2">
+                        {(stat.values as CountedItem[]).map((val, i) => {
+                            const info = val.info as any;
+                            const date = info?.date
+                                ? new Date(info.date).toLocaleString([], {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: '2-digit'
+                                })
+                                : "";
+
+                            return (
+                                <div key={i}
+                                     className="group flex items-center py-2 border-b border-dashed border-white/5 last:border-0">
+                                    <div className="min-w-[60px] shrink-0">
+                                        <span
+                                            className="text-[1.1rem] font-mono font-bold text-alien-primary">
+                                            {val.count}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col min-w-0 ml-4 w-full">
+                                        <div className="flex justify-between items-baseline gap-2">
+                                            {val.label && (
+                                                <span>
+                                                    <a href={`https://osu.ppy.sh/users/${val.info.user_id}`}
+                                                       target="_blank"
+                                                       rel="noopener noreferrer"
+                                                       className="font-bold text-text-primary text-[1rem] leading-none hover:underline"
+                                                       onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {val.label}
+                                                    </a>
+                                                </span>
+                                            )}
+                                            <span
+                                                className="text-[10px] text-text-muted uppercase tracking-wider shrink-0">
+                                                {date}
+                                            </span>
+                                        </div>
+                                        <div className="truncate mt-1">
+                                            <a href={`https://osu.ppy.sh/scores/${val.info.score_id}`}
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               className="text-text-primary hover:underline"
+                                               onClick={(e) => e.stopPropagation()}
+                                            >
+                                                {info?.artist} — {info?.title}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 );
 
