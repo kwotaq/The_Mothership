@@ -31,7 +31,9 @@ def sync_player_all(player_id):
     OsuAPIService().update_player_info(player_id)
     OsuAPIService().update_player_top_scores(player_id)
     from services.metrics_service import MetricsService
-    MetricsService().update_recent_tops(player_id)
+    MetricsService().update_player_metrics(player_id)
+    MetricsService().update_global_player_metrics()
+    MetricsService().update_global_score_metrics()
 
 
 @celery.task

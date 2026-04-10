@@ -38,12 +38,6 @@ class MetricsService:
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
             self.update_player_metrics(player_id)
 
-    def update_recent_tops(self, player_id):
-        recent_scores_player = self._get_recent_tops(player_id=player_id, results_limit=5)
-        self.player_stats_collection.update_one({"_id": player_id}, {"$set": {"recent_scores": recent_scores_player}},upsert=True)
-        recent_scores_global = self._get_recent_tops(results_limit=10, top_scores_limit=200)
-        self.global_stats_collection.update_one({"_id": "global_player_metrics"}, {"$set": {"recent_scores": recent_scores_global}},upsert=True)
-
 
     def update_player_metrics(self, player_id):
         top_artists = self._get_score_top_stat_count('artist', player_id, results_limit=7)
@@ -51,7 +45,6 @@ class MetricsService:
         top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
         top_mappers = self._get_score_top_stat_count('creator', player_id, results_limit=7)
         hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
-        closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
         recent_scores = self._get_recent_tops(player_id=player_id, results_limit=5)
 
         data = {
@@ -60,7 +53,6 @@ class MetricsService:
             'top_mods': top_mods,
             'top_mappers': top_mappers,
             'hour_histogram': hour_histogram,
-            'closest_neighbours': closest_neighbours,
             'recent_scores': recent_scores,
         }
 
@@ -69,6 +61,11 @@ class MetricsService:
     def update_similarity_coordinates(self):
         data = {"similarity_coordinates": self._calculate_similarity_coordinates()}
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
+
+        player_ids = self.player_collection.distinct("_id")
+        for player_id in tqdm(player_ids, desc="Updating Similarities", unit="player"):
+            closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
+            self.player_stats_collection.update_one({"_id": player_id}, {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
     def update_global_player_metrics(self):
         top_artists = self._get_score_top_stat_count('artist', results_limit=10)
