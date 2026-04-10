@@ -39,10 +39,10 @@ class MetricsService:
             self.update_player_metrics(player_id)
 
     def update_player_metrics(self, player_id):
-        top_artists = self._get_score_top_stat_count('artist', player_id)
-        top_songs = self._get_score_top_stat_count('title', player_id)
+        top_artists = self._get_score_top_stat_count('artist', player_id, results_limit=7)
+        top_songs = self._get_score_top_stat_count('title', player_id, results_limit=7)
         top_mods = self._get_score_top_stat_count('mods', player_id, results_limit=10)
-        top_mappers = self._get_score_top_stat_count('creator', player_id)
+        top_mappers = self._get_score_top_stat_count('creator', player_id, results_limit=7)
         hour_histogram = self._calculate_top_play_time_histogram(player_id=player_id)
         closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
         recent_scores= self._get_recent_tops(player_id= player_id,results_limit=5)
@@ -64,10 +64,10 @@ class MetricsService:
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
 
     def update_global_player_metrics(self):
-        top_artists = self._get_score_top_stat_count('artist')
-        top_songs = self._get_score_top_stat_count('title')
+        top_artists = self._get_score_top_stat_count('artist', results_limit=10)
+        top_songs = self._get_score_top_stat_count('title', results_limit=10)
         top_mods = self._get_score_top_stat_count('mods', results_limit=10)
-        top_mappers = self._get_score_top_stat_count('creator')
+        top_mappers = self._get_score_top_stat_count('creator', results_limit=10)
         hour_histogram = self._calculate_top_play_time_histogram()
 
         data = {
