@@ -1,4 +1,4 @@
-import {ResponsiveScatterPlot} from '@nivo/scatterplot';
+import {ResponsiveScatterPlotCanvas} from '@nivo/scatterplot';
 import type {UserCoordinate} from "../../types/userCoordinates.ts";
 import type {Player} from "../../types/player.ts";
 import {usePlayers} from '../../utility/context/playerContext.tsx';
@@ -53,6 +53,28 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
         })),
     }], [data, activePlayer]);
 
+    const activePoint = useMemo(() =>
+            nivoData[0].data.find(p => p.isActive)
+        , [nivoData]);
+
+    const [chartSize, setChartSize] = useState({width: 0, height: 0});
+
+    useEffect(() => {
+        if (!chartRef.current) return;
+        const {clientWidth, clientHeight} = chartRef.current;
+        setChartSize({width: clientWidth, height: clientHeight});
+    }, []);
+
+    const activePos = useMemo(() => {
+        if (!activePoint || chartSize.width === 0) return null;
+        const margin = 40;
+        const width = chartSize.width - margin * 2;
+        const height = chartSize.height - margin * 2;
+        const px = margin + ((activePoint.x - domain.x[0]) / (domain.x[1] - domain.x[0])) * width;
+        const py = margin + ((1 - (activePoint.y - domain.y[0]) / (domain.y[1] - domain.y[0])) * height);
+        return {px, py};
+    }, [activePoint, domain, chartSize]);
+
     return (
         <section className="mx-auto w-full">
             <div
@@ -91,11 +113,10 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                     isDragging.current = false;
                 }}
             >
-                <ResponsiveScatterPlot
+                <ResponsiveScatterPlotCanvas
                     key={data?.length}
                     data={nivoData}
                     isInteractive={true}
-                    animate={false}
                     theme={{
                         axis: {
                             legend: {text: {fill: 'var(--text-primary)'}}
@@ -109,8 +130,9 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                     yScale={{type: "linear", min: domain.y[0], max: domain.y[1], nice: false}}
                     axisBottom={null}
                     axisLeft={null}
-                    nodeSize={8}
-                    colors={'var(--alien-primary)'}
+                    nodeSize={12}
+
+                    colors={'rgba(0, 255, 102, 0.2)'}
 
                     onClick={(node) => {
                         if (hasDragged.current) return;
@@ -131,49 +153,17 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                             </div>
                         );
                     }}
-
-                    nodeComponent={({node}) => {
-                        const {x, y, size} = node;
-                        const isActive = node.data.isActive;
-
-                        return (
-                            <g transform={`translate(${x},${y})`}>
-                                {isActive && (
-                                    <>
-                                        <circle
-                                            cx="0" cy="0" r={size}
-                                            className="fill-alien-primary blur-[6px] opacity-20 pointer-events-none origin-center [transform-box:fill-box]"
-                                        />
-                                        <style>
-                                            {`@keyframes steady-pulse {
-                                            0% { transform: scale(1); opacity: 0.6; }
-                                            100% { transform: scale(3); opacity: 0; }}`}
-                                        </style>
-
-                                        <circle
-                                            cx="0" cy="0" r={size / 2}
-                                            className="fill-none stroke-alien-primary stroke-[2px]
-                                            pointer-events-none origin-center [transform-box:fill-box]
-                                            [animation:steady-pulse_2s_ease-out_infinite]"
-                                        />
-                                    </>
-                                )}
-
-                                <circle
-                                    cx="0" cy="0"
-                                    r={isActive ? size : size / 2}
-                                    fill={isActive ? 'var(--alien-primary)' : 'rgba(0, 255, 102, 0.15)'}
-                                    stroke="var(--alien-primary)"
-                                    strokeWidth={isActive ? 2 : 0.5}
-                                    className="cursor-pointer transition-all duration-200"
-                                    style={{
-                                        filter: isActive ? 'drop-shadow(0 0 8px var(--alien-primary))' : 'none',
-                                    }}
-                                />
-                            </g>
-                        );
-                    }}
                 />
+                {activePos && (
+                    <div
+                        className="absolute pointer-events-none"
+                        style={{left: activePos.px, top: activePos.py, transform: 'translate(-50%, -50%)'}}
+                    >
+                        <div className="w-5 h-5 rounded-full border-4 border-alien-primary animate-ping opacity-60"/>
+                        <div className="absolute inset-0 rounded-full bg-alien-primary opacity-80"
+                             style={{filter: 'drop-shadow(0 0 9px var(--alien-primary))'}}/>
+                    </div>
+                )}
             </div>
         </section>
     );
