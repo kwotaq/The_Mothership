@@ -7,7 +7,7 @@ export const PieChart = ({data}: { data: { id: string | null, value: number }[] 
         <div className="h-[300px]">
             <ResponsivePie
                 data={data}
-                margin={{top: 20, right: 40, bottom: 20, left: 60}}
+                margin={{top: 50, right: 50, bottom: 50, left: 50}}
                 innerRadius={0.3}
                 padAngle={2}
                 cornerRadius={0}
