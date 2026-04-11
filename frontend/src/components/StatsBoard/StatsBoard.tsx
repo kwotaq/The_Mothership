@@ -65,7 +65,7 @@ export const StatsBoard = ({stats}: { stats: PlayerMetrics | ScoreMetrics | Glob
                 width: 2 as const,
                 values: stats.recent_scores?.map(score => ({
                     count: Math.round(score.pp),
-                    label: playerMap[score.user_id]?.name || "Unknown",
+                    label: null,
                     info: {
                         artist: score.artist,
                         title: score.title,
