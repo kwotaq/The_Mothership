@@ -15,28 +15,31 @@ class OsuAPIService:
                                               OsuAPIConfig.redirect_url)
         self.player_collection = database.get_player_collection()
         self.scores_collection = database.get_scores_collection()
-        self.recent_score_cache = database.get_recent_scores_collection()
+        self.recent_score_cache = database.get_recent_scores_cache()
         self.player_stats_collection = database.get_player_stats_collection()
 
-    def get_top_scores(self):
+    def get_scores(self):
         return list(self.scores_collection.find().sort("pp", -1).limit(200))
 
     def get_recent_scores(self):
         return list(self.recent_score_cache.find().sort("ended_at", 1))
 
-    def update_all_top_scores(self):
+    def get_players(self):
+        return list(self.player_collection.find({}).sort({"performance_points": -1}))
+
+    def sync_all_scores(self):
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Overall Player Score Update", unit="player"):
-            self.update_player_top_scores(player_id)
+            self.sync_player_scores(player_id)
 
-    def update_x_top_scores(self, amount):
+    def sync_scores_limited(self, amount):
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids[:int(amount)], desc="Limited Player Score Update", unit="player"):
-            self.update_player_top_scores(player_id)
+            self.sync_player_scores(player_id)
 
-    def update_player_top_scores(self, player_id):
+    def sync_player_scores(self, player_id):
         player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD,
                                                         limit=200)
 
@@ -73,10 +76,7 @@ class OsuAPIService:
 
             self.scores_collection.update_one({"_id": str(score.id)}, {"$set": score_data}, upsert=True)
 
-    def get_all_player_info(self):
-        return list(self.player_collection.find({}).sort({"performance_points": -1}))
-
-    def update_player_info(self, player_id):
+    def sync_player(self, player_id):
         data = self.client.get_user(player_id, GameModeStr.STANDARD)
         user = {
             "_id": str(data.id),
@@ -87,7 +87,7 @@ class OsuAPIService:
         }
         self.player_collection.update_one({"_id": str(data.id)}, {"$set": user}, upsert=True)
 
-    def update_player_info_by_page(self):
+    def sync_players(self):
         active_ids = []
         new_ids = []
 
@@ -115,7 +115,7 @@ class OsuAPIService:
                 self.player_collection.update_one({"_id": user_id}, {"$set": user}, upsert=True)
 
         for player_id in tqdm(new_ids, desc="Fetching scores for new players"):
-            self.update_player_top_scores(player_id)
+            self.sync_player_scores(player_id)
 
         removed = list(self.player_collection.find({"_id": {"$nin": active_ids}}, {"_id": 1}))
         removed_ids = [p["_id"] for p in removed]

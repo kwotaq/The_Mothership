@@ -16,7 +16,7 @@ class OsuStreamService:
     def __init__(self):
         self.socketio = None
         self.is_running = False
-        self.scores_collection = database.get_recent_scores_collection()
+        self.recent_scores_cache = database.get_recent_scores_cache()
         self.greek_player_info = {}
         self.on_new_top_score = None
 
@@ -59,21 +59,21 @@ class OsuStreamService:
             try:
                 ws = websocket.create_connection(uri)
 
-                last = self.scores_collection.find_one(sort=[("ended_at", -1)])
+                last = self.recent_scores_cache.find_one(sort=[("ended_at", -1)])
                 last = str(last["_id"]) if last else "connect"
                 ws.send(last)
 
                 while True:
                     message = ws.recv()
                     raw_data = json.loads(message)
-                    u_id = str(raw_data.get('user_id', ''))
+                    user_id = str(raw_data.get('user_id', ''))
 
-                    if u_id in self.greek_player_info:
+                    if user_id in self.greek_player_info:
                         score_pp = raw_data.get('pp')
-                        bottom = self.greek_player_info[u_id]["bottom_score"]
+                        bottom = self.greek_player_info[user_id]["bottom_score"]
                         try:
                             if score_pp is not None and (bottom is None or bottom < score_pp):
-                                self.on_new_top_score(u_id)
+                                self.on_new_top_score(user_id)
                         except Exception as e:
                             logger.error(f"Comparison failed: {e} | pp={score_pp} bottom={bottom}")
 
@@ -84,13 +84,13 @@ class OsuStreamService:
 
                         formatted_score = {
                             "_id": str(raw_data.get('id')),
-                            "user_id": u_id,
+                            "user_id": user_id,
                             "pp": raw_data.get('pp'),
                             "ended_at": bson_date
                         }
 
                         try:
-                            self.scores_collection.insert_one(formatted_score)
+                            self.recent_scores_cache.insert_one(formatted_score)
                         except Exception as e:
                             logger.error(f"Failed to cache score: {e}")
 

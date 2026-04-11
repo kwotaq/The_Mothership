@@ -23,30 +23,30 @@ class MetricsService:
     def get_global_score_metrics(self):
         return self.global_stats_collection.find_one({"_id": "global_score_metrics"}, {"_id": 0})
 
-    def get_individual_player_metrics(self, player_id):
+    def get_player_metrics(self, player_id):
         return self.player_stats_collection.find_one({"_id": player_id}, {"_id": 0})
 
-    def get_similarity_coordinates(self):
+    def get_similarity(self):
         return self.global_stats_collection.find_one(
             {"_id": "similarity_coordinates"},
             {"_id": 0, "similarity_coordinates": 1}
         )
 
-    def update_individual_player_metrics(self):
+    def sync_all_player_metrics(self):
         player_ids = self.player_collection.distinct("_id")
 
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
-            self.update_player_metrics(player_id)
+            self.sync_player_metrics(player_id)
 
-    def update_player_metrics(self, player_id):
-        top_artists = self._get_top_stat_count('artist', player_id, results_limit=7)
-        top_songs = self._get_top_stat_count('title', player_id, results_limit=7)
-        top_mods = self._get_top_stat_count('mods', player_id, results_limit=10)
-        top_mappers = self._get_top_stat_count('creator', player_id, results_limit=7)
-        hour_histogram = self._get_top_stat_count("hour", player_id=player_id)
-        recent_scores = self._get_recent_tops(player_id=player_id, results_limit=5)
-        bpm_histogram = self._get_top_stat_count("bpm", player_id=player_id)
-        year_created_histogram = self._get_top_stat_count("year", player_id=player_id)
+    def sync_player_metrics(self, player_id):
+        top_artists = self._aggregate_stat('artist', player_id, results_limit=7)
+        top_songs = self._aggregate_stat('title', player_id, results_limit=7)
+        top_mods = self._aggregate_stat('mods', player_id, results_limit=10)
+        top_mappers = self._aggregate_stat('creator', player_id, results_limit=7)
+        hour_histogram = self._aggregate_stat("hour", player_id=player_id)
+        recent_scores = self._get_recent_scores(player_id=player_id, results_limit=5)
+        bpm_histogram = self._aggregate_stat("bpm", player_id=player_id)
+        year_created_histogram = self._aggregate_stat("year", player_id=player_id)
 
         data = {
             'top_artists': top_artists,
@@ -61,24 +61,24 @@ class MetricsService:
 
         self.player_stats_collection.update_one({"_id": player_id}, {"$set": data}, upsert=True)
 
-    def update_similarity_coordinates(self):
-        data = {"similarity_coordinates": self._calculate_similarity_coordinates()}
+    def sync_similarity(self):
+        data = {"similarity_coordinates": self._compute_similarity()}
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
 
         player_ids = self.player_collection.distinct("_id")
         for player_id in tqdm(player_ids, desc="Updating Similarities", unit="player"):
-            closest_neighbours = self._calculate_closest_neighbours(player_id, results_limit=5)
+            closest_neighbours = self._compute_closest_neighbours(player_id, results_limit=5)
             self.player_stats_collection.update_one({"_id": player_id},
                                                     {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
-    def update_global_player_metrics(self):
-        top_artists = self._get_top_stat_count('artist', results_limit=10)
-        top_songs = self._get_top_stat_count('title', results_limit=10)
-        top_mods = self._get_top_stat_count('mods', results_limit=10)
-        top_mappers = self._get_top_stat_count('creator', results_limit=10)
-        hour_histogram = self._get_top_stat_count("hour")
-        bpm_histogram = self._get_top_stat_count("bpm")
-        year_created_histogram = self._get_top_stat_count("year")
+    def sync_global_player_metrics(self):
+        top_artists = self._aggregate_stat('artist', results_limit=10)
+        top_songs = self._aggregate_stat('title', results_limit=10)
+        top_mods = self._aggregate_stat('mods', results_limit=10)
+        top_mappers = self._aggregate_stat('creator', results_limit=10)
+        hour_histogram = self._aggregate_stat("hour")
+        bpm_histogram = self._aggregate_stat("bpm")
+        year_created_histogram = self._aggregate_stat("year")
 
         data = {
             'top_artists': top_artists,
@@ -92,10 +92,10 @@ class MetricsService:
 
         self.global_stats_collection.update_one({"_id": "global_player_metrics"}, {"$set": data}, upsert=True)
 
-    def update_global_score_metrics(self):
-        top_players = self._get_top_stat_count('user_id', results_limit=10, top_scores_limit=200)
-        top_mappers = self._get_top_stat_count('creator', results_limit=7, top_scores_limit=200)
-        recent_scores = self._get_recent_tops(results_limit=10, top_scores_limit=200)
+    def sync_global_score_metrics(self):
+        top_players = self._aggregate_stat('user_id', results_limit=10, top_scores_limit=200)
+        top_mappers = self._aggregate_stat('creator', results_limit=7, top_scores_limit=200)
+        recent_scores = self._get_recent_scores(results_limit=10, top_scores_limit=200)
 
         data = {
             'top_players': top_players,
@@ -105,12 +105,12 @@ class MetricsService:
 
         self.global_stats_collection.update_one({"_id": "global_score_metrics"}, {"$set": data}, upsert=True)
 
-    def _calculate_similarity_coordinates(self):
+    def _compute_similarity(self):
         scores = self.scores_collection.find({})
         df = pd.DataFrame(scores)
         return analyze_profiles(df)
 
-    def _calculate_closest_neighbours(self, user_id, results_limit=5):
+    def _compute_closest_neighbours(self, user_id, results_limit=5):
         doc = self.global_stats_collection.find_one({"_id": "similarity_coordinates"})
         if not doc: return []
 
@@ -142,7 +142,7 @@ class MetricsService:
         raw_results.sort(key=lambda x: x["count"], reverse=True)
         return raw_results[:results_limit]
 
-    def _get_top_stat_count(self, field_name, player_id=None, results_limit=None, top_scores_limit=None):
+    def _aggregate_stat(self, field_name, player_id=None, results_limit=None, top_scores_limit=None):
         pipeline = []
 
         if player_id:
@@ -212,7 +212,7 @@ class MetricsService:
 
         return results
 
-    def _get_recent_tops(self, player_id=None, results_limit=5, top_scores_limit=None):
+    def _get_recent_scores(self, player_id=None, results_limit=5, top_scores_limit=None):
         pipeline = []
 
         if player_id:

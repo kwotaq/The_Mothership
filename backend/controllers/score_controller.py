@@ -10,10 +10,10 @@ osu_api_service = OsuAPIService()
 scores_bp = Blueprint('scores', __name__)
 
 
-@scores_bp.route('/api/scores/top')
-def get_top_scores():
+@scores_bp.route('/api/scores')
+def get_scores():
     logger.info('Top scores requested')
-    score_list = osu_api_service.get_top_scores()
+    score_list = osu_api_service.get_scores()
     logger.info(f'Top scores fetched from database')
     return jsonify(score_list)
 

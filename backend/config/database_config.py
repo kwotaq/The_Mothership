@@ -27,7 +27,7 @@ class Database:
     def get_scores_collection(self):
         return self.db['scores']
 
-    def get_recent_scores_collection(self):
+    def get_recent_scores_cache(self):
         if 'recent_scores_cache' not in self.db.list_collection_names():
             self.db.create_collection(
                 'recent_scores_cache',
