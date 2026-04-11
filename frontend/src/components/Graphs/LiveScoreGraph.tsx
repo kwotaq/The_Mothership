@@ -81,8 +81,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
         <section className="flex flex-col lg:flex-row w-full gap-4">
             <div
                 ref={chartRef}
-                style={{touchAction: 'none'}}
-                className="flex-1 h-[400px] sm:h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
+                className="flex-1 h-[450px] sm:h-[600px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
                 onMouseDown={(e) => {
                     isDragging.current = true;
                     dragStart.current = e.clientX;
@@ -106,7 +105,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
             >
                 <ResponsiveLine
                     data={visiblePoints}
-                    margin={{top: 60, right: 30, bottom: 60, left: 60}}
+                    margin={{top: 100, right: 30, bottom: 60, left: 60}}
                     xScale={{
                         type: 'time',
                         format: 'native',
@@ -198,9 +197,8 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     }}
                 />
             </div>
-
             <div
-                className="w-full lg:w-64 h-auto max-h-[200px] lg:h-[500px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shadow-lg">
+                className="w-full lg:w-64 h-auto max-h-[450px] lg:h-[600px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shadow-lg">
                 <div className="flex items-center justify-between border-b border-alien-primary pb-2 mb-1 sm:mb-2">
                     <span className="text-xs font-bold uppercase text-text-primary tracking-widest">
                         Visible Players
