@@ -19,40 +19,40 @@ export const ScoreStatistics = () => {
     const {liveData, isConnected} = useLiveStream();
 
     return (
-        <div className="flex flex-col lg:flex-row gap-5 p-5 lg:pl-20 items-start">
-            <div className="w-full lg:w-[40%] shrink-0 lg:order-1 order-2">
-                <SectionHeader title='Top Scores'/>
+        <div className="w-full px-4 sm:px-6 lg:px-20 py-5 lg:py-20">
+            <div>
+                <SectionHeader title='Live Score Stream'/>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <DataHandler
-                        loading={scoresReq.loading}
-                        error={scoresReq.error}
-                        data={scoresReq.data}
-                        label={"scores"}
-                    >
-                        <ScoresList scores={scoresReq.data}/>
-                    </DataHandler>
+                    <div
+                        className="min-h-[300px] sm:min-h-[400px] w-full border border-alien-primary/20 rounded bg-bg-secondary/30 relative">
+                        {!isConnected && (
+                            <div
+                                className="absolute inset-0 flex items-center justify-center z-10 bg-black/20">
+                                <span className="text-alien-primary animate-pulse font-mono text-xs">
+                                </span>
+                            </div>
+                        )}
+                        <LiveScoreGraph data={liveData}/>
+                    </div>
                 </ErrorBoundary>
             </div>
 
-            <div className="flex-1 h-full lg:px-20 flex flex-col gap-5 min-w-0 lg:order-2 order-1">
-                <div>
-                    <SectionHeader title='Live Score Stream'/>
+            <div className="flex flex-col lg:flex-row gap-5 lg:gap-20 mt-5 lg:mt-8">
+                <div className="w-full lg:w-[60%] shrink-0">
+                    <SectionHeader title='Top Scores'/>
                     <ErrorBoundary FallbackComponent={ErrorFallback}>
-                        <div
-                            className="min-h-[400px] w-full border border-alien-primary/20 rounded bg-bg-secondary/30 relative">
-                            {!isConnected && (
-                                <div
-                                    className="absolute inset-0 flex items-center justify-center z-10 bg-black/20">
-                        <span className="text-alien-primary animate-pulse font-mono text-xs">
-                        </span>
-                                </div>
-                            )}
-                            <LiveScoreGraph data={liveData}/>
-                        </div>
+                        <DataHandler
+                            loading={scoresReq.loading}
+                            error={scoresReq.error}
+                            data={scoresReq.data}
+                            label={"scores"}
+                        >
+                            <ScoresList scores={scoresReq.data}/>
+                        </DataHandler>
                     </ErrorBoundary>
                 </div>
 
-                <div>
+                <div className="flex-1 h-full flex flex-col min-w-0">
                     <SectionHeader title='Score Statistics'/>
                     <ErrorBoundary FallbackComponent={ErrorFallback}>
                         <DataHandler
