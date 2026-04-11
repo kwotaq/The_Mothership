@@ -12,7 +12,8 @@ const COLOR_PALETTE = [
 export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const {playerMap} = usePlayers();
     const [isMobile, setIsMobile] = useState(false);
-    const [hoveredPlayerId, setHoveredPlayerId] = useState<string | null>(null);
+    const [isClicked, setIsClicked] = useState(false)
+    const [activePlayerId, setActivePlayerId] = useState<string | null>(null);
     const isDragging = useRef(false);
     const dragStart = useRef<number | null>(null);
     const chartRef = useRef<HTMLDivElement>(null);
@@ -131,7 +132,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     colors={COLOR_PALETTE}
                     pointSize={isMobile ? 5 : 8}
                     pointColor={({point}) => {
-                        const isHovered = hoveredPlayerId === null || hoveredPlayerId === point.seriesId;
+                        const isHovered = activePlayerId === null || activePlayerId === point.seriesId;
                         const color = COLOR_PALETTE[colorIndexMap[point.seriesId] % COLOR_PALETTE.length];
                         return isHovered ? color : `${color}26`;
                     }}
@@ -145,6 +146,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     layers={['grid', 'axes', 'areas', 'points', 'slices', 'mesh', 'legends']}
 
                     tooltip={({point}) => {
+                        if (activePlayerId !== null && point.seriesId !== activePlayerId) return <></>;
                         const player = playerMap[point.seriesId];
 
                         if (!player) return (
@@ -201,25 +203,26 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                 className="w-full lg:w-64 h-auto max-h-[200px] lg:h-[500px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shadow-lg">
                 <div className="flex items-center justify-between border-b border-alien-primary pb-2 mb-1 sm:mb-2">
                     <span className="text-xs font-bold uppercase text-text-primary tracking-widest">
-                        Active Players
+                        Visible Players
                     </span>
                 </div>
 
-                <div className="flex flex-row lg:flex-col flex-wrap lg:flex-nowrap gap-2">
+                <div className="flex flex-row lg:flex-col flex-wrap lg:flex-nowrap">
                     {visiblePoints.filter(series => series.data.length > 0).map((series) => {
                         const player = playerMap[series.id]
                         const playerName = player.name || `User ${series.id}`;
                         const color = COLOR_PALETTE[colorIndexMap[series.id] % COLOR_PALETTE.length];
-                        const isHovered = hoveredPlayerId === series.id;
+                        const isActive = activePlayerId === series.id;
 
                         return (
                             <div
                                 key={series.id}
-                                onMouseEnter={() => setHoveredPlayerId(series.id)}
-                                onMouseLeave={() => setHoveredPlayerId(null)}
+                                onMouseEnter={() => !isClicked ? setActivePlayerId(series.id) : 0}
+                                onClick={() => isClicked ? setIsClicked(false) : setIsClicked(true)}
+                                onMouseLeave={() => !isClicked ? setActivePlayerId(null) : 0}
                                 className={`flex items-center gap-2 p-1.5 sm:p-2 rounded transition-all group cursor-pointer flex-1 min-w-[120px] lg:min-w-0
-                                ${isHovered ? 'bg-white/10' : 'hover:bg-white/5'}
-                                ${hoveredPlayerId && !isHovered ? 'opacity-40' : 'opacity-100'}`}
+                                ${isActive ? 'bg-white/10' : 'hover:bg-white/5'}
+                                ${activePlayerId && !isActive ? 'opacity-40' : 'opacity-100'}`}
                             >
                                 <span
                                     className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
@@ -230,7 +233,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                                 />
                                 <span
                                     className={`text-xs sm:text-sm truncate font-medium transition-colors ${
-                                        isHovered ? 'text-white' : 'text-text-primary'
+                                        isActive ? 'text-white' : 'text-text-primary'
                                     }`} title={playerName}>
                                     <a href={`https://osu.ppy.sh/users/${player._id}`}
                                        target="_blank"
