@@ -19,16 +19,16 @@ export const ScoreStatistics = () => {
     const {liveData, isConnected} = useLiveStream();
 
     return (
-        <div className="w-full px-4 sm:px-6 lg:px-20 py-5 lg:py-20">
+        <div className="w-full px-4 sm:px-6 lg:px-20 p-7">
             <div>
                 <SectionHeader title='Live Score Stream'/>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <div
-                        className="min-h-[300px] sm:min-h-[400px] w-full border border-alien-primary/20 rounded bg-bg-secondary/30 relative">
+                        className="min-h-[300px] sm:min-h-[400px] w-full relative">
                         {!isConnected && (
                             <div
-                                className="absolute inset-0 flex items-center justify-center z-10 bg-black/20">
-                                <span className="text-alien-primary animate-pulse font-mono text-xs">
+                                className="absolute inset-0 flex items-center justify-center z-10bg-black/20">
+                                <span className="text-alien-primary font-mono text-xs">
                                 </span>
                             </div>
                         )}

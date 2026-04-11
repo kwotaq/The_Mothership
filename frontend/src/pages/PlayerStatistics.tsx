@@ -43,7 +43,7 @@ export const PlayerStatistics = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-5 p-5 items-start w-full">
+        <div className="flex flex-col lg:flex-row gap-5 p-7 items-start w-full">
             <div className="flex-1 h-full lg:px-10 flex flex-col gap-8 sm:gap-12 min-w-0 w-full">
                 <div className="w-full">
                     <SectionHeader title='Player Similarity Map'/>
