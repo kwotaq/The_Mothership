@@ -11,6 +11,7 @@ const COLOR_PALETTE = [
 
 export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const {playerMap} = usePlayers();
+    const [isMobile, setIsMobile] = useState(false);
     const [hoveredPlayerId, setHoveredPlayerId] = useState<string | null>(null);
     const isDragging = useRef(false);
     const dragStart = useRef<number | null>(null);
@@ -20,6 +21,15 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
         const defaultTimeLimit = new Date(now.getTime() - 6 * 60 * 60 * 1000); // 6 hours
         return [defaultTimeLimit, now];
     });
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         const el = chartRef.current;
@@ -67,11 +77,11 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     if (transformedData.length === 0) return null;
 
     return (
-        <section className="flex w-full gap-4">
+        <section className="flex flex-col lg:flex-row w-full gap-4">
             <div
                 ref={chartRef}
                 style={{touchAction: 'none'}}
-                className="flex-1 h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
+                className="flex-1 h-[400px] sm:h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
                 onMouseDown={(e) => {
                     isDragging.current = true;
                     dragStart.current = e.clientX;
@@ -95,7 +105,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
             >
                 <ResponsiveLine
                     data={visiblePoints}
-                    margin={{top: 80, right: 40, bottom: 60, left: 80}}
+                    margin={{top: 60, right: 30, bottom: 60, left: 60}}
                     xScale={{
                         type: 'time',
                         format: 'native',
@@ -106,17 +116,20 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     }}
                     yScale={{type: 'linear', min: 0, max: 'auto'}}
                     axisBottom={{
-                        format: '%d/%m %H:%M',
-                        tickValues: 5,
-                        tickPadding: 20,
+                        format: '%H:%M',
+                        tickValues: isMobile ? 3 : 5,
+                        tickPadding: 15,
+                        tickRotation: isMobile ? -30 : 0,
                     }}
                     axisLeft={{
-                        legend: 'PP',
-                        legendOffset: -55,
-                        legendPosition: 'middle'
+                        legend: isMobile ? '' : 'PP',
+                        legendOffset: -45,
+                        legendPosition: 'middle',
+                        tickSize: isMobile ? 0 : 5,
+                        tickPadding: 5,
                     }}
                     colors={COLOR_PALETTE}
-                    pointSize={8}
+                    pointSize={isMobile ? 5 : 8}
                     pointColor={({point}) => {
                         const isHovered = hoveredPlayerId === null || hoveredPlayerId === point.seriesId;
                         const color = COLOR_PALETTE[colorIndexMap[point.seriesId] % COLOR_PALETTE.length];
@@ -168,8 +181,14 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     theme={{
                         axis: {
                             domain: {line: {stroke: 'var(--alien-primary)', strokeWidth: 1}},
-                            ticks: {text: {fill: 'var(--text-secondary)', fontSize: 11}},
-                            legend: {text: {fill: 'var(--text-primary)', fontWeight: 'bold', fontSize: 14}}
+                            ticks: {text: {fill: 'var(--text-secondary)', fontSize: isMobile ? 9 : 11}},
+                            legend: {
+                                text: {
+                                    fill: 'var(--text-primary)',
+                                    fontWeight: 'bold',
+                                    fontSize: isMobile ? 12 : 14
+                                }
+                            }
                         },
                         grid: {
                             line: {stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1}
@@ -179,14 +198,14 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
             </div>
 
             <div
-                className="w-64 h-[500px] bg-bg-primary border border-alien-primary p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shadow-lg">
-                <div className="flex items-center justify-between border-b border-alien-primary pb-2 mb-2">
+                className="w-full lg:w-64 h-auto max-h-[200px] lg:h-[500px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shadow-lg">
+                <div className="flex items-center justify-between border-b border-alien-primary pb-2 mb-1 sm:mb-2">
                     <span className="text-xs font-bold uppercase text-text-primary tracking-widest">
                         Active Players
                     </span>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-row lg:flex-col flex-wrap lg:flex-nowrap gap-2">
                     {visiblePoints.filter(series => series.data.length > 0).map((series) => {
                         const player = playerMap[series.id]
                         const playerName = player.name || `User ${series.id}`;
@@ -198,19 +217,19 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                                 key={series.id}
                                 onMouseEnter={() => setHoveredPlayerId(series.id)}
                                 onMouseLeave={() => setHoveredPlayerId(null)}
-                                className={`flex items-center gap-3 p-2 rounded transition-all group cursor-pointer
+                                className={`flex items-center gap-2 p-1.5 sm:p-2 rounded transition-all group cursor-pointer flex-1 min-w-[120px] lg:min-w-0
                                 ${isHovered ? 'bg-white/10' : 'hover:bg-white/5'}
                                 ${hoveredPlayerId && !isHovered ? 'opacity-40' : 'opacity-100'}`}
                             >
                                 <span
-                                    className="w-3 h-3 rounded-full shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+                                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
                                     style={{
                                         backgroundColor: color,
                                         boxShadow: `0 0 10px ${color}66`
                                     }}
                                 />
                                 <span
-                                    className={`text-sm truncate font-medium transition-colors ${
+                                    className={`text-xs sm:text-sm truncate font-medium transition-colors ${
                                         isHovered ? 'text-white' : 'text-text-primary'
                                     }`} title={playerName}>
                                     <a href={`https://osu.ppy.sh/users/${player._id}`}

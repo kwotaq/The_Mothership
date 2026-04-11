@@ -12,6 +12,7 @@ interface ScatterPlotProps {
 
 export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) => {
     const {playerMap} = usePlayers()
+    const [isMobile, setIsMobile] = useState(false);
     const isDragging = useRef(false);
     const hasDragged = useRef(false);
     const dragStart = useRef<[number, number] | null>(null);
@@ -20,6 +21,15 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
         x: [-11, 11] as [number, number],
         y: [-11, 11] as [number, number]
     });
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         const el = chartRef.current;
@@ -61,24 +71,29 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
 
     useEffect(() => {
         if (!chartRef.current) return;
-        const {clientWidth, clientHeight} = chartRef.current;
-        setChartSize({width: clientWidth, height: clientHeight});
+        const updateSize = () => {
+            const {clientWidth, clientHeight} = chartRef.current!;
+            setChartSize({width: clientWidth, height: clientHeight});
+        };
+        updateSize();
+        window.addEventListener('resize', updateSize);
+        return () => window.removeEventListener('resize', updateSize);
     }, []);
 
     const activePos = useMemo(() => {
         if (!activePoint || chartSize.width === 0) return null;
-        const margin = 40;
+        const margin = isMobile ? 20 : 40;
         const width = chartSize.width - margin * 2;
         const height = chartSize.height - margin * 2;
         const px = margin + ((activePoint.x - domain.x[0]) / (domain.x[1] - domain.x[0])) * width;
         const py = margin + ((1 - (activePoint.y - domain.y[0]) / (domain.y[1] - domain.y[0])) * height);
         return {px, py};
-    }, [activePoint, domain, chartSize]);
+    }, [activePoint, domain, chartSize, isMobile]);
 
     return (
         <section className="mx-auto w-full">
             <div
-                className="w-full h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
+                className="w-full h-[350px] sm:h-[400px] md:h-[500px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
                 ref={chartRef}
                 style={{touchAction: 'none'}}
                 onMouseDown={(e) => {
@@ -125,12 +140,15 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                             line: {stroke: 'var(--bg-tertiary)', strokeWidth: 1}
                         }
                     }}
-                    margin={{top: 40, right: 40, bottom: 40, left: 40}}
+                    margin={isMobile ?
+                        {top: 20, right: 20, bottom: 20, left: 20} :
+                        {top: 40, right: 40, bottom: 40, left: 40}
+                    }
                     xScale={{type: "linear", min: domain.x[0], max: domain.x[1], nice: false}}
                     yScale={{type: "linear", min: domain.y[0], max: domain.y[1], nice: false}}
                     axisBottom={null}
                     axisLeft={null}
-                    nodeSize={12}
+                    nodeSize={isMobile ? 9 : 12}
 
                     colors={'rgba(0, 255, 102, 0.2)'}
 
@@ -147,7 +165,7 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                         return (
                             <div>
                                 <div
-                                    className="bg-bg-primary p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap">
+                                    className="bg-bg-primary p-[6px] sm:p-[9px] border border-alien-primary rounded text-text-primary whitespace-nowrap text-xs sm:text-sm">
                                     <strong className="text-text-primary">{player.name}</strong>
                                 </div>
                             </div>
@@ -159,8 +177,8 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
                         className="absolute pointer-events-none"
                         style={{left: activePos.px, top: activePos.py, transform: 'translate(-50%, -50%)'}}
                     >
-                        <div className="w-5 h-5 rounded-full border-4 border-alien-primary animate-ping opacity-60"/>
-                        <div className="absolute inset-0 rounded-full bg-alien-primary opacity-80"
+                        <div className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} rounded-full border-4 border-alien-primary animate-ping opacity-60`}/>
+                        <div className={`absolute inset-0 rounded-full bg-alien-primary opacity-80 ${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`}
                              style={{filter: 'drop-shadow(0 0 9px var(--alien-primary))'}}/>
                     </div>
                 )}

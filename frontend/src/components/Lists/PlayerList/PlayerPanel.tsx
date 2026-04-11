@@ -23,7 +23,7 @@ export const PlayerPanel = ({onToggle, activePlayer}: {
     }, [players, filter]);
 
     return (
-        <div className="w-[40%] shrink-0">
+        <div className="w-full lg:w-[40%] shrink-0 pr-4">
             <div className="pb-6">
                 <SectionHeader title='Player Rankings'/>
                 <SearchBox setFilter={setFilter}/>

@@ -30,24 +30,23 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
             />
             <div className="absolute inset-0 bg-[#050a08]/85 z-[1]"/>
 
-            <div className="relative z-[2] w-full p-4 flex justify-between items-center">
-                <div className="flex items-center gap-1 min-w-0">
+            <div className="relative z-[2] w-full py-2.5 px-3 sm:py-3 sm:px-4 flex flex-wrap items-center gap-x-3 gap-y-2">
 
-                    <div className="text-[24px] font-mono font-black text-white w-12 shrink-0 underline italic">
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <div className="text-xl sm:text-2xl font-mono font-black text-white w-9 sm:w-11 shrink-0 underline italic">
                         #{index}
                     </div>
 
-                    <div className="flex flex-col items-center justify-center w-[80px] shrink-0">
+                    <div className="flex flex-col items-center justify-center w-[65px] sm:w-[75px] shrink-0">
                         <img
                             src={player?.avatar}
-                            className="w-[45px] h-[45px] border-2 border-alien-primary bg-black object-cover [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]"
+                            className="w-[38px] h-[38px] sm:w-[45px] sm:h-[45px] border-2 border-alien-primary bg-black object-cover [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]"
                             alt={player?.name}
                         />
-
                         <a href={`https://osu.ppy.sh/users/${player._id}`}
                            target="_blank"
                            rel="noopener noreferrer"
-                           className="text-alien-primary hover:underline text-[10px] font-mono font-extrabold uppercase tracking-tighter w-full line-clamp-1 text-center mt-1"
+                           className="text-alien-primary hover:underline text-[9px] sm:text-[10px] font-mono font-extrabold uppercase tracking-tight w-full truncate text-center mt-0.5"
                            onClick={(e) => e.stopPropagation()}
                         >
                             {player.name}
@@ -55,47 +54,49 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
                     </div>
 
                     <div
-                        className={`text-[42px] font-black italic w-[70px] shrink-0 text-center leading-none ${rankStyles[score.rank] || 'text-white'}`}>
+                        className={`text-3xl sm:text-[42px] font-black italic w-[55px] sm:w-[70px] shrink-0 text-center leading-none ${rankStyles[score.rank] || 'text-white'}`}>
                         {displayRank(score.rank)}
-                    </div>
-
-                    <div className="flex flex-col gap-0.5 min-w-0 overflow-hidden">
-                        <span className="text-white font-bold text-[18px] leading-tight truncate">
-                            <a href={`https://osu.ppy.sh/beatmapsets/${score.beatmap_id}`}
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               className="hover:underline"
-                               onClick={(e) => e.stopPropagation()}
-                            >
-                            {score.artist} - {score.title}
-                            </a>
-                        </span>
-                        <span className="text-white/50 text-[10px] uppercase tracking-widest">
-                            BY <span className="text-alien-primary/80">{score.creator}</span>
-                        </span>
-                        <div
-                            className="text-[11px] font-bold text-white bg-alien-primary/10 px-2 py-0.5 w-fit uppercase border border-alien-primary/20 mt-1">
-                            {score.difficulty}
-                        </div>
                     </div>
                 </div>
 
-                <div className="flex gap-5 items-center justify-end min-w-[320px]">
-                    <div className="flex flex-col items-end w-20">
-                        <span className="text-[12px] text-alien-primary font-extrabold">PP</span>
-                        <span
-                            className="text-[20px] text-white font-extrabold leading-none">{score.pp.toFixed(0)}</span>
+                <div className="flex-1 min-w-[200px] flex flex-col gap-0.5">
+                    <span className="text-white font-bold text-sm sm:text-base leading-tight truncate">
+                        <a href={`https://osu.ppy.sh/beatmapsets/${score.beatmap_id}`}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="hover:underline"
+                           onClick={(e) => e.stopPropagation()}
+                        >
+                        {score.artist} - {score.title}
+                        </a>
+                    </span>
+                    <span className="text-white/50 text-[8px] sm:text-[10px] uppercase tracking-wider">
+                        BY <span className="text-alien-primary/80">{score.creator}</span>
+                    </span>
+                    <div
+                        className="text-[9px] sm:text-[11px] font-bold text-white bg-alien-primary/10 px-2 py-0.5 w-fit max-w-full uppercase border border-alien-primary/20 mt-0.5 truncate"
+                        title={score.difficulty}>
+                        {score.difficulty}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3 sm:gap-5 ml-auto">
+                    <div className="flex flex-col items-end w-14 sm:w-16">
+                        <span className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">PP</span>
+                        <span className="text-base sm:text-xl text-white font-extrabold leading-none">
+                            {score.pp.toFixed(0)}
+                        </span>
                     </div>
 
-                    <div className="flex flex-col items-end w-20">
-                        <span className="text-[12px] text-alien-primary font-extrabold">ACC</span>
-                        <span
-                            className="text-[20px] text-white font-extrabold leading-none">{(score.accuracy * 100).toFixed(2)}%</span>
+                    <div className="flex flex-col items-end w-14 sm:w-16">
+                        <span className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">ACC</span>
+                        <span className="text-base sm:text-xl text-white font-extrabold leading-none">
+                            {(score.accuracy * 100).toFixed(2)}%
+                        </span>
                     </div>
 
-                    <div className="flex justify-end min-w-[80px] shrink-0">
-                        <div
-                            className="bg-alien-primary/10 text-alien-primary px-2.5 py-0.5 border border-alien-primary text-[12px] font-extrabold whitespace-nowrap shadow-[0_0_5px_rgba(0,255,102,0.2)]">
+                    <div className="shrink-0">
+                        <div className="bg-alien-primary/10 text-alien-primary px-1 sm:px-2.0 py-0.5 border border-alien-primary text-[10px] sm:text-xs font-extrabold whitespace-nowrap">
                             {score.mods}
                         </div>
                     </div>

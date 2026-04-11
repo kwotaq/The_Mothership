@@ -38,17 +38,17 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                     <div className="flex flex-col gap-4">
                         {(stat.values as CountedItem[]).map((val, i) => (
                             <div key={i} className="flex flex-col gap-1">
-                                <div className="flex justify-between items-center text-white text-[1rem]">
+                                <div className="flex justify-between items-center text-white text-sm sm:text-[1rem]">
                                     <a href={`https://osu.ppy.sh/users/${val.info as string}`}
                                        target="_blank"
                                        rel="noopener noreferrer"
-                                       className="hover:underline"
+                                       className="hover:underline truncate max-w-[120px] sm:max-w-none"
                                        onClick={(e) => e.stopPropagation()}
                                     >
                                         <span className="font-medium">{val.label}</span>
                                     </a>
 
-                                    <span className="font-mono text-alien-primary">{val.count}% Match</span>
+                                    <span className="font-mono text-alien-primary text-xs sm:text-base shrink-0 ml-2">{val.count}% Match</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                                     <div
@@ -78,21 +78,21 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
 
                             return (
                                 <div key={i}
-                                     className="group flex items-center py-2 border-b border-dashed border-white/5 last:border-0">
-                                    <div className="min-w-[60px] shrink-0">
+                                     className="group flex items-start sm:items-center py-2 border-b border-dashed border-white/5 last:border-0 gap-2 sm:gap-0">
+                                    <div className="min-w-[50px] sm:min-w-[60px] shrink-0">
                                         <span
-                                            className="text-[1.1rem] font-mono font-bold text-alien-primary">
+                                            className="text-base sm:text-[1.1rem] font-mono font-bold text-alien-primary">
                                             {val.count}
                                         </span>
                                     </div>
-                                    <div className="flex flex-col min-w-0 ml-4 w-full">
-                                        <div className="flex justify-between items-baseline">
+                                    <div className="flex flex-col min-w-0 ml-0 sm:ml-4 w-full">
+                                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-0">
                                             {val.label && (
                                                 <span>
                                                     <a href={`https://osu.ppy.sh/users/${val.info.user_id}`}
                                                        target="_blank"
                                                        rel="noopener noreferrer"
-                                                       className="font-bold text-text-primary text-[1rem] leading-none hover:underline"
+                                                       className="font-bold text-text-primary text-sm sm:text-[1rem] leading-none hover:underline"
                                                        onClick={(e) => e.stopPropagation()}
                                                     >
                                                         {val.label}
@@ -100,7 +100,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                                 </span>
                                             )}
                                             <span
-                                                className="text-[10px] text-text-muted uppercase tracking-wider shrink-0">
+                                                className="text-[9px] sm:text-[10px] text-text-muted uppercase tracking-wider shrink-0">
                                                 {date}
                                             </span>
                                         </div>
@@ -108,7 +108,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                             <a href={`https://osu.ppy.sh/scores/${val.info.score_id}`}
                                                target="_blank"
                                                rel="noopener noreferrer"
-                                               className="text-text-primary hover:underline"
+                                               className="text-text-primary text-xs sm:text-sm hover:underline"
                                                onClick={(e) => e.stopPropagation()}
                                             >
                                                 {info?.artist} — {info?.title}
@@ -127,11 +127,11 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                     <div className="flex flex-col gap-3">
                         {(stat.values as CountedItem[]).map((val, i) => (
                             <div key={i}
-                                 className="flex items-center gap-4 text-[1.1rem] text-white border-b border-dashed border-white/5 pb-1">
-                                <span className="min-w-[30px] font-mono font-bold text-alien-primary">
+                                 className="flex items-center gap-2 sm:gap-4 text-sm sm:text-[1.1rem] text-white border-b border-dashed border-white/5 pb-1">
+                                <span className="min-w-[25px] sm:min-w-[30px] font-mono font-bold text-alien-primary">
                                     {val.count}
                                 </span>
-                                <p>{val.label}</p>
+                                <p className="truncate">{val.label}</p>
                             </div>
                         ))}
                     </div>
@@ -140,12 +140,12 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
     };
 
     return (
-        <div className="grid grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-8">
             {stats.map((stat, index) => {
                 const widthMap = {
                     1: 'col-span-1',
-                    2: 'col-span-2',
-                    3: 'col-span-3'
+                    2: 'col-span-1 md:col-span-2',
+                    3: 'col-span-1 md:col-span-3'
                 };
 
                 const spanClass = widthMap[stat.width || 1];
@@ -156,12 +156,12 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                         className={`
                             interactive-panel
                             ${spanClass} 
-                            p-6 flex flex-col min-h-0
+                            p-4 sm:p-6 flex flex-col min-h-0
                         `}
                     >
                         <h3
                             className="
-                            mb-4 text-[1.1rem] uppercase tracking-[2px] font-bold text-text-primary pl-[5px] pb-2
+                            mb-3 sm:mb-4 text-sm sm:text-[1.1rem] uppercase tracking-[2px] font-bold text-text-primary pl-[5px] pb-2
                             border-b border-alien-primary/20
                             ">
                             {stat.label}

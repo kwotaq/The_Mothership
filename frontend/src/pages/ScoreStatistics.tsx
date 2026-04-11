@@ -19,8 +19,8 @@ export const ScoreStatistics = () => {
     const {liveData, isConnected} = useLiveStream();
 
     return (
-        <div className="flex gap-5 p-5 pl-20 items-start">
-            <div className="w-[40%] shrink-0">
+        <div className="flex flex-col lg:flex-row gap-5 p-5 lg:pl-20 items-start">
+            <div className="w-full lg:w-[40%] shrink-0 lg:order-1 order-2">
                 <SectionHeader title='Top Scores'/>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <DataHandler
@@ -34,7 +34,7 @@ export const ScoreStatistics = () => {
                 </ErrorBoundary>
             </div>
 
-            <div className="flex-1 h-full px-20 flex flex-col gap-5 min-w-0">
+            <div className="flex-1 h-full lg:px-20 flex flex-col gap-5 min-w-0 lg:order-2 order-1">
                 <div>
                     <SectionHeader title='Live Score Stream'/>
                     <ErrorBoundary FallbackComponent={ErrorFallback}>

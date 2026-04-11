@@ -12,13 +12,13 @@ interface PlayerListProps {
 
 export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) => {
     const listContainerRef = useRef<HTMLDivElement>(null);
-
     const firstItemRef = useRef<HTMLDivElement>(null);
-    const [estimatedSize, setEstimatedSize] = useState(88);
+    const [estimatedSize, setEstimatedSize] = useState(95);
 
     useEffect(() => {
         if (firstItemRef.current) {
-            setEstimatedSize(firstItemRef.current.getBoundingClientRect().height);
+            const height = firstItemRef.current.getBoundingClientRect().height;
+            setEstimatedSize(height + 16);
         }
     }, [players]);
 
@@ -40,7 +40,7 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
         <div className="flex flex-col h-full">
             <div
                 ref={listContainerRef}
-                className="h-[calc(200vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3"
+                className="h-[calc(100vh-200px)] lg:h-[calc(200vh)] overflow-y-auto overflow-x-hidden overscroll-contain pr-3 sm:pr-3"
             >
                 <div style={{height: virtualizer.getTotalSize(), position: 'relative'}}>
                     {virtualizer.getVirtualItems().map(virtualItem => {
@@ -57,7 +57,7 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
                                     position: 'absolute',
                                     top: virtualItem.start,
                                     width: '100%',
-                                    paddingBottom: '1rem'
+                                    paddingBottom: '0.75rem'
                                 }}
                             >
                                 <PlayerCard
@@ -74,9 +74,9 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
             </div>
 
             <div
-                className="flex items-center justify-center gap-10 p-5 bg-alien-primary/5 border-t-2 border-alien-primary mt-4">
+                className="flex items-center justify-center gap-6 sm:gap-10 p-4 sm:p-5 bg-alien-primary/5 border-t-2 border-alien-primary mt-4">
                 <div className="w-1.5 h-1.5 bg-alien-primary rotate-45"/>
-                <span className="font-mono uppercase tracking-[0.3em] text-text-primary">
+                <span className="font-mono uppercase tracking-[0.2em] sm:tracking-[0.3em] text-text-primary text-xs sm:text-sm">
                 / --------------------- /
             </span>
                 <div className="w-1.5 h-1.5 bg-alien-primary rotate-45"/>
