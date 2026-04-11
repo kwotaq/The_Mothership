@@ -59,7 +59,6 @@ def sync_score_metrics():
 @celery.task
 def sync_metrics():
     chain(
-        sync_similarity_coordinates.si(),
         sync_player_metrics.si(),
         sync_score_metrics.si()
     ).apply_async()
@@ -87,4 +86,8 @@ celery.conf.beat_schedule = {
         'task': 'tasks.sync_scheduled',
         'schedule': 3600 * 3,
     },
+    'sync-ever-month': {
+        'task': 'tasks.sync_similarity_coordinates',
+        'schedule':  3600 * 24 * 30,
+    }
 }
