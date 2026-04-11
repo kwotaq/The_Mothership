@@ -48,7 +48,8 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                         <span className="font-medium">{val.label}</span>
                                     </a>
 
-                                    <span className="font-mono text-alien-primary text-xs sm:text-base shrink-0 ml-2">{val.count}% Match</span>
+                                    <span
+                                        className="font-mono text-alien-primary text-xs sm:text-base shrink-0 ml-2">{val.count}% Match</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                                     <div
@@ -86,7 +87,8 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                                         </span>
                                     </div>
                                     <div className="flex flex-col min-w-0 ml-0 sm:ml-4 w-full">
-                                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-0">
+                                        <div
+                                            className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-0">
                                             {val.label && (
                                                 <span>
                                                     <a href={`https://osu.ppy.sh/users/${val.info.user_id}`}
@@ -140,38 +142,38 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {stats.map((stat, index) => {
-                const widthMap = {
-                    1: 'col-span-1',
-                    2: 'col-span-1 md:col-span-2',
-                    3: 'col-span-1 md:col-span-3'
-                };
+            const widthMap = {
+                1: 'col-span-1',
+                2: 'col-span-1 md:col-span-2',
+                3: 'col-span-1 md:col-span-3'
+            };
 
-                const spanClass = widthMap[stat.width || 1];
+            const spanClass = widthMap[stat.width || 1];
 
-                return (
-                    <div
-                        key={index}
-                        className={`
+            return (
+                <div
+                    key={index}
+                    className={`
                             interactive-panel
                             ${spanClass} 
                             p-4 sm:p-6 flex flex-col min-h-0
                         `}
-                    >
-                        <h3
-                            className="
+                >
+                    <h3
+                        className="
                             mb-3 sm:mb-4 text-sm sm:text-[1.1rem] uppercase tracking-[2px] font-bold text-text-primary pl-[5px] pb-2
                             border-b border-alien-primary/20
                             ">
-                            {stat.label}
-                        </h3>
-                        <div className="flex-1 min-h-0">
-                            {renderContent(stat)}
-                        </div>
+                        {stat.label}
+                    </h3>
+                    <div className="flex-1 min-h-0">
+                        {renderContent(stat)}
                     </div>
-                );
-            })}
+                </div>
+            );
+        })}
         </div>
     );
 };
