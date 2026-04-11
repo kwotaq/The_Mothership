@@ -9,7 +9,7 @@ import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
 import {LiveScoreGraph} from "../components/Graphs/LiveScoreGraph.tsx";
 import {useLiveStream} from "../utility/context/liveStreamContext.tsx";
 
-const fetchScores = () => api.get('/api/scores/top').then(res => res.data);
+const fetchScores = () => api.get('/api/scores').then(res => res.data);
 const fetchStats = () => api.get("/api/scores/metrics/global").then(res => ({...res.data, kind: 'scoreMetrics'}));
 
 export const ScoreStatistics = () => {
