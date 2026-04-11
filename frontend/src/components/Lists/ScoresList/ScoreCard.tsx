@@ -80,7 +80,7 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 sm:gap-5 ml-auto">
+                <div className="flex items-center gap-5 sm:gap-10 ml-auto">
                     <div className="flex flex-col items-end w-14 sm:w-16">
                         <span className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">PP</span>
                         <span className="text-base sm:text-xl text-white font-extrabold leading-none">
@@ -96,7 +96,7 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
                     </div>
 
                     <div className="shrink-0">
-                        <div className="bg-alien-primary/10 text-alien-primary px-1 sm:px-2.0 py-0.5 border border-alien-primary text-[10px] sm:text-xs font-extrabold whitespace-nowrap">
+                        <div className="bg-alien-primary/10 text-alien-primary px-1 sm:px-2.0 py-0.5 border border-alien-primary text-[12px] sm:text-xs font-extrabold whitespace-nowrap">
                             {score.mods}
                         </div>
                     </div>
