@@ -26,7 +26,7 @@ export const PlayerPanel = ({onToggle, activePlayer}: {
         <div className="w-full lg:w-[40%] shrink-0 pr-4">
             <div className="pb-6">
                 <SectionHeader title='Player Rankings'/>
-                <SearchBox setFilter={setFilter}/>
+                <div className="mr-5"><SearchBox setFilter={setFilter}/></div>
             </div>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <DataHandler loading={loading} error={error} data={players} label="players">
