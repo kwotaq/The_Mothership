@@ -48,9 +48,9 @@ export const VisiblePlayerList = ({visiblePoints, activePlayerId, setActivePlaye
                         return (
                             <div
                                 key={series.id}
-                                onMouseEnter={() => !isClicked ? setActivePlayerId(series.id) : 0}
+                                onMouseEnter={() => !isClicked && setActivePlayerId(series.id)}
                                 onClick={() => isClicked ? setIsClicked(false) : setIsClicked(true)}
-                                onMouseLeave={() => !isClicked ? setActivePlayerId(null) : 0}
+                                onMouseLeave={() => !isClicked && setActivePlayerId(null)}
                                 className={`flex items-center gap-2 p-1.5 sm:p-2 transition-all group cursor-pointer flex-1 min-w-[120px] lg:min-w-0
                                 ${isActive ? 'bg-white/10' : 'hover:bg-white/5'}
                                 ${activePlayerId && !isActive ? 'opacity-40' : 'opacity-100'}`}

@@ -10,6 +10,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const [isMobile, setIsMobile] = useState(false);
     const [activePlayerId, setActivePlayerId] = useState<string | null>(null);
     const isDragging = useRef(false);
+    const hasDragged = useRef(false);
     const dragStart = useRef<number | null>(null);
     const chartRef = useRef<HTMLDivElement>(null);
     const [xDomain, setXDomain] = useState<[Date, Date]>(() => {
@@ -79,10 +80,12 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                 className="flex-1 h-[450px] sm:h-[600px] bg-bg-secondary border border-alien-primary overflow-hidden relative"
                 onMouseDown={(e) => {
                     isDragging.current = true;
+                    hasDragged.current = false;
                     dragStart.current = e.clientX;
                 }}
                 onMouseMove={(e) => {
                     if (!isDragging.current || dragStart.current === null) return;
+                    hasDragged.current = true;
                     const dx = e.clientX - dragStart.current;
                     dragStart.current = e.clientX;
                     setXDomain(([min, max]) => {
@@ -136,6 +139,8 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     useMesh={true}
                     lineWidth={0}
                     animate={false}
+
+                    onClick={(point) => !hasDragged.current && window.open(`https://osu.ppy.sh/scores/${point.data._id}`, '_blank')}
 
                     layers={['grid', 'axes', 'areas', 'points', 'slices', 'mesh', 'legends']}
 

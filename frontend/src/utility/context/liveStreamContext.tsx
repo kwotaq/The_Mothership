@@ -4,6 +4,7 @@ import type {LiveScore} from "../../types/liveScore.ts";
 export interface LiveScorePoint {
     x: LiveScore['ended_at'];
     y: LiveScore['pp'];
+    _id: LiveScore['_id']
 }
 
 export interface LiveScoreSeries {

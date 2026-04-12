@@ -15,7 +15,8 @@ const fetchRecentScores = () => api.get<LiveScore[]>('/api/scores/recent').then(
 
 const scoreToPoint = (score: LiveScore) => ({
     x: score.ended_at,
-    y: score.pp || 0
+    y: score.pp || 0,
+    _id: score._id
 });
 
 const toSeries = (scores: LiveScore[]): LiveScoreSeries[] => {
