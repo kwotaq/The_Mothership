@@ -1,18 +1,13 @@
 import {ResponsiveLine} from '@nivo/line';
-import {usePlayers} from "../../utility/context/playerContext.tsx";
-import type {LiveScoreSeries} from "../../utility/context/liveStreamContext.tsx";
+import {usePlayers} from "../../../utility/context/playerContext.tsx";
+import type {LiveScoreSeries} from "../../../utility/context/liveStreamContext.tsx";
 import {useEffect, useMemo, useRef, useState} from "react";
-
-const COLOR_PALETTE = [
-    '#00f2ff', '#ff0055', '#00ff66', '#bc13fe',
-    '#fbbf24', '#3b82f6', '#f97316', '#a855f7',
-    '#2dd4bf', '#ef4444', '#84cc16', '#6366f1'
-];
+import {VisiblePlayerList} from "./VisiblePlayerList.tsx";
+import {COLOR_PALETTE} from "./colorPalette.ts";
 
 export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     const {playerMap} = usePlayers();
     const [isMobile, setIsMobile] = useState(false);
-    const [isClicked, setIsClicked] = useState(false)
     const [activePlayerId, setActivePlayerId] = useState<string | null>(null);
     const isDragging = useRef(false);
     const dragStart = useRef<number | null>(null);
@@ -197,62 +192,11 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     }}
                 />
             </div>
-            <div
-                className="w-full lg:w-64 h-auto max-h-[450px] lg:h-[600px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shadow-lg">
-                <div className="flex items-center justify-between border-b border-alien-primary pb-2 mb-1 sm:mb-2">
-                    <span className="text-xs font-bold uppercase text-text-primary tracking-widest">
-                        Visible Players
-                    </span>
-                </div>
-
-                <div className="flex flex-row lg:flex-col flex-wrap lg:flex-nowrap">
-                    {visiblePoints.filter(series => series.data.length > 0).map((series) => {
-                        const player = playerMap[series.id]
-                        const playerName = player.name || `User ${series.id}`;
-                        const color = COLOR_PALETTE[colorIndexMap[series.id] % COLOR_PALETTE.length];
-                        const isActive = activePlayerId === series.id;
-
-                        return (
-                            <div
-                                key={series.id}
-                                onMouseEnter={() => !isClicked ? setActivePlayerId(series.id) : 0}
-                                onClick={() => isClicked ? setIsClicked(false) : setIsClicked(true)}
-                                onMouseLeave={() => !isClicked ? setActivePlayerId(null) : 0}
-                                className={`flex items-center gap-2 p-1.5 sm:p-2 rounded transition-all group cursor-pointer flex-1 min-w-[120px] lg:min-w-0
-                                ${isActive ? 'bg-white/10' : 'hover:bg-white/5'}
-                                ${activePlayerId && !isActive ? 'opacity-40' : 'opacity-100'}`}
-                            >
-                                <span
-                                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
-                                    style={{
-                                        backgroundColor: color,
-                                        boxShadow: `0 0 10px ${color}66`
-                                    }}
-                                />
-                                <span
-                                    className={`text-xs sm:text-sm truncate font-medium transition-colors ${
-                                        isActive ? 'text-white' : 'text-text-primary'
-                                    }`} title={playerName}>
-                                    <a href={`https://osu.ppy.sh/users/${player._id}`}
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       className="text-text-primary hover:underline"
-                                       onClick={(e) => e.stopPropagation()}
-                                    >
-                                        {player.name}
-                                    </a>
-                                </span>
-                            </div>
-                        );
-                    })}
-
-                    {visiblePoints.filter(s => s.data.length > 0).length === 0 && (
-                        <div className="text-text-tertiary text-xs italic py-4 text-center">
-                            Waiting for scores...
-                        </div>
-                    )}
-                </div>
-            </div>
+            <VisiblePlayerList
+                visiblePoints={visiblePoints}
+                activePlayerId={activePlayerId}
+                setActivePlayerId={setActivePlayerId}
+            />
         </section>
     );
 };

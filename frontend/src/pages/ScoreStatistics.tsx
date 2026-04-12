@@ -6,7 +6,7 @@ import {ErrorBoundary} from "react-error-boundary";
 import {ErrorFallback} from "../utility/handlers/ErrorFallback.tsx";
 import {DataHandler} from "../utility/handlers/DataHandler.tsx";
 import {StatsBoard} from "../components/StatsBoard/StatsBoard.tsx";
-import {LiveScoreGraph} from "../components/Graphs/LiveScoreGraph.tsx";
+import {LiveScoreGraph} from "../components/Graphs/LiveScoreGraph/LiveScoreGraph.tsx";
 import {useLiveStream} from "../utility/context/liveStreamContext.tsx";
 
 const fetchScores = () => api.get('/api/scores').then(res => res.data);
