@@ -100,7 +100,7 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
             >
                 <ResponsiveLine
                     data={visiblePoints}
-                    margin={{top: 100, right: 30, bottom: 60, left: 60}}
+                    margin={{top: 100, right: 70, bottom: 60, left: 70}}
                     xScale={{
                         type: 'time',
                         format: 'native',
