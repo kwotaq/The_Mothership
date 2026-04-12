@@ -22,7 +22,9 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
 
     return (
         <div
-            className="relative w-full min-h-[120px] bg-[#050a08] border border-alien-primary/30 rounded shadow-sm overflow-hidden flex group">
+            className="interactive-panel relative w-full min-h-[120px] rounded shadow-sm overflow-hidden flex group cursor-pointer"
+            onClick={() => window.open(`https://osu.ppy.sh/scores/${score._id}`, '_blank')}
+        >
             <img
                 className="absolute inset-0 w-full h-full object-cover z-0"
                 src={score.background_url}
@@ -30,10 +32,12 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
             />
             <div className="absolute inset-0 bg-[#050a08]/85 z-[1]"/>
 
-            <div className="relative z-[2] w-full py-2.5 px-3 sm:py-3 sm:px-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <div
+                className="relative z-[2] w-full py-2.5 px-3 sm:py-3 sm:px-4 flex flex-wrap items-center gap-x-3 gap-y-2">
 
                 <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="text-xl sm:text-2xl font-mono font-black text-white w-9 sm:w-11 shrink-0 underline italic">
+                    <div
+                        className="text-xl sm:text-2xl font-mono font-black text-white w-9 sm:w-11 shrink-0 underline italic">
                         #{index}
                     </div>
 
@@ -82,21 +86,24 @@ export const ScoreCard = ({score, index}: { score: Score; index: number }) => {
 
                 <div className="flex items-center gap-5 sm:gap-10 ml-auto">
                     <div className="flex flex-col items-end w-14 sm:w-16">
-                        <span className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">PP</span>
+                        <span
+                            className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">PP</span>
                         <span className="text-base sm:text-xl text-white font-extrabold leading-none">
                             {score.pp.toFixed(0)}
                         </span>
                     </div>
 
                     <div className="flex flex-col items-end w-14 sm:w-16">
-                        <span className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">ACC</span>
+                        <span
+                            className="text-[10px] sm:text-xs text-alien-primary font-extrabold uppercase tracking-wide">ACC</span>
                         <span className="text-base sm:text-xl text-white font-extrabold leading-none">
                             {(score.accuracy * 100).toFixed(2)}%
                         </span>
                     </div>
 
                     <div className="shrink-0">
-                        <div className="bg-alien-primary/10 text-alien-primary px-1 sm:px-2.0 py-0.5 border border-alien-primary text-[12px] sm:text-xs font-extrabold whitespace-nowrap">
+                        <div
+                            className="bg-alien-primary/10 text-alien-primary px-1 sm:px-2.0 py-0.5 border border-alien-primary text-[12px] sm:text-xs font-extrabold whitespace-nowrap">
                             {score.mods}
                         </div>
                     </div>
