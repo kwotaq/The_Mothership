@@ -140,7 +140,12 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
                     lineWidth={0}
                     animate={false}
 
-                    onClick={(point) => !hasDragged.current && window.open(`https://osu.ppy.sh/scores/${point.data._id}`, '_blank')}
+                    onClick={(point) => {
+                        if (!hasDragged.current && 'data' in point) {
+                            const scoreId = (point.data as any)._id;
+                            window.open(`https://osu.ppy.sh/scores/${scoreId}`, '_blank');
+                        }
+                    }}
 
                     layers={['grid', 'axes', 'areas', 'points', 'slices', 'mesh', 'legends']}
 
