@@ -163,7 +163,7 @@ export const StatDetails = ({stats}: { stats: StatItem[] }) => {
                 >
                     <h3
                         className="
-                            mb-3 sm:mb-4 text-sm sm:text-[1.1rem] uppercase tracking-[2px] font-bold text-text-primary pl-[5px] pb-2
+                            mb-3 sm:mb-4 text-sm sm:text-[1.1rem] uppercase tracking-[2px] font-bold text-text-primary pl-[5px] pb-3
                             border-b border-alien-primary/20
                             ">
                         {stat.label}
