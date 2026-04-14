@@ -1,0 +1,50 @@
+@layer components {
+    .loading-state, .error-state, .empty-state {
+        @apply text-center py-16 px-8 flex flex-col justify-center items-center min-h-[300px];
+        background: var(--bg-secondary);
+        border: 1px solid var(--bg-tertiary);
+    }
+
+    .spinner {
+        @apply w-[60px] h-[60px] rounded-full animate-spin mb-6;
+        border: 3px solid var(--bg-tertiary);
+        border-top: 3px solid var(--alien-primary);
+    }
+
+    .interactive-panel {
+        @apply bg-bg-secondary border border-alien-primary/40 transition-all duration-300 relative;
+    }
+
+    .interactive-panel:hover {
+        @apply bg-bg-tertiary shadow-[0_0_15px_var(--alien-glow)] border-alien-primary/80;
+    }
+
+    .interactive-panel.active {
+        @apply bg-bg-tertiary shadow-[0_0_15px_var(--alien-glow)] border-alien-primary brightness-125;
+    }
+
+    .btn-nav {
+        @apply bg-transparent border border-alien-primary text-alien-primary px-5 py-2.5
+               font-mono font-bold cursor-pointer min-w-[100px] transition-all duration-300 uppercase;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+        @apply bg-alien-primary text-black;
+        box-shadow: 0 0 20px var(--alien-primary);
+    }
+
+    .btn-nav:disabled {
+        @apply border-[#333] text-[#333] cursor-not-allowed;
+        box-shadow: none;
+    }
+
+    .nav-link {
+        @apply px-5 py-2 font-mono text-[0.85rem] uppercase tracking-wider transition-all duration-75 text-white border border-transparent;
+        clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+    }
+
+    .nav-link:hover, .nav-link-active {
+        @apply bg-[rgba(0,255,102,0.15)] text-[var(--text-primary)] border-[rgba(0,255,102,0.3)];
+        box-shadow: 0 0 15px var(--alien-glow);
+    }
+}
