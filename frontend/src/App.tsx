@@ -6,6 +6,7 @@ import {PlayerStatistics} from "./pages/PlayerStatistics.tsx";
 import {ScoreStatistics} from "./pages/ScoreStatistics.tsx";
 import {PlayerProvider} from "./utility/providers/PlayerProvider.tsx";
 import {LiveStreamProvider} from "./utility/providers/LiveStreamProvider.tsx";
+import {Footer} from "./pages/Footer.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -29,6 +30,7 @@ export const App = () => {
                                 <Route path="/scores" element={<ScoreStatistics/>}/>
                             </Routes>
                         </main>
+                        <Footer/>
                     </div>
                     <ReactQueryDevtools initialIsOpen={false}/>
                 </LiveStreamProvider>
