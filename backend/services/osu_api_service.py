@@ -3,8 +3,8 @@ import logging
 from osu import Client, GameModeStr, RankingType, UserScoreType
 from tqdm import tqdm
 
-from backend.config.api_config import OsuAPIConfig
-from backend.config.database_config import database
+from config.api_config import OsuAPIConfig
+from config.database_config import database
 
 logger = logging.getLogger(__name__)
 

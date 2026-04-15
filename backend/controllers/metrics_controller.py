@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint, request, jsonify
 
-from backend.services.metrics_service import MetricsService
+from services.metrics_service import MetricsService
 
 logger = logging.getLogger(__name__)
 

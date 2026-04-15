@@ -4,8 +4,8 @@ import math
 import pandas as pd
 from tqdm import tqdm
 
-from backend.config.database_config import database
-from backend.processing.similarity_calculation import analyze_profiles
+from config.database_config import database
+from processing.similarity_calculation import analyze_profiles
 
 logger = logging.getLogger(__name__)
 
