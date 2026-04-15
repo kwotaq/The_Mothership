@@ -62,7 +62,7 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
                             >
                                 <PlayerCard
                                     player={player}
-                                    index={virtualItem.index + 1}
+                                    index={player.country_rank}
                                     onToggle={onToggle}
                                     isActive={activePlayer?._id === player._id}
                                     data-id={player._id}
