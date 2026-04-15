@@ -3,8 +3,8 @@ import logging
 from osu import Client, GameModeStr, RankingType, UserScoreType
 from tqdm import tqdm
 
-from config.api_config import OsuAPIConfig
-from config.database_config import database
+from backend.config.api_config import OsuAPIConfig
+from backend.config.database_config import database
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +83,7 @@ class OsuAPIService:
             "name": data.username,
             "avatar": data.avatar_url,
             "global_rank": data.statistics.global_rank,
+            "country_rank": data.statistics.country_rank,
             "performance_points": data.statistics.pp,
         }
         self.player_collection.update_one({"_id": str(data.id)}, {"$set": user}, upsert=True)

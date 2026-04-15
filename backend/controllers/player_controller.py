@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint, jsonify
 
-from services.osu_api_service import OsuAPIService
+from backend.services.osu_api_service import OsuAPIService
 
 logger = logging.getLogger(__name__)
 

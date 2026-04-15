@@ -7,7 +7,7 @@ from datetime import datetime
 import websocket
 from flask_socketio import SocketIO
 
-from config.database_config import database
+from backend.config.database_config import database
 
 logger = logging.getLogger(__name__)
 
