@@ -1,4 +1,5 @@
 import logging
+import json
 
 from osu import Client, GameModeStr, RankingType, UserScoreType
 from tqdm import tqdm
@@ -17,15 +18,34 @@ class OsuAPIService:
         self.scores_collection = database.get_scores_collection()
         self.recent_score_cache = database.get_recent_scores_cache()
         self.player_stats_collection = database.get_player_stats_collection()
+        self.redis_client = database.redis
 
     def get_scores(self):
-        return list(self.scores_collection.find().sort("pp", -1).limit(200))
+        cached = self.redis_client.get('scores')
+        if cached:
+            return json.loads(cached)
+
+        scores = list(self.scores_collection.find().sort("pp", -1).limit(200))
+        database.sync_redis_cache_field(scores, "scores")
+        return scores
 
     def get_recent_scores(self):
         return list(self.recent_score_cache.find().sort("ended_at", 1))
 
     def get_players(self):
-        return list(self.player_collection.find({}).sort({"performance_points": -1}))
+        cached = self.redis_client.get('players')
+        if cached:
+            return json.loads(cached)
+
+        players = list(self.player_collection.find({}).sort("performance_points", -1))
+        database.sync_redis_cache_field(players, "players")
+        return players
+
+    def sync_redis_cache_all(self):
+        players = list(self.player_collection.find({}).sort("performance_points", -1))
+        database.sync_redis_cache_field(players, "players")
+        scores = list(self.scores_collection.find().sort("pp", -1).limit(200))
+        database.sync_redis_cache_field(scores, "scores")
 
     def sync_all_scores(self):
         player_ids = self.player_collection.distinct("_id")

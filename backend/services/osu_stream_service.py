@@ -20,7 +20,7 @@ class OsuStreamService:
         self.greek_player_info = {}
         self.on_new_top_score = None
 
-    def init_app(self, socketio: SocketIO, on_new_top_score = None):
+    def init_app(self, socketio: SocketIO, on_new_top_score=None):
         self.socketio = socketio
         self._load_player_info()
         self.on_new_top_score = on_new_top_score
@@ -53,6 +53,23 @@ class OsuStreamService:
         except Exception as e:
             logger.error(f"OsuStreamService: DB load failed: {e}")
 
+    def _update_single_player_bottom(self, user_id):
+        try:
+            scores = database.get_scores_collection()
+
+            pipeline = [
+                {"$match": {"user_id": user_id}},
+                {"$sort": {"pp": 1}},
+                {"$limit": 1}
+            ]
+            result = list(scores.aggregate(pipeline))
+            if result:
+                new_bottom = result[0]["pp"]
+                self.greek_player_info[user_id]["bottom_score"] = new_bottom
+                logger.info(f"Updated bottom_score for {user_id} to {new_bottom}")
+        except Exception as e:
+            logger.error(f"Failed to update single player {user_id}: {e}")
+
     def _run_listener(self):
         uri = "ws://127.0.0.1:7727"
         while True:
@@ -74,6 +91,7 @@ class OsuStreamService:
                         try:
                             if score_pp is not None and (bottom is None or bottom < score_pp):
                                 self.on_new_top_score(user_id)
+                                self._update_single_player_bottom(user_id)
                         except Exception as e:
                             logger.error(f"Comparison failed: {e} | pp={score_pp} bottom={bottom}")
 

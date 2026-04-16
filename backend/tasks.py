@@ -30,6 +30,7 @@ def sync_player_all(player_id):
     from services.osu_api_service import OsuAPIService
     OsuAPIService().sync_player(player_id)
     OsuAPIService().sync_player_scores(player_id)
+    OsuAPIService().sync_redis_cache_all()
     from services.metrics_service import MetricsService
     MetricsService().sync_player_metrics(player_id)
     MetricsService().sync_global_player_metrics()

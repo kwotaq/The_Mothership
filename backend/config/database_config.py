@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+import redis
 
 from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
@@ -7,7 +9,6 @@ from pymongo import MongoClient
 logger = logging.getLogger(__name__)
 
 load_dotenv(find_dotenv())
-
 
 class Database:
     def __init__(self):
@@ -20,6 +21,7 @@ class Database:
 
         self.db = self.client['data']
         self.create_indexes()
+        self.redis = redis.Redis(host='localhost', port=6379, db=1)
 
     def get_player_collection(self):
         return self.db['players']
@@ -62,5 +64,7 @@ class Database:
 
         logger.info('Indexing finished')
 
+    def sync_redis_cache_field(self, data, label):
+        self.redis.set(label, json.dumps(data, default=str))
 
 database = Database()
