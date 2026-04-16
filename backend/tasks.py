@@ -12,17 +12,20 @@ celery = Celery('tasks', broker='redis://localhost:6379/0')
 def sync_players():
     from services.osu_api_service import OsuAPIService
     OsuAPIService().sync_players()
+    OsuAPIService().sync_redis_cache_all()
 
 
 @celery.task
 def sync_all_scores():
     from services.osu_api_service import OsuAPIService
     OsuAPIService().sync_all_scores()
+    OsuAPIService().sync_redis_cache_all()
 
 @celery.task
 def sync_x_scores(amount):
     from services.osu_api_service import OsuAPIService
     OsuAPIService().sync_scores_limited(amount)
+    OsuAPIService().sync_redis_cache_all()
 
 
 @celery.task
