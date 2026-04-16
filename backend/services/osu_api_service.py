@@ -131,6 +131,7 @@ class OsuAPIService:
                     "name": stats.user.username,
                     "avatar": stats.user.avatar_url,
                     "global_rank": stats.global_rank,
+                    "country_rank": stats.country_rank,
                     "performance_points": stats.pp,
                 }
                 self.player_collection.update_one({"_id": user_id}, {"$set": user}, upsert=True)
