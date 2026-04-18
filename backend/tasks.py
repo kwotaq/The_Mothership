@@ -1,12 +1,16 @@
 import os
 import sys
 
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s %(message)s')
+logger = logging.getLogger(__name__)
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from celery import Celery, chain
 
 celery = Celery('tasks', broker='redis://localhost:6379/0')
-
+celery.conf.worker_hijack_root_logger = False
 
 @celery.task
 def sync_players():
@@ -30,6 +34,7 @@ def sync_x_scores(amount):
 
 @celery.task
 def sync_player_all(player_id):
+    logger.info(f'Syncing player {player_id}')
     from services.osu_api_service import OsuAPIService
     OsuAPIService().sync_player(player_id)
     OsuAPIService().sync_player_scores(player_id)
@@ -79,6 +84,7 @@ def sync_all():
 
 @celery.task
 def sync_scheduled():
+    logger.info('Running scheduled sync')
     chain(
         sync_players.si(),
         sync_metrics.si(),
