@@ -5,12 +5,13 @@ import {useVirtualizer} from '@tanstack/react-virtual';
 
 interface PlayerListProps {
     players: Player[];
+    countryRankings:  Map<string, number>;
     onToggle: (player: Player) => void;
     activePlayer: Player | null;
 
 }
 
-export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) => {
+export const PlayerList = ({players, countryRankings, activePlayer, onToggle}: PlayerListProps) => {
     const listContainerRef = useRef<HTMLDivElement>(null);
     const firstItemRef = useRef<HTMLDivElement>(null);
     const [estimatedSize, setEstimatedSize] = useState(95);
@@ -62,7 +63,7 @@ export const PlayerList = ({players, activePlayer, onToggle}: PlayerListProps) =
                             >
                                 <PlayerCard
                                     player={player}
-                                    index={player.country_rank}
+                                    index={countryRankings.get(player._id)}
                                     onToggle={onToggle}
                                     isActive={activePlayer?._id === player._id}
                                     data-id={player._id}

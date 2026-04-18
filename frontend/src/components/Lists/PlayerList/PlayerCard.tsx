@@ -2,7 +2,7 @@ import type {Player} from '../../../types/player.ts';
 
 interface PlayerProps {
     player: Player;
-    index: number;
+    index: number | undefined;
     onToggle: (player: Player) => void;
     isActive: boolean;
     "data-id"?: string;

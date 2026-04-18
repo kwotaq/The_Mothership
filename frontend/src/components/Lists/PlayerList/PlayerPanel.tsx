@@ -15,6 +15,10 @@ export const PlayerPanel = ({onToggle, activePlayer}: {
     const {players, loading, error} = usePlayers();
     const [filter, setFilter] = useState<string>('');
 
+    const rankMap = useMemo(() => {
+        return new Map(players.map((p, i) => [p._id, i + 1]));
+    }, [players]);
+
     const filteredPlayers = useMemo(() => {
         if (!players || !filter) return players;
         return players.filter(p =>
@@ -32,6 +36,7 @@ export const PlayerPanel = ({onToggle, activePlayer}: {
                 <DataHandler loading={loading} error={error} data={players} label="players">
                     <PlayerList
                         players={filteredPlayers}
+                        countryRankings={rankMap}
                         onToggle={onToggle}
                         activePlayer={activePlayer}
                     />
