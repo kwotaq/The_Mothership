@@ -103,7 +103,6 @@ class OsuAPIService:
             "name": data.username,
             "avatar": data.avatar_url,
             "global_rank": data.statistics.global_rank,
-            "country_rank": data.statistics.country_rank,
             "performance_points": data.statistics.pp,
         }
         self.player_collection.update_one({"_id": str(data.id)}, {"$set": user}, upsert=True)
@@ -131,7 +130,6 @@ class OsuAPIService:
                     "name": stats.user.username,
                     "avatar": stats.user.avatar_url,
                     "global_rank": stats.global_rank,
-                    "country_rank": stats.country_rank,
                     "performance_points": stats.pp,
                 }
                 self.player_collection.update_one({"_id": user_id}, {"$set": user}, upsert=True)
