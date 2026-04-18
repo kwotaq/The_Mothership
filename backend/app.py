@@ -18,7 +18,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 
 def on_new_top_score(player_id):
-    sync_player_all.delay(player_id)
+    sync_player_all.apply_async(args=[player_id], countdown=30)
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent', transports=['websocket'])
 OsuStreamService().init_app(socketio,on_new_top_score=on_new_top_score)
