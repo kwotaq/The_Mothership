@@ -62,8 +62,10 @@ class OsuAPIService:
     def sync_player_scores(self, player_id):
         player_top_scores = self.client.get_user_scores(player_id, UserScoreType.BEST, mode=GameModeStr.STANDARD,
                                                         limit=200)
+        score_ids = []
 
         for score in player_top_scores:
+            score_ids.append(str(score.id))
             mods = score.mods
             mod_string = ''.join([mod.mod.value for mod in mods]) or 'NM'
             if "DT" in mod_string or "NC" in mod_string:
@@ -95,10 +97,8 @@ class OsuAPIService:
             }
 
             self.scores_collection.delete_many({
-                "user_id": str(score.user_id),
-                "beatmap_id": score.beatmapset.id,
-                "difficulty": score.beatmap.version,
-                "_id": {"$ne": str(score.id)}
+                "user_id": str(player_id),
+                "_id": {"$nin": score_ids}
             })
 
             self.scores_collection.update_one({"_id": str(score.id)}, {"$set": score_data}, upsert=True)
