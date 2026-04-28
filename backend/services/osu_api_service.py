@@ -94,6 +94,13 @@ class OsuAPIService:
                 "ended_at": score.ended_at
             }
 
+            self.scores_collection.delete_one({
+                "user_id": str(score.user_id),
+                "beatmap_id": score.beatmapset.id,
+                "difficulty": score.beatmap.version,
+                "_id": {"$ne": str(score.id)}
+            })
+
             self.scores_collection.update_one({"_id": str(score.id)}, {"$set": score_data}, upsert=True)
 
     def sync_player(self, player_id):
