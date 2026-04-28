@@ -94,7 +94,7 @@ class OsuAPIService:
                 "ended_at": score.ended_at
             }
 
-            self.scores_collection.delete_one({
+            self.scores_collection.delete_many({
                 "user_id": str(score.user_id),
                 "beatmap_id": score.beatmapset.id,
                 "difficulty": score.beatmap.version,
