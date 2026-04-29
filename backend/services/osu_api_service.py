@@ -96,12 +96,12 @@ class OsuAPIService:
                 "ended_at": score.ended_at
             }
 
-            self.scores_collection.delete_many({
-                "user_id": str(player_id),
-                "_id": {"$nin": score_ids}
-            })
-
             self.scores_collection.update_one({"_id": str(score.id)}, {"$set": score_data}, upsert=True)
+
+        self.scores_collection.delete_many({
+            "user_id": str(player_id),
+            "_id": {"$nin": score_ids}
+        })
 
     def sync_player(self, player_id):
         data = self.client.get_user(player_id, GameModeStr.STANDARD)
