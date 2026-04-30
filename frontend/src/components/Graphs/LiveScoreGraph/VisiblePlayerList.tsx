@@ -1,5 +1,5 @@
 import {usePlayers} from "../../../utility/context/playerContext.tsx";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {COLOR_PALETTE} from "./colorPalette.ts";
 import {SearchBox} from "../../../utility/SearchBox.tsx";
 
@@ -20,14 +20,26 @@ interface VisiblePointProps {
 export const VisiblePlayerList = ({visiblePoints, activePlayerId, setActivePlayerId}: VisiblePointProps) => {
     const {playerMap} = usePlayers();
     const [isClicked, setIsClicked] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
     const [filter, setFilter] = useState<string>('');
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const colorIndexMap = useMemo(() =>
             Object.fromEntries(visiblePoints.map((series, i) => [series.id, i]))
         , [visiblePoints]);
 
     return (
-        <div className="w-full lg:w-64 h-auto max-h-[450px] lg:h-[600px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto ">
+        <div
+            className="w-full lg:w-64 h-auto max-h-[450px] lg:h-[600px] lg:max-h-none bg-bg-primary border border-alien-primary p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto ">
             <div className="flex items-center justify-between border-b border-alien-primary pb-2 mb-1 sm:mb-2">
                     <span className="text-xs font-bold uppercase text-text-primary tracking-widest">
                         Visible Players
@@ -48,9 +60,17 @@ export const VisiblePlayerList = ({visiblePoints, activePlayerId, setActivePlaye
                         return (
                             <div
                                 key={series.id}
-                                onMouseEnter={() => !isClicked && setActivePlayerId(series.id)}
-                                onClick={() => isClicked ? setIsClicked(false) : setIsClicked(true)}
-                                onMouseLeave={() => !isClicked && setActivePlayerId(null)}
+                                onMouseEnter={() => !isMobile && !isClicked && setActivePlayerId(series.id)}
+                                onMouseLeave={() => !isMobile && !isClicked && setActivePlayerId(null)}
+                                onClick={() => {
+                                    if (activePlayerId === series.id) {
+                                        setActivePlayerId(null);
+                                        setIsClicked(false);
+                                    } else {
+                                        setActivePlayerId(series.id);
+                                        setIsClicked(true);
+                                    }
+                                }}
                                 className={`flex items-center gap-2 p-1.5 sm:p-2 transition-all group cursor-pointer flex-1 min-w-[120px] lg:min-w-0
                                 ${isActive ? 'bg-white/10' : 'hover:bg-white/5'}
                                 ${activePlayerId && !isActive ? 'opacity-40' : 'opacity-100'}`}
