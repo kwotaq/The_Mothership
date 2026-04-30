@@ -44,7 +44,8 @@ export function usePlotInteraction() {
         onPinch: ({delta: [dScale]}) => zoom(1 - dScale * 0.01),
     }, {
         drag: {filterTaps: true},
-        pinch: {scaleBounds: {min: 0.1, max: 10}}
+        pinch: {scaleBounds: {min: 0.1, max: 10}},
+        eventOptions: {passive: false}
     });
 
     return {chartRef, domain, bind};
