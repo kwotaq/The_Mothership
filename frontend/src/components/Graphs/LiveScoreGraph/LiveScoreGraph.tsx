@@ -47,11 +47,11 @@ export const LiveScoreGraph = ({data}: { data: LiveScoreSeries[] }) => {
     if (transformedData.length === 0) return null;
 
     return (
-        <section className="flex flex-col lg:flex-row w-full gap-4 max-h-[700px] sm:max-h-[600px] lg:max-h-none overflow-hidden">
+        <section className="flex flex-col lg:flex-row w-full gap-4">
             <div
                 ref={chartRef}
                 style={{touchAction: 'none'}}
-                className="w-full h-[450px] sm:h-[600px] sm:shrink-0 lg:shrink bg-bg-secondary border border-alien-primary overflow-hidden relative"
+                className="w-full h-[450px] sm:h-[600px] shrink-0 lg:shrink bg-bg-secondary border border-alien-primary overflow-hidden relative"
                 {...bind()}
             >
                 <ResponsiveLine
