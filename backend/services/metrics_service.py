@@ -10,13 +10,12 @@ from processing.similarity_calculation import analyze_profiles
 logger = logging.getLogger(__name__)
 
 
-def _compute_closest_neighbours(user_id, coordinates, top_players, results_limit=5):
+def _compute_closest_neighbours(user_id, coordinates, top_ids, results_limit=5):
     if not coordinates:
         return []
 
     all_players = coordinates.get("similarity_coordinates", [])
     user_id = str(user_id)
-    top_ids = {str(p['_id']) for p in top_players}
 
     target = None
     others = []
@@ -71,11 +70,12 @@ class MetricsService:
         player_ids = self.player_collection.distinct("_id")
 
         coordinates = self.global_stats_collection.find_one({"_id": "similarity_coordinates"})
-        top_players = self.player_collection.find({}).sort("performance_points", -1).limit(500)
+        top_players = self.player_collection.find({}, {"_id": 1}).sort("performance_points", -1).limit(500)
+        top_ids = {str(p['_id']) for p in top_players}
 
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
             self.sync_player_metrics(player_id)
-            closest_neighbours = _compute_closest_neighbours(player_id, coordinates, top_players, results_limit=5)
+            closest_neighbours = _compute_closest_neighbours(player_id, coordinates, top_ids, results_limit=5)
             self.player_stats_collection.update_one({"_id": player_id},
                                                     {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
