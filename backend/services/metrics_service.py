@@ -10,6 +10,41 @@ from processing.similarity_calculation import analyze_profiles
 logger = logging.getLogger(__name__)
 
 
+def _compute_closest_neighbours(user_id, coordinates, top_players, results_limit=5):
+    if not coordinates:
+        return []
+
+    all_players = coordinates.get("similarity_coordinates", [])
+    user_id = str(user_id)
+    top_ids = {str(p['_id']) for p in top_players}
+
+    target = None
+    others = []
+    for p in all_players:
+        if p['user_id'] == user_id:
+            target = p
+        elif p['user_id'] in top_ids:
+            others.append(p)
+
+    if not target or not others:
+        return []
+
+    tx, ty = target['x'], target['y']
+
+    raw_results = [
+        {"label": p['user_id'], "distance": math.sqrt((p['x'] - tx) ** 2 + (p['y'] - ty) ** 2)}
+        for p in others
+    ]
+
+    max_distance = max(r["distance"] for r in raw_results)
+    for r in raw_results:
+        normalized = r["distance"] / max_distance
+        r["count"] = round((1 - normalized ** 0.35) * 100, 1)
+
+    raw_results.sort(key=lambda x: x["count"], reverse=True)
+    return raw_results[:results_limit]
+
+
 class MetricsService:
     def __init__(self):
         self.player_collection = database.get_player_collection()
@@ -35,8 +70,14 @@ class MetricsService:
     def sync_all_player_metrics(self):
         player_ids = self.player_collection.distinct("_id")
 
+        coordinates = self.global_stats_collection.find_one({"_id": "similarity_coordinates"})
+        top_players = self.player_collection.find({}).sort("performance_points", -1).limit(500)
+
         for player_id in tqdm(player_ids, desc="Updating Player Stats", unit="player"):
             self.sync_player_metrics(player_id)
+            closest_neighbours = _compute_closest_neighbours(player_id, coordinates, top_players, results_limit=5)
+            self.player_stats_collection.update_one({"_id": player_id},
+                                                    {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
     def sync_player_metrics(self, player_id):
         top_artists = self._aggregate_stat('artist', player_id, results_limit=7)
@@ -64,12 +105,6 @@ class MetricsService:
     def sync_similarity(self):
         data = {"similarity_coordinates": self._compute_similarity()}
         self.global_stats_collection.update_one({"_id": "similarity_coordinates"}, {"$set": data}, upsert=True)
-
-        player_ids = self.player_collection.distinct("_id")
-        for player_id in tqdm(player_ids, desc="Updating Similarities", unit="player"):
-            closest_neighbours = self._compute_closest_neighbours(player_id, results_limit=5)
-            self.player_stats_collection.update_one({"_id": player_id},
-                                                    {"$set": {"closest_neighbours": closest_neighbours}}, upsert=True)
 
     def sync_global_player_metrics(self):
         top_artists = self._aggregate_stat('artist', results_limit=10)
@@ -109,38 +144,6 @@ class MetricsService:
         scores = self.scores_collection.find({})
         df = pd.DataFrame(scores)
         return analyze_profiles(df)
-
-    def _compute_closest_neighbours(self, user_id, results_limit=5):
-        doc = self.global_stats_collection.find_one({"_id": "similarity_coordinates"})
-        if not doc: return []
-
-        all_players = doc.get("similarity_coordinates", [])
-        user_id = str(user_id)
-
-        target = next((p for p in all_players if p['user_id'] == user_id), None)
-        if not target: return []
-
-        tx, ty = target['x'], target['y']
-        raw_results = []
-
-        for p in all_players:
-            if p['user_id'] == user_id: continue
-
-            distance = math.sqrt((p['x'] - tx) ** 2 + (p['y'] - ty) ** 2)
-            raw_results.append({"label": p['user_id'], "distance": distance})
-
-        if not raw_results: return []
-
-        distances = [r["distance"] for r in raw_results]
-        max_distance = max(distances)
-
-        for r in raw_results:
-            normalized = r["distance"] / max_distance
-            score = (1 - normalized ** 0.35) * 100
-            r["count"] = round(score, 1)
-
-        raw_results.sort(key=lambda x: x["count"], reverse=True)
-        return raw_results[:results_limit]
 
     def _aggregate_stat(self, field_name, player_id=None, results_limit=None, top_scores_limit=None):
         pipeline = []

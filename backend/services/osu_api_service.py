@@ -37,12 +37,12 @@ class OsuAPIService:
         if cached:
             return json.loads(cached)
 
-        players = list(self.player_collection.find({}).sort("performance_points", -1))
+        players = list(self.player_collection.find({}).sort("performance_points", -1).limit(500))
         database.sync_redis_cache_field(players, "players")
         return players
 
     def sync_redis_cache_all(self):
-        players = list(self.player_collection.find({}).sort("performance_points", -1))
+        players = list(self.player_collection.find({}).sort("performance_points", -1).limit(500))
         database.sync_redis_cache_field(players, "players")
         scores = list(self.scores_collection.find().sort("pp", -1).limit(200))
         database.sync_redis_cache_field(scores, "scores")
@@ -120,7 +120,7 @@ class OsuAPIService:
 
         existing_ids = set(self.player_collection.distinct("_id"))
 
-        for page_idx in tqdm(range(10), desc="Fetching Leaderboard Pages"):
+        for page_idx in tqdm(range(11), desc="Fetching Leaderboard Pages"):
             rankings = self.client.get_ranking(GameModeStr.STANDARD, RankingType.PERFORMANCE, country="GR",
                                                cursor=None if page_idx == 0 else cursor)
             cursor = rankings.cursor

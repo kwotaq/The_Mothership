@@ -28,13 +28,15 @@ export const ScatterPlot = ({data, onToggle, activePlayer}: ScatterPlotProps) =>
 
     const nivoData = useMemo(() => [{
         id: "Player Similarity",
-        data: data.map((point) => ({
-            x: point.x,
-            y: point.y,
-            userId: point.user_id,
-            isActive: activePlayer?._id === point.user_id
-        })),
-    }], [data, activePlayer]);
+        data: data
+            .filter((point) => playerMap[point.user_id])
+            .map((point) => ({
+                x: point.x,
+                y: point.y,
+                userId: point.user_id,
+                isActive: activePlayer?._id === point.user_id
+            })),
+    }], [data, activePlayer, playerMap]);
 
     const activePoint = useMemo(() =>
             nivoData[0].data.find(p => p.isActive)
