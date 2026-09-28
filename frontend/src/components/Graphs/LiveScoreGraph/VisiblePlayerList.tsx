@@ -63,7 +63,7 @@ export const VisiblePlayerList = ({visiblePoints, activePlayerId, setActivePlaye
                                 onMouseEnter={() => !isMobile && !isClicked && setActivePlayerId(series.id)}
                                 onMouseLeave={() => !isMobile && !isClicked && setActivePlayerId(null)}
                                 onClick={() => {
-                                    if (activePlayerId === series.id) {
+                                    if (activePlayerId === series.id && isClicked) {
                                         setActivePlayerId(null);
                                         setIsClicked(false);
                                     } else {
